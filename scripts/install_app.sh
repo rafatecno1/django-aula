@@ -57,15 +57,19 @@ echo -e "------------\n"
 
 echo "--- 3.b: Configurando Permisos NOPASSWD para PostgreSQL ---"
 
+PSQL_PATH="/usr/bin/psql" # Usamos la ruta absoluta más común
+
+# 1. Definir la regla completa
 # Creamos un archivo de reglas específico para el usuario djau
 # Esto es más seguro que modificar el archivo /etc/sudoers directamente
 SUDOERS_RULE="/etc/sudoers.d/90-djau-psql"
-PSQL_PATH=$(which psql) # En sistemas Debian/Ubuntu suele ser /usr/bin/psql
+PSQL_RULE="$APP_USER ALL=(postgres) NOPASSWD: $PSQL_PATH"
 
-# Concedemos a djau permiso para ejecutar el comando 'psql' como el usuario 'postgres' sin contraseña
-echo "$APP_USER ALL=(postgres) NOPASSWD: $PSQL_PATH" | sudo tee $SUDOERS_RULE > /dev/null
+# 2. Concedemos a djau permiso para ejecutar el comando 'psql' como el usuario 'postgres' sin contraseña
+# Escribir la regla de forma segura. 'printf' es más seguro que 'echo' para evitar problemas de formato y saltos de línea
+printf "%s\n" "$PSQL_RULE" | sudo tee $SUDOERS_RULE > /dev/null
 
-# Establecemos los permisos seguros para el archivo sudoers
+# 3. Asegurar los permisos seguros para el archivo sudoers
 sudo chmod 0440 $SUDOERS_RULE
 
 echo -e "✅ Permiso NOPASSWD configurado para el usuario '$APP_USER' para psql.\n"
