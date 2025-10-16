@@ -53,6 +53,22 @@ export PATH_DADES_PRIVADES
 echo -e "La ruta completa para el directorio donde se guardarán los datos privados serà '$PATH_DADES_PRIVADES'.\n"
 echo -e "------------\n"
 
+# -----------------------------------
+
+echo "--- 3.b: Configurando Permisos NOPASSWD para PostgreSQL ---"
+
+# Creamos un archivo de reglas específico para el usuario djau
+# Esto es más seguro que modificar el archivo /etc/sudoers directamente
+SUDOERS_RULE="/etc/sudoers.d/90-djau-psql"
+PSQL_PATH=$(which psql) # En sistemas Debian/Ubuntu suele ser /usr/bin/psql
+
+# Concedemos a djau permiso para ejecutar el comando 'psql' como el usuario 'postgres' sin contraseña
+echo "$APP_USER ALL=(postgres) NOPASSWD: $PSQL_PATH" | sudo tee $SUDOERS_RULE > /dev/null
+
+# Establecemos los permisos seguros para el archivo sudoers
+sudo chmod 0440 $SUDOERS_RULE
+
+echo -e "✅ Permiso NOPASSWD configurado para el usuario '$APP_USER' para psql.\n"
 
 # -----------------------------------
 
