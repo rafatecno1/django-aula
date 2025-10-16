@@ -4,6 +4,17 @@
 # grupos y archivos estáticos de una instalación de Django.
 echo -e "setup_djau.sh en marxa\n"
 
+PATH_DADES_PRIVADES="$1"
+
+# Verificación (para depuración)
+if [ -z "$PATH_DADES_PRIVADES" ]; then
+    echo "❌ ERROR: No se recibió la ruta de datos privados. Saliendo."
+    exit 1
+fi
+
+echo "Ruta de datos privados recibida: $PATH_DADES_PRIVADES"
+echo -e "\n\n"
+
 # --- 4. Crear venv e Instalar Requisitos (Paso 4) ---
 python3 -m venv venv
 source venv/bin/activate
