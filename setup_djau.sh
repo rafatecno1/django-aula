@@ -52,6 +52,8 @@ if [ "$DB_PASS" != "$DB_PASS2" ]; then
     exit 1
 fi
 
+echo -e "Configurando la base de datos en PostgreSQL.\n\n"
+
 # Crear el script SQL temporal
 SQL_FILE="temp_setup_${DB_NAME}.sql"
 cat << EOF > "$SQL_FILE"
@@ -72,7 +74,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 rm "$SQL_FILE"
-echo -e "\n"
+
 echo -e "✅ Base de datos '$DB_NAME' y usuario '$DB_USER' configurados en PostgreSQL.\n\n"
 
 
