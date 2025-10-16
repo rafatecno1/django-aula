@@ -7,8 +7,8 @@
 echo "--- CONFIGURACIÓN DE DIRECTORIOS I USUARIOS PARA LA INSTALACIÓN DE DJANGO-AULA ---"
 echo -e "--- Este archivo de ejecutarse con sudo ---\n"
 
-
-REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"
+#REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"
+REPO_URL="https://github.com/rafatecno1/django-aula.git"
 
 read -p "Introduce el nombre del DIRECTORIO (CARPETA) del proyecto (por defecto: djau): " PROJECT_FOLDER
 
