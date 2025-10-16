@@ -64,9 +64,10 @@ ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
 EOF
 
 # Ejecutar el script SQL con el usuario postgres
-sudo -u postgres psql -t -f "$SQL_FILE"
+# Redirigimos la salida y los errores a /dev/null (2>&1 > /dev/null)
+sudo -u postgres psql -t -f "$SQL_FILE" > /dev/null 2>&1 
 if [ $? -ne 0 ]; then
-    echo "❌ Error al configurar PostgreSQL. Revisa las credenciales o permisos de sudo."
+    echo "❌ Error al configurar PostgreSQL. Revisa las credenciales. Puede que la regla NOPASSWD haya fallado o que la sintaxis SQL sea incorrecta."
     rm "$SQL_FILE"
     exit 1
 fi
