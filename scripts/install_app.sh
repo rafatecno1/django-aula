@@ -107,7 +107,7 @@ echo -e "Esto se ejecutará como el usuario '$APP_USER' para manejar el venv y m
 # Transfiere la ejecución al script de configuración de Django DENTRO del repositorio clonado
 cd "FULL_PATH"
 chmod +x setup_djau.sh
-sudo -u "$APP_USER" bash setup_djau.sh # Asumiendo que setup_django.sh está a la subcarpeta raiz
+sudo -u "$APP_USER" bash setup_djau.sh "$PATH_DADES_PRIVADES" # Asumiendo que setup_django.sh está a la subcarpeta raiz
 
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo en el script de configuración de Django. Revisa los logs."
