@@ -2,6 +2,7 @@
 
 # Este script automatiza la configuración de la BD, migraciones, superusuario,
 # grupos y archivos estáticos de una instalación de Django.
+echo -e "setup_djau.sh en marxa\n"
 
 # --- 4. Crear venv e Instalar Requisitos (Paso 4) ---
 python3 -m venv venv
