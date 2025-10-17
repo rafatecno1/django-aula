@@ -50,7 +50,7 @@ echo -e "\n"
 
 echo "--- 1.1 Instalación del Servidor Apache y Módulo WSGI ---"
 
-apt update && apt install -y apache2 libapache2-mod-wsgi-py3 > /dev/null 2>&1
+apt update && apt install -y apache2 libapache2-mod-wsgi-py3
 
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo en la instalación del servidor Apache. Saliendo."
