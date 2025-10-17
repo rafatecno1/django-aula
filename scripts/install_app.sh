@@ -4,7 +4,8 @@
 # Se encarga de la configuración del sistema, usuarios y permisos.
 # DEBE EJECUTARSE con privilegios de root (p. ej., sudo bash install_app.sh).
 
-echo -e "\n================================================================"
+echo -e "\n"
+echo "=================================================================="
 echo "--- 🔴 INICIO DEL SCRIPT: install_app.sh (Instalación Base) 🔴 ---"
 echo "=================================================================="
 echo -e "\n"
@@ -44,20 +45,20 @@ read_or_default () {
 # 1. DEFINICIÓN DE DIRECTORIOS Y USUARIOS
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "========================================================"
 echo "--- ⚙️ 1. DEFINICIÓN DE DIRECTORIOS Y USUARIOS CLAVE ---"
-echo "================================================================="
+echo "========================================================"
 echo -e "\n"
 
 # URL del Repositorio (Mantenida como referencia)
 REPO_URL="https://github.com/rafatecno1/django-aula.git"
 #REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
 
-echo "--- 1.1 Solicitud de Parámetros de Ruta ---"
 echo -e "ℹ️  Pulse Enter para aceptar el valor por defecto.\n"
+echo -e "--- 1.1 Solicitud de Parámetros de Ruta ---\n"
 
 # 1. Carpeta del Proyecto
-read_or_default "Introduce el nombre del DIRECTORIO del proyecto (defecto: djau): " PROJECT_FOLDER "djau"
+read_or_default "Introduce el nombre del DIRECTORIO del proyecto (por defecto: djau): " PROJECT_FOLDER "djau"
 INSTALL_DIR="/opt"
 FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
 echo -e "La ruta completa de instalación serà: '$FULL_PATH'."
@@ -66,7 +67,7 @@ sleep 2
 
 
 # 2. Carpeta de Datos Privados
-read_or_default "Introduce el nombre del DIRECTORIO para datos privados (defecto: djau-dades-privades): " DADES_PRIVADES "djau-dades-privades"
+read_or_default "Introduce el nombre del DIRECTORIO para datos privados (por defecto: djau-dades-privades): " DADES_PRIVADES "djau-dades-privades"
 PATH_DADES_PRIVADES="$INSTALL_DIR/$DADES_PRIVADES"
 export PATH_DADES_PRIVADES
 echo -e "La ruta completa de datos privados serà: '$PATH_DADES_PRIVADES'."
@@ -74,7 +75,7 @@ echo -e "\n"
 sleep 2
 
 
-echo "--- 1.2 Solicitud y Validación de Usuario de la Aplicación ---"
+echo -e "--- 1.2 Solicitud y Validación de Usuario de la Aplicación ---\n"
 
 # 3. Usuario de la Aplicación
 read_or_default "Introduce el nombre del USUARIO de la aplicación (debe existir y tener sudo) (defecto: djau): " APP_USER "djau"
@@ -94,9 +95,9 @@ sleep 2
 # 2. CONFIGURACIÓN DE POSTGRESQL Y SUDOERS
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "============================================================"
 echo "--- 🔒 2. CONFIGURACIÓN DE SEGURIDAD (Permisos NOPASSWD) ---"
-echo "================================================================="
+echo "============================================================"
 echo -e "\n"
 
 echo "--- 2.1 Configurando Permisos NOPASSWD para PostgreSQL ---"
@@ -118,24 +119,26 @@ sleep 2
 # 3. INSTALACIÓN DE DEPENDENCIAS DEL SISTEMA Y CREACIÓN DE CARPETAS
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "================================================================"
 echo "--- 📥 3. INSTALACIÓN DE DEPENDENCIAS Y PREPARACIÓN DE RUTAS ---"
-echo "================================================================="
+echo "================================================================"
 echo -e "\n"
 
-echo "--- 3.1 Instalando dependencias del sistema (Python, Git, PostgreSQL, etc. No se instala el servidor web) ---"
+echo -e "--- 3.1 Instalando dependencias del sistema (Python, Git, PostgreSQL, etc. Ahora no se instalará el servidor web) ---\n"
+
 # Se ha quitado la instalación de Apache para aislar el servidor web en setup_apache.sh.
 apt update && apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo en la instalación de dependencias del sistema. Saliendo."
     exit 1
 fi
+echo -e "\n"
 echo "✅ Dependencias del sistema instaladas correctamente."
 echo -e "\n"
 sleep 2
 
 
-echo "--- 3.2 Creación de Directorios del Proyecto y Privados ---"
+echo "--- 3.2 Creación de Directorios del Proyecto y para los datos privados ---"
 # Directorio del proyecto
 mkdir -p "$FULL_PATH"
 if [ ! -d "$FULL_PATH" ]; then
@@ -157,7 +160,7 @@ echo "--- 3.3 Asignación de Permisos de Archivos ---"
 
 # Permisos para el directorio del proyecto (propiedad del usuario de la app)
 chown -R "$APP_USER":"$APP_USER" "$FULL_PATH"
-echo "✅ Permisos de '$FULL_PATH' asignados a '$APP_USER'."
+echo "✅ Permisos de '$FULL_PATH' asignados al usuario '$APP_USER'."
 
 # Permisos para el directorio de datos privados (www-data necesita acceso de lectura/escritura)
 chown -R "$APP_USER":www-data "$PATH_DADES_PRIVADES"
@@ -170,20 +173,21 @@ sleep 2
 # 4. CLONACIÓN DEL REPOSITORIO Y DELEGACIÓN
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "========================================================"
 echo "--- 🌐 4. CLONACIÓN DEL REPOSITORIO DE LA APLICACIÓN ---"
-echo "================================================================="
+echo "========================================================"
 echo -e "\n"
 
-echo "--- 4.1 Clonando Repositorio como usuario '$APP_USER' ---"
+echo -e "--- 4.1 Clonando Repositorio como usuario '$APP_USER' ---\n"
 # Usamos sudo -u para clonar como el usuario de la aplicación
-echo "Clonando $REPO_URL en $FULL_PATH. Esto puede tardar un momento..."
+echo "Clonando $REPO_URL en $FULL_PATH. Esto puede tardar un rato..."
 sudo -u "$APP_USER" git clone "$REPO_URL" "$FULL_PATH"
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo al clonar el repositorio '$REPO_URL'."
     echo "Comprueba que la URL sea correcta o que el usuario '$APP_USER' tenga permisos de red."
     exit 1
 fi
+echo -e "\n"
 echo "✅ Repositorio clonado en '$FULL_PATH'."
 echo -e "\n"
 sleep 3
@@ -197,12 +201,12 @@ echo "--- 🚀 5. INICIO DE LA CONFIGURACIÓN ESPECÍFICA DE DJANGO-AULA ---"
 echo "=================================================================="
 echo -e "\n"
 
-echo "--- 5.1 Preparando y Ejecutando setup_djau.sh para configurar la base de datos, la aplicación, etc ---"
+echo -e "--- A partir de este momento se ejecutarà el script setup_djau.sh que se encuentra en '$FULL_PATH' ---\n"
 
 # Transfiere la ejecución al script de configuración de Django DENTRO del repositorio clonado
 cd "$FULL_PATH"
 chmod +x setup_djau.sh
-echo "ℹ️  La ejecución pasa al usuario '$APP_USER' para configurar el venv, la BD y la aplicación."
+echo "ℹ️  La ejecución se efectuará con el usuario '$APP_USER' para configurar el venv, la BD y la aplicación."
 echo -e "ℹ️  **ATENCIÓN:** Espere la solicitud de parámetros de Base de Datos y Aplicación.\n"
 sleep 3
 
@@ -214,10 +218,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo -e "\n================================================================"
+echo -e "\n"
+echo "=============================================================================="
 echo "--- 🟢 INSTALACIÓN BASE COMPLETADA (install_app.sh) 🟢 ---"
-echo "El siguiente paso es la configuración del servidor web (Apache)."
-echo "================================================================"
+echo "El siguiente paso es la instalación y configuración del servidor web (Apache)."
+echo "En la ruta '$FULL_PATH' ejecute sudo ./setup_apache.sh"
+echo "=============================================================================="
 echo -e "\n"
 
 cd "$FULL_PATH"
