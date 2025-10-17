@@ -7,8 +7,8 @@
 echo "--- CONFIGURACIÓN DE DIRECTORIOS I USUARIOS PARA LA INSTALACIÓN DE DJANGO-AULA ---"
 echo -e "--- Este archivo de ejecutarse con sudo ---\n"
 
-#REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"
-REPO_URL="https://github.com/rafatecno1/django-aula.git"
+#REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
+REPO_URL="https://github.com/rafatecno1/django-aula.git"	#repositorio copiado para hacere las mejoras en privado
 
 read -p "Introduce el nombre del DIRECTORIO (CARPETA) del proyecto (por defecto: djau): " PROJECT_FOLDER
 
@@ -80,7 +80,7 @@ echo -e "--- INICIO DE INSTALACIÓN DE DJANGO-AULA ---\n"
 
 # 1. INSTALAR DEPENDENCIAS (Paso 1)
 echo -e "1/5: Instalando dependencias del sistema...\n"
-apt update && apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 apache2 libapache2-mod-wsgi-py3 postgresql
+apt update && apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo en la instalación de dependencias. Saliendo."
     exit 1
