@@ -3,9 +3,10 @@
 # Automatiza la configuración de Apache2, módulos, virtual hosts y certificados.
 # DEBE EJECUTARSE con privilegios de root (p. ej., sudo bash setup_apache.sh)
 
-echo -e "\n================================================================"
+echo -e "\n"
+echo "======================================================================="
 echo "--- 🟢 INICIO DEL SCRIPT: setup_apache.sh (Configuración Apache) 🟢 ---"
-echo "=================================================================="
+echo "======================================================================="
 echo -e "\n"
 
 # ----------------------------------------------------------------------
@@ -56,9 +57,10 @@ if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo en la instalación del servidor Apache. Saliendo."
     exit 1
 fi
+echo -e "\n"
 echo "✅ Servidor Apache y WSGI instalados."
 echo -e "\n"
-
+sleep 3
 
 echo "--- 1.2 Solicitud y Validación de Parámetros ---"
 echo -e "\n"
@@ -72,8 +74,10 @@ INSTALL_DIR="/opt"
 FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
 VENV_PATH="$FULL_PATH/venv"
 WSGI_PATH="$FULL_PATH/aula/wsgi.py"
+echo -e "\n"
 echo "☑️ Parámetros definidos."
 echo -e "\n"
+sleep 3
 
 # 1.3 Verificación de la Carpeta del Proyecto (OBJETIVO 2)
 echo "--- 1.3 Verificando la existencia del directorio del proyecto ---"
@@ -83,8 +87,10 @@ if [ ! -d "$FULL_PATH" ]; then
     echo "Asegúrate de que el script 'install_app.sh' y 'setup_djau.sh' se hayan ejecutado correctamente."
     exit 1
 fi
-echo "✅ Directorio del proyecto '$FULL_PATH' encontrado."
 echo -e "\n"
+echo "✅ Directorio del proyecto proporcionado '$FULL_PATH' ha sido encontrado."
+echo -e "\n"
+sleep 3
 
 # ----------------------------------------------------------------------
 # 2. HABILITACIÓN DE MÓDULOS Y GENERACIÓN DE CERTIFICADO
@@ -93,7 +99,7 @@ echo -e "\n"
 echo "================================================================="
 echo "--- 🛡️ 2. CONFIGURACIÓN DE MÓDULOS Y CERTIFICADO SSL ---"
 echo "================================================================="
-echo -e "\n"
+#echo -e "\n"
 
 echo "--- 2.1 Habilitación de Módulos de Apache ---"
 a2enmod wsgi ssl headers rewrite > /dev/null 2>&1
@@ -102,9 +108,10 @@ if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo al habilitar módulos de Apache (wsgi, ssl, headers, rewrite)."
     exit 1
 fi
+echo -e "\n"
 echo "✅ Módulos habilitados: wsgi, ssl, headers, rewrite."
 echo -e "\n"
-
+sleep 3
 
 echo "--- 2.2 Generación de Certificado Self-Signed (para Desarrollo) ---"
 
@@ -120,7 +127,7 @@ if [ $? -ne 0 ]; then
 fi
 echo "✅ Certificado de desarrollo generado en $CERT_CRT."
 echo -e "\n"
-
+sleep 3
 
 # ----------------------------------------------------------------------
 # 3. CREACIÓN DE ARCHIVOS VIRTUAL HOST
@@ -129,7 +136,7 @@ echo -e "\n"
 echo "================================================================="
 echo "--- 📝 3. CREACIÓN DE ARCHIVOS DE CONFIGURACIÓN VIRTUAL HOST ---"
 echo "================================================================="
-echo -e "\n"
+#echo -e "\n"
 
 VHOST_DIR="/etc/apache2/sites-available"
 HTTP_CONF="$VHOST_DIR/$PROJECT_FOLDER.conf"
@@ -148,9 +155,9 @@ cat << EOF | sudo tee "$HTTP_CONF" > /dev/null
 	RedirectMatch permanent ^(.*)$ https://$DOMAIN_NAME$1
 </VirtualHost>
 EOF
+echo -e "\n"
 echo "✅ Archivo HTTP ($HTTP_CONF) creado (Redirección)."
 echo -e "\n"
-
 
 echo "--- 3.2 Creando archivo para acceso HTTPS (SSL) ---"
 
@@ -199,9 +206,10 @@ cat << EOF | sudo tee "$SSL_CONF" > /dev/null
 
 </VirtualHost>
 EOF
+echo -e "\n"
 echo "✅ Archivo SSL ($SSL_CONF) creado (Servicio principal)."
 echo -e "\n"
-
+sleep 3
 
 # ----------------------------------------------------------------------
 # 4. HABILITACIÓN DE VIRTUAL HOSTS Y REINICIO
@@ -210,7 +218,7 @@ echo -e "\n"
 echo "================================================================="
 echo "--- 🚀 4. HABILITACIÓN DE SITIOS Y RECARGA DE APACHE ---"
 echo "================================================================="
-echo -e "\n"
+#echo -e "\n"
 
 echo "--- 4.1 Deshabilitando Virtual Hosts por defecto ---"
 a2dissite 000-default.conf > /dev/null 2>&1
@@ -234,8 +242,9 @@ else
 	echo "--- Estado del servicio Apache2 ---"
 	systemctl status apache2 | grep Loaded
 	systemctl status apache2 | grep Active
-	echo "✅ Recarga de Apache2 completada sin errores."
+	echo -e "✅ Recarga de Apache2 completada sin errores.\n"
 fi
+sleep 3
 
 echo -e "\n"
 echo "================================================================="

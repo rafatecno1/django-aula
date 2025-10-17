@@ -4,9 +4,10 @@
 # y personaliza el archivo settings_local.py para la aplicación Django.
 # DEBE EJECUTARSE como el usuario de la aplicación (djau).
 
-echo -e "\n================================================================"
+echo -e "\n"
+echo "====================================================================="
 echo "--- 🟢 INICIO DEL SCRIPT: setup_djau.sh (Configuración Django) 🟢 ---"
-echo "=================================================================="
+echo "====================================================================="
 echo -e "\n"
 
 # ----------------------------------------------------------------------
@@ -43,10 +44,10 @@ read_and_validate () {
 # 1. PREPARACIÓN DEL ENTORNO Y BASE DE DATOS
 # ----------------------------------------------------------------------
 
-echo "=================================================================="
+echo "==================================================================="
 echo "--- 📝 1. CONFIGURACIÓN DE PARÁMETROS DE LA BASE DE DATOS Y APP ---"
-echo "=================================================================="
-echo -e "\n"
+echo "==================================================================="
+#echo -e "\n"
 
 # 1.1 Capturar la ruta de datos privados (Pasada por el script padre)
 PATH_DADES_PRIVADES="$1"
@@ -55,7 +56,7 @@ if [ -z "$PATH_DADES_PRIVADES" ]; then
     echo "❌ ERROR: No se recibió la ruta de datos privados (Argumento \$1). Saliendo."
     exit 1
 fi
-echo "☑️ Ruta de datos privados recibida: $PATH_DADES_PRIVADES"
+echo "☑️ Ruta de datos privados recibida del script install_app.sh: $PATH_DADES_PRIVADES"
 echo -e "\n"
 
 
@@ -82,19 +83,22 @@ while true; do
         break
     fi
 done
+echo -e "\n"
 echo "☑️ Parámetros de la Base de Datos definidos."
 echo -e "\n"
+sleep 3
 
 # ----------------------------------------------------------------------
 # 2. CONFIGURACIÓN DEL ENTORNO VIRTUAL Y CLAVE SECRETA
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "======================================================="
 echo "--- ⚙️ 2. PREPARACIÓN DEL ENTORNO VIRTUAL DE DJANGO ---"
-echo "================================================================="
-echo -e "\n"
+echo "======================================================="
+#echo -e "\n"
 
-echo "--- 2.1 Creando Entorno Virtual (venv) e instalando dependencias ---"
+echo -e "--- 2.1 Creando Entorno Virtual (venv) e instalando dependencias ---\n"
+
 python3 -m venv venv
 source venv/bin/activate
 
@@ -106,8 +110,10 @@ if [ $? -ne 0 ]; then
     deactivate
     exit 1
 fi
+echo -e "\n"
 echo "✅ Entorno virtual creado y paquetes instalados."
 echo -e "\n"
+sleep 3
 
 echo "--- 2.2 Generando Clave Secreta de Django ---"
 SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
@@ -119,16 +125,16 @@ if [ ${#SECRET_KEYPASS} -lt 32 ]; then
 fi
 echo "✅ Clave secreta generada automáticamente."
 echo -e "\n"
-
+sleep 3
 
 # ----------------------------------------------------------------------
 # 3. CREACIÓN Y CONFIGURACIÓN DE POSTGRESQL
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "=================================================================="
 echo "--- 💾 3. CREACIÓN Y CONFIGURACIÓN DE BASE DE DATOS POSTGRESQL ---"
-echo "================================================================="
-echo -e "\n"
+echo "=================================================================="
+#echo -e "\n"
 
 # Crear el script SQL temporal
 SQL_FILE="temp_setup_${DB_NAME}.sql"
@@ -140,10 +146,10 @@ CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
 EOF
-echo "--- 3.1 Script SQL generado temporalmente."
 
 echo -e "\n"
-echo "--- 3.2 Ejecutando Script SQL con 'psql' (NOPASSWD) ---"
+echo "--- Ejecutando Script SQL con 'psql' (NOPASSWD) ---"
+
 # Se ejecuta con NOPASSWD configurado en el script padre, la salida se redirige a /dev/null
 sudo -u postgres psql -t -f "$SQL_FILE" > /dev/null 2>&1 
 
@@ -154,18 +160,19 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 rm "$SQL_FILE"
+echo -e "\n"
 echo "✅ Base de datos '$DB_NAME' y usuario '$DB_USER' creados correctamente."
 echo -e "\n"
-
+sleep 3
 
 # ----------------------------------------------------------------------
 # 4. PERSONALIZACIÓN DEL ARCHIVO settings_local.py
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "==========================================================="
 echo "--- 📝 4. PERSONALIZACIÓN DEL ARCHIVO settings_local.py ---"
-echo "================================================================="
-echo -e "\n"
+echo "==========================================================="
+#echo -e "\n"
 
 # --- 4.1 Solicitud de Parámetros de la Aplicación (Usuario) ---
 echo "--- 4.1 Parámetros de la Aplicación ---"
@@ -175,18 +182,19 @@ read_and_validate "Introduzca el nombre del CENTRO EDUCATIVO (ej: Centre de Demo
 read_and_validate "Introduzca la LOCALIDAD del centro educativo (ej: Badia del Vallés): " LOCALITAT
 read_and_validate "Introduzca el CÓDIGO del centro (ej: 00000000): " CODI_CENTRE
 read_and_validate "Introduzca la URL base de la aplicación (ej: https://elteudomini.cat): " URL_BASE
-read_and_validate "Introduzca los HOSTS permitidos (separados por comas, ej: elteudomini.cat,127.0.0.1): " ALLOWED_HOSTS_LIST
+read_and_validate "Introduzca los HOSTS permitidos separados por comas. (ej: elteudomini.cat,127.0.0.1): " ALLOWED_HOSTS_LIST
 read_and_validate "Introduzca la dirección de CORREO del administrador (ej: ui@mega.cracs.cat): " ADMIN_EMAIL
-echo "☑️ Parámetros generales definidos."
+echo -e "☑️ Parámetros generales definidos.\n"
 echo -e "\n"
 
 echo "--- 4.2 Parámetros de Correo SMTP (Google/App Password) ---"
-echo -e "ℹ️  Para el envío de correos se requiere una contraseña de aplicación de Google.\n"
+echo "ℹ️  Para el envío de correos se requiere una contraseña de aplicación de Google."
+echo -e "    La información se puede encontrar aquí: https://support.google.com/mail/answer/185833?hl=ca\n"
 
 read_and_validate "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER): " EMAIL_HOST_USER
 read_and_validate "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
 read_and_validate "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL): " SERVER_MAIL
-echo "☑️ Parámetros SMTP definidos."
+echo -e "☑️ Parámetros SMTP definidos.\n"
 echo -e "\n"
 
 
@@ -236,17 +244,18 @@ sed -i "s/^CSRF_COOKIE_SECURE=False/CSRF_COOKIE_SECURE=True/" "$FINAL_FILE"
 
 echo "✅ settings_local.py configurado y personalizado."
 echo -e "\n"
+sleep 3
 
 # ----------------------------------------------------------------------
 # 5. MIGRACIONES Y CONFIGURACIÓN DE USUARIOS
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "=================================================================="
 echo "--- 🔄 5. APLICACIÓN DE MIGRACIONES Y CONFIGURACIÓN DE USUARIO ---"
-echo "================================================================="
-echo -e "\n"
+echo "=================================================================="
+#echo -e "\n"
 
-echo "--- 5.1 Aplicando Migraciones de Base de Datos ---"
+echo -e "--- 5.1 Aplicando Migraciones de Base de Datos ---\n"
 python manage.py migrate --noinput
 
 if [ $? -ne 0 ]; then
@@ -254,12 +263,14 @@ if [ $? -ne 0 ]; then
     deactivate
     exit 1
 fi
+echo -e "\n"
 echo "✅ Migraciones aplicadas correctamente."
 echo -e "\n"
+sleep 3
 
 echo "--- 5.2 Ejecutando 'fixtures.sh' (si existe) ---"
-if [ -f "fixtures.sh" ]; then
-    bash fixtures.sh
+if [ -f "scripts/fixtures.sh" ]; then
+    bash scripts/fixtures.sh
     if [ $? -ne 0 ]; then
         echo "❌ Advertencia: Fallo al ejecutar 'fixtures.sh'."
     fi
@@ -268,11 +279,14 @@ else
     echo "☑️ fixtures.sh no encontrado. Paso omitido."
     echo -e "\n"
 fi
+sleep 3
 
-echo "--- 5.3 Creación de Superusuario 'admin' ---"
+echo "--- 5.3 Creación de Superusuario 'admin' en la aplicación DJANGO ---"
+echo -e "\n"
 echo "⚠️  ATENCIÓN: Se abrirá el modo interactivo para crear el superusuario 'admin'."
-echo -e "   Por favor, utiliza el nombre de usuario 'admin' y una contraseña segura.\n"
+echo -e "   Por favor, utiliza el nombre de usuario 'admin', en vez del que el sistema sugiere por defecto, y una contraseña segura.\n"
 python manage.py createsuperuser
+sleep 3
 
 echo -e "\n"
 echo "--- 5.4 Creando Grupos y asignando a 'admin' ---"
@@ -298,18 +312,19 @@ if [ $? -ne 0 ]; then
     echo "❌ Error al ejecutar el script de configuración de grupos."
 fi
 rm "$PYTHON_SCRIPT"
+echo -e "\n"
 echo "✅ Grupos configurados."
 echo -e "\n"
-
+sleep 3
 
 # ----------------------------------------------------------------------
 # 6. RECOLECCIÓN DE ESTÁTICOS Y FINALIZACIÓN
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "==============================================="
 echo "--- 🖼️ 6. RECOLECCIÓN DE ARCHIVOS ESTÁTICOS ---"
-echo "================================================================="
-echo -e "\n"
+echo "==============================================="
+#echo -e "\n"
 
 python manage.py collectstatic -c --no-input
 
@@ -318,12 +333,16 @@ if [ $? -ne 0 ]; then
     deactivate
     exit 1
 fi
+echo -e "\n"
 echo "✅ Archivos estáticos recolectados."
 echo -e "\n"
 
 deactivate
-echo "================================================================="
-echo "--- 🟢 CONFIGURACIÓN BÁSICA DE DJANGO COMPLETADA 🟢 ---"
-echo "Ahora puede ejecutar el script de configuración de Apache."
-echo "================================================================="
+sleep 3
+
+
+echo "========================================================================================="
+echo "--- 🟢 CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA COMPLETADA (setup_djau.sh) 🟢 ---"
+echo "Devolviendo el control al script install_app.sh"
+echo "========================================================================================="
 echo -e "\n"
