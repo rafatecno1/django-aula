@@ -63,7 +63,7 @@ INSTALL_DIR="/opt"
 FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
 echo -e "La ruta completa de instalación serà: '$FULL_PATH'."
 echo -e "\n"
-sleep 2
+sleep 1
 
 
 # 2. Carpeta de Datos Privados
@@ -72,7 +72,7 @@ PATH_DADES_PRIVADES="$INSTALL_DIR/$DADES_PRIVADES"
 export PATH_DADES_PRIVADES
 echo -e "La ruta completa de datos privados serà: '$PATH_DADES_PRIVADES'."
 echo -e "\n"
-sleep 2
+sleep 1
 
 
 echo -e "--- 1.2 Solicitud y Validación de Usuario de la Aplicación ---\n"
@@ -206,6 +206,7 @@ echo -e "--- A partir de este momento, el usuario '$APP_USER' ejecutarà el scri
 # Transfiere la ejecución al script de configuración de Django DENTRO del repositorio clonado
 cd "$FULL_PATH"
 chmod +x setup_djau.sh
+chmod +x setup_apache.sh
 echo -e "ℹ️  **ATENCIÓN:** Espere la solicitud de parámetros para configurar la Base de Datos y la Aplicación.\n"
 sleep 3
 
@@ -217,13 +218,21 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo -e "\n"
-echo "=============================================================================="
-echo "--- 🟢 INSTALACIÓN BASE COMPLETADA (install_app.sh) 🟢 ---"
-echo "El siguiente paso es la instalación y configuración del servidor web (Apache)."
-echo "En la ruta '$FULL_PATH' ejecute sudo ./setup_apache.sh"
-echo "=============================================================================="
-echo -e "\n"
 
-cd "$FULL_PATH"
-chmod +x setup_apache.sh
+echo -e "\n"
+echo "==========================================================="
+echo "--- 🟢 INSTALACIÓN BASE COMPLETADA (install_app.sh) 🟢 ---"
+echo "==========================================================="
+echo -e "\n"
+echo "--- 5.2 SIGUIENTE PASO: CONFIGURACIÓN DEL SERVIDOR WEB APACHE ---"
+echo -e "\n"
+echo "Para continuar con la configuración del servidor web Apache, ejecute los siguientes comandos (Copiar/Pegar):"
+echo -e "\n"
+echo "   1. Cambie al directorio del proyecto:"
+echo "      $ cd \"$FULL_PATH\""
+echo -e "\n"
+echo "   2. Ejecute el script de configuración del servidor web Apache (DEBE SER con sudo):"
+echo "      $ sudo bash setup_apache.sh"
+echo -e "\n"
+echo "¡Puede proceder con la configuración del servidor web Apache!"
+echo -e "\n"
