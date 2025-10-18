@@ -116,7 +116,7 @@ echo -e "\n"
 sleep 3
 
 echo "--- 2.2 Generando Clave Secreta de Django ---"
-source venv/bin/activate
+
 SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
 
 if [ ${#SECRET_KEYPASS} -lt 32 ]; then
@@ -124,9 +124,10 @@ if [ ${#SECRET_KEYPASS} -lt 32 ]; then
     deactivate
     exit 1
 fi
+
 echo "✅ Clave secreta generada automáticamente."
 echo -e "\n"
-deactivate
+
 sleep 3
 
 # ----------------------------------------------------------------------
@@ -149,7 +150,6 @@ GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
 EOF
 
-echo -e "\n"
 echo "--- Ejecutando Script SQL con 'psql' (NOPASSWD) ---"
 
 # Se ejecuta con NOPASSWD configurado en el script padre, la salida se redirige a /dev/null
@@ -231,7 +231,7 @@ ALLOWED_HOSTS_PYTHON_LIST="'${ALLOWED_HOSTS_LIST//,/\', \'}'"
 sed -i "s#^ALLOWED_HOSTS = \[ 'elteudomini.cat', '127.0.0.1', \]#ALLOWED_HOSTS = [ $ALLOWED_HOSTS_PYTHON_LIST, ]#" "$FINAL_FILE"
 
 # Clave Secreta y Datos Privados
-sed -i "s#^SECRET_KEY = .*#SECRET_KEY = '$SECRET_KEYPASS'#" "$FINAL_FILE"
+sed -i "s|^SECRET_KEY = .*|SECRET_KEY = '$SECRET_KEYPASS'|" "$FINAL_FILE"
 sed -i "s#^PRIVATE_STORAGE_ROOT =.*#PRIVATE_STORAGE_ROOT = '$PATH_DADES_PRIVADES'#" "$FINAL_FILE"
 
 # Datos de Email/Admin
@@ -257,7 +257,7 @@ sleep 3
 echo "=================================================================="
 echo "--- 🔄 5. APLICACIÓN DE MIGRACIONES Y CONFIGURACIÓN DE USUARIO ---"
 echo "=================================================================="
-#echo -e "\n"
+echo -e "\n"
 
 echo -e "--- 5.1 Aplicando Migraciones de Base de Datos ---\n"
 python manage.py migrate --noinput
@@ -272,16 +272,16 @@ echo "✅ Migraciones aplicadas correctamente."
 echo -e "\n"
 sleep 3
 
-echo -e "--- 5.2 Ejecutando 'fixtures.sh' (si existe) ---\n"
+echo -e "--- 5.2 Ejecutando 'scripts/fixtures.sh' (si existe) ---\n"
 if [ -f "scripts/fixtures.sh" ]; then
     bash scripts/fixtures.sh
 	echo -e "\n"
     if [ $? -ne 0 ]; then
-        echo "❌ Advertencia: Fallo al ejecutar 'fixtures.sh'."
+        echo "❌ Advertencia: Fallo al ejecutar 'scripts/fixtures.sh'."
     fi
     echo -e "✅ Fixtures ejecutados.\n"
 else
-    echo -e "☑️ fixtures.sh no encontrado. Paso omitido.\n"
+    echo -e "☑️ scripts/fixtures.sh no encontrado. Paso omitido.\n"
 fi
 echo -e "\n"
 sleep 3
