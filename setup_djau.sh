@@ -119,6 +119,11 @@ echo "--- 2.2 Generando Clave Secreta de Django ---"
 
 SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
 
+# FILTRO ROBUSTO:
+# 1. Usamos 'tr' para reemplazar los caracteres problemáticos (|, #, /, &) por un guion (-).
+#    Este filtro garantiza que la clave no contendrá el delimitador que usaremos en sed (|).
+SECRET_KEYPASS_FILTERED=$(echo "$SECRET_KEYPASS" | tr '\|#/&' '----')
+
 if [ ${#SECRET_KEYPASS} -lt 32 ]; then
     echo "❌ ERROR: No se pudo generar una clave secreta válida. Saliendo."
     deactivate
@@ -231,7 +236,7 @@ ALLOWED_HOSTS_PYTHON_LIST="'${ALLOWED_HOSTS_LIST//,/\', \'}'"
 sed -i "s#^ALLOWED_HOSTS = \[ 'elteudomini.cat', '127.0.0.1', \]#ALLOWED_HOSTS = [ $ALLOWED_HOSTS_PYTHON_LIST, ]#" "$FINAL_FILE"
 
 # Clave Secreta y Datos Privados
-sed -i "s|^SECRET_KEY = .*|SECRET_KEY = '$SECRET_KEYPASS'|" "$FINAL_FILE"
+sed -i "s|^SECRET_KEY = .*|SECRET_KEY = '$SECRET_KEYPASS_FILTERED'|" "$FINAL_FILE"
 sed -i "s#^PRIVATE_STORAGE_ROOT =.*#PRIVATE_STORAGE_ROOT = '$PATH_DADES_PRIVADES'#" "$FINAL_FILE"
 
 # Datos de Email/Admin
