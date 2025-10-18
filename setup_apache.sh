@@ -44,12 +44,12 @@ read_and_validate () {
 # 1. INSTALACIÓN Y DEFINICIÓN DE PARÁMETROS
 # ----------------------------------------------------------------------
 
-echo "=================================================================="
+echo "================================================================="
 echo "--- ⚙️ 1. INSTALACIÓN Y DEFINICIÓN DE PARÁMETROS DEL SERVIDOR ---"
-echo "=================================================================="
+echo "================================================================="
 echo -e "\n"
 
-echo "--- 1.1 Instalación del Servidor Apache y Módulo WSGI ---"
+echo -e "--- 1.1 Instalación del Servidor Apache y Módulo WSGI ---\n"
 
 apt update && apt install -y apache2 libapache2-mod-wsgi-py3
 
@@ -68,13 +68,13 @@ echo -e "\n"
 # Implementación de read_and_validate
 read_and_validate "Introduce el dominio principal (ej: elteudomini.cat): " DOMAIN_NAME
 read_and_validate "Introduce el correo del administrador (ej: juan@xtec.cat): " SERVER_ADMIN
-read_and_validate "Introduce el nombre de la carpeta del proyecto (ej: djau2025): " PROJECT_FOLDER
+read_and_validate "Introduce el nombre de la carpeta del proyecto (ej: djau): " PROJECT_FOLDER
 
 INSTALL_DIR="/opt"
 FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
 VENV_PATH="$FULL_PATH/venv"
 WSGI_PATH="$FULL_PATH/aula/wsgi.py"
-echo -e "\n"
+
 echo "☑️ Parámetros definidos."
 echo -e "\n"
 sleep 3
@@ -87,7 +87,6 @@ if [ ! -d "$FULL_PATH" ]; then
     echo "Asegúrate de que el script 'install_app.sh' y 'setup_djau.sh' se hayan ejecutado correctamente."
     exit 1
 fi
-echo -e "\n"
 echo "✅ Directorio del proyecto proporcionado '$FULL_PATH' ha sido encontrado."
 echo -e "\n"
 sleep 3
@@ -96,10 +95,10 @@ sleep 3
 # 2. HABILITACIÓN DE MÓDULOS Y GENERACIÓN DE CERTIFICADO
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "========================================================"
 echo "--- 🛡️ 2. CONFIGURACIÓN DE MÓDULOS Y CERTIFICADO SSL ---"
-echo "================================================================="
-#echo -e "\n"
+echo "========================================================"
+echo -e "\n"
 
 echo "--- 2.1 Habilitación de Módulos de Apache ---"
 a2enmod wsgi ssl headers rewrite > /dev/null 2>&1
@@ -108,7 +107,6 @@ if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo al habilitar módulos de Apache (wsgi, ssl, headers, rewrite)."
     exit 1
 fi
-echo -e "\n"
 echo "✅ Módulos habilitados: wsgi, ssl, headers, rewrite."
 echo -e "\n"
 sleep 3
@@ -133,10 +131,10 @@ sleep 3
 # 3. CREACIÓN DE ARCHIVOS VIRTUAL HOST
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "================================================================"
 echo "--- 📝 3. CREACIÓN DE ARCHIVOS DE CONFIGURACIÓN VIRTUAL HOST ---"
-echo "================================================================="
-#echo -e "\n"
+echo "================================================================"
+echo -e "\n"
 
 VHOST_DIR="/etc/apache2/sites-available"
 HTTP_CONF="$VHOST_DIR/$PROJECT_FOLDER.conf"
@@ -155,9 +153,10 @@ cat << EOF | sudo tee "$HTTP_CONF" > /dev/null
 	RedirectMatch permanent ^(.*)$ https://$DOMAIN_NAME$1
 </VirtualHost>
 EOF
-echo -e "\n"
+
 echo "✅ Archivo HTTP ($HTTP_CONF) creado (Redirección)."
 echo -e "\n"
+sleep 3
 
 echo "--- 3.2 Creando archivo para acceso HTTPS (SSL) ---"
 
@@ -206,19 +205,19 @@ cat << EOF | sudo tee "$SSL_CONF" > /dev/null
 
 </VirtualHost>
 EOF
-echo -e "\n"
+
 echo "✅ Archivo SSL ($SSL_CONF) creado (Servicio principal)."
 echo -e "\n"
-sleep 3
+sleep 5
 
 # ----------------------------------------------------------------------
 # 4. HABILITACIÓN DE VIRTUAL HOSTS Y REINICIO
 # ----------------------------------------------------------------------
 
-echo "================================================================="
+echo "========================================================"
 echo "--- 🚀 4. HABILITACIÓN DE SITIOS Y RECARGA DE APACHE ---"
-echo "================================================================="
-#echo -e "\n"
+echo "========================================================"
+echo -e "\n"
 
 echo "--- 4.1 Deshabilitando Virtual Hosts por defecto ---"
 a2dissite 000-default.conf > /dev/null 2>&1
@@ -230,6 +229,7 @@ a2ensite "$PROJECT_FOLDER.conf" > /dev/null
 a2ensite "$PROJECT_FOLDER-ssl.conf" > /dev/null
 echo "☑️ Vhosts de la aplicación habilitados."
 echo -e "\n"
+sleep 3
 
 echo "--- 4.3 Recargando Apache para aplicar los cambios ---"
 systemctl reload apache2
@@ -239,16 +239,19 @@ if [ $? -ne 0 ]; then
     exit 1
 else
 	# Mostrar el estado del servicio para confirmación
-	echo "--- Estado del servicio Apache2 ---"
+	echo "Estado del servicio Apache2:"
 	systemctl status apache2 | grep Loaded
 	systemctl status apache2 | grep Active
-	echo -e "✅ Recarga de Apache2 completada sin errores.\n"
+	echo -e "\n"
+	echo "✅ Recarga de Apache2 completada sin errores."
 fi
-sleep 3
+sleep 5
 
 echo -e "\n"
-echo "================================================================="
+echo "================================================="
 echo "--- 🟢 CONFIGURACIÓN DE APACHE FINALIZADA 🟢 ---"
-echo "La aplicación debería estar disponible en https://$DOMAIN_NAME"
-echo "================================================================="
+echo ""
+echo "La aplicación debería estar disponible en:"
+echo "https://$DOMAIN_NAME"
+echo "================================================="
 echo -e "\n"
