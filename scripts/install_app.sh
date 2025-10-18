@@ -201,13 +201,12 @@ echo "--- 🚀 5. INICIO DE LA CONFIGURACIÓN ESPECÍFICA DE DJANGO-AULA ---"
 echo "=================================================================="
 echo -e "\n"
 
-echo -e "--- A partir de este momento se ejecutarà el script setup_djau.sh que se encuentra en '$FULL_PATH' ---\n"
+echo -e "--- A partir de este momento, el usuario '$APP_USER' ejecutarà el script setup_djau.sh que se encuentra en '$FULL_PATH' ---\n"
 
 # Transfiere la ejecución al script de configuración de Django DENTRO del repositorio clonado
 cd "$FULL_PATH"
 chmod +x setup_djau.sh
-echo "ℹ️  La ejecución se efectuará con el usuario '$APP_USER' para configurar el venv, la BD y la aplicación."
-echo -e "ℹ️  **ATENCIÓN:** Espere la solicitud de parámetros de Base de Datos y Aplicación.\n"
+echo -e "ℹ️  **ATENCIÓN:** Espere la solicitud de parámetros para configurar la Base de Datos y la Aplicación.\n"
 sleep 3
 
 # Ejecuta el script de configuración de Django, pasando la ruta privada como argumento
