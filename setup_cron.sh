@@ -8,7 +8,7 @@
 # 1. DEFINICIONES Y VERIFICACIÓN INICIAL
 # ----------------------------------------------------------------------
 
-echo -e "\n
+echo -e "\n"
 echo "===================================================================="
 echo "--- ⏱️ INICIO DEL SCRIPT: setup_cron.sh (Tareas Programadas) ⏱️ ---"
 echo "===================================================================="
@@ -151,9 +151,9 @@ sleep 3
 # ----------------------------------------------------------------------
 
 echo "--- 4.1 Instalando crontab para el usuario '$APP_USER' (Backup) ---"
-# Instalar solo las tareas del usuario $APP_USER (solo la primera línea)
-# Leemos solo la primera línea del archivo temporal que tiene el backup.sh
-head -n 7 "$CRONTAB_FILE" | crontab -u "$APP_USER" -
+# Instalar solo la línea de backup.sh (línea 7 del archivo temporal)
+# Contando la cabecera y comentarios, la tarea de backup está en la línea 7.
+head -n 7 "$CRONTAB_FILE" | tail -n 1 | crontab -u "$APP_USER" -
 
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo al instalar la tarea de backup para '$APP_USER'."
@@ -161,19 +161,16 @@ else
     echo "✅ Tarea de backup instalada en crontab de '$APP_USER'."
 fi
 echo -e "\n"
-sleep 3
 
 echo "--- 4.2 Instalando crontab para el usuario 'www-data' (Scripts) ---"
-# Las tareas restantes deben ser instaladas para www-data (scripts que interactúan con Apache/www-data)
-# Leemos el archivo temporal, omitiendo las primeras 7 líneas (el backup y cabecera)
-tail -n +8 "$CRONTAB_FILE" | crontab -u www-data -
+# Leemos las tareas 2, 3, 4, 5 (las líneas restantes)
+tail -n 5 "$CRONTAB_FILE" | crontab -u www-data -
 
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo al instalar las tareas restantes para 'www-data'."
 else
     echo "✅ Tareas de scripts instaladas en crontab de 'www-data'."
 fi
-echo -e "\n"
 sleep 3
 
 # Limpieza
