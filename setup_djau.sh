@@ -119,18 +119,24 @@ echo "--- 2.2 Generando Clave Secreta de Django ---"
 
 SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
 
-# FILTRO ROBUSTO:
-# 1. Usamos 'tr' para reemplazar los caracteres problemáticos (|, #, /, &) por un guion (-).
-#    Este filtro garantiza que la clave no contendrá el delimitador que usaremos en sed (|).
-SECRET_KEYPASS_FILTERED=$(echo "$SECRET_KEYPASS" | tr '\|#/&' '----')
-
 if [ ${#SECRET_KEYPASS} -lt 32 ]; then
     echo "❌ ERROR: No se pudo generar una clave secreta válida. Saliendo."
     deactivate
     exit 1
 fi
 
-echo "✅ Clave secreta generada automáticamente."
+# FILTRADO DEFINITIVO Y ROBUSTO:
+# 1. Eliminamos retornos de carro/saltos de línea.
+# 2. Usamos 'printf' para construir una cadena con la clave y la pasamos a 'tr'.
+#    El comando 'tr' filtra TODOS los caracteres conflictivos de Bash/Sed/Python:
+#    | (delimitador), #, /, &, \, '
+FILTER_CHARS='|#/&\\'\'
+REPLACEMENT_CHARS='------'
+
+# Ejecutamos el filtro:
+SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr "$FILTER_CHARS" "$REPLACEMENT_CHARS")
+
+echo "✅ Clave secreta generada y filtrada automáticamente."
 echo -e "\n"
 
 sleep 3
