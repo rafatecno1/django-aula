@@ -101,17 +101,20 @@ echo "============================================================"
 echo -e "\n"
 
 echo "--- 2.1 Configurando Permisos NOPASSWD para PostgreSQL ---"
-PSQL_PATH="/usr/bin/psql"
-SUDOERS_RULE="/etc/sudoers.d/90-djau-psql"
-PSQL_RULE="$APP_USER ALL=(postgres) NOPASSWD: $PSQL_PATH"
 
-# Conceder a djau permiso para ejecutar 'psql' como 'postgres' sin contraseña
+PSQL_PATH="/usr/bin/psql"
+PGDUMP_PATH="/usr/bin/pg_dump"
+
+SUDOERS_RULE="/etc/sudoers.d/90-djau-psql"
+PSQL_RULE="$APP_USER ALL=(postgres) NOPASSWD: $PSQL_PATH, $PGDUMP_PATH"
+
+# Conceder a djau permiso para ejecutar 'psql' y 'pg_dump' como 'postgres' sin contraseña
 printf "%s\n" "$PSQL_RULE" | sudo tee $SUDOERS_RULE > /dev/null
 
 # Asegurar los permisos seguros para el archivo sudoers
 sudo chmod 0440 $SUDOERS_RULE
 
-echo "✅ Permiso NOPASSWD configurado para el usuario '$APP_USER' para psql."
+echo "✅ Permisos NOPASSWD configurados para '$APP_USER' para psql y pg_dump."
 echo -e "\n"
 sleep 2
 
