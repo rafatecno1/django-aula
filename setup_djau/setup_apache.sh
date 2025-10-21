@@ -3,89 +3,18 @@
 # Automatiza la configuración de Apache2, módulos, virtual hosts y certificados.
 # DEBE EJECUTARSE con privilegios de root (p. ej., sudo bash setup_apache.sh)
 
+clear
+
 echo -e "\n"
 echo "======================================================================"
-echo "--- 🟢 FASE 3: SERVIDOR WEB Y CERTIFICADOS SSL setup_apache.sh 🟢 ---"
+echo "--- 🟢 FASE 2: SERVIDOR WEB Y CERTIFICADOS SSL setup_apache.sh 🟢 ---"
 echo "======================================================================"
 echo -e "\n"
 
 if [ "$(id -u)" -ne 0 ]; then
-    echo "❌ ADVERTENCIA: Este script debe ejecutarse con 'sudo bash setup_cron.sh' para modificar las tareas programadas en crontab."
+    echo "❌ ADVERTENCIA: Este script debe ejecutarse con 'sudo bash setup_apache.sh' para modificar las tareas programadas en crontab."
     sleep 3
 fi
-
-# ----------------------------------------------------------------------
-# FUNCIONES DE AYUDA Y VALIDACIÓN
-# ----------------------------------------------------------------------
-
-read_prompt () {
-    # $1: Mensaje (prompt)
-    # $2: Nombre de la variable a asignar (sin $)
-    # $3: [Opcional] Valor por defecto (si se omite o es vacío, el campo es obligatorio)
-
-    local PROMPT_MSG="$1"
-    local VAR_NAME="$2"
-    local DEFAULT_VALUE="$3"
-    local INPUT_VALUE=""
-
-    while true; do
-        # 1. Leer la entrada del usuario
-        read -p "$PROMPT_MSG" INPUT_VALUE
-
-        # 2. Eliminar espacios en blanco alrededor (trim)
-        INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
-
-        if [ -z "$INPUT_VALUE" ]; then
-            # A) Si no hay entrada del usuario:
-            
-            if [ -n "$DEFAULT_VALUE" ]; then
-                # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
-                eval "$VAR_NAME='$DEFAULT_VALUE'"
-                echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
-                break
-            else
-                # A.2) Si NO hay valor por defecto, el campo es obligatorio.
-                echo "❌ ERROR: Este campo no puede dejarse en blanco."
-                # Vuelve a iterar el bucle (while true)
-            fi
-        else
-            # B) Si hay entrada del usuario, usarla y salir.
-            eval "$VAR_NAME='$INPUT_VALUE'"
-            echo "☑️ Valor introducido: '$INPUT_VALUE'"
-            break
-        fi
-    done
-}
-
-
-
-
-
-# Función para leer la entrada de datos del usuario o asignar un valor por defecto
-# Uso: read_or_default "Mensaje de la pregunta" VARIABLE_NAME "VALOR_POR_DEFECTO"
-read_or_default () {
-    # $1: Mensaje (prompt), $2: Nombre de la variable (sin $), $3: Valor por defecto
-    local PROMPT_MSG="$1"
-    local VAR_NAME="$2"
-    local DEFAULT_VALUE="$3"
-    local INPUT_VALUE=""
-    
-    # Leer la entrada del usuario
-    read -p "$PROMPT_MSG" INPUT_VALUE
-    
-    # Eliminar espacios en blanco alrededor (trim)
-    INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
-    
-    if [ -z "$INPUT_VALUE" ]; then
-        # Asignar el valor por defecto
-        eval "$VAR_NAME='$DEFAULT_VALUE'"
-        echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
-    else
-        # Asignar el valor introducido por el usuario
-        eval "$VAR_NAME='$INPUT_VALUE'"
-        echo "☑️ Valor introducido: '$INPUT_VALUE'"
-    fi
-}
 
 
 echo "======================================================================"
@@ -93,12 +22,17 @@ echo "--- 📝 1. PREPARACIÓN DEL ENTORNO Y CARGA DE VARIABLES COMPARTIDAS ---"
 echo "======================================================================"
 echo -e "\n"
 
-# Càrrega de variables comunes
+# 1.1 Càrrega de variables comunes
+echo "--- 1.1 Carga de funciones y variables comunes per la instalación ---"
 
 # El script se ejecuta desde /opt/djau/setup_djau, por lo que el directorio padre es /opt/djau
 FULL_PATH=$(dirname "$PWD")
 SETUP_DIR="$PWD" # La ubicación actual del script
 
+# 1. CARGAR LIBRERÍA DE FUNCIONES
+source "$SETUP_DIR/functions.sh"
+
+# 2. CARGAR VARIABLES DE CONFIGURACIÓN
 CONFIG_FILE="$SETUP_DIR/config_vars.sh"
 
 if [ -f "$CONFIG_FILE" ]; then
@@ -302,8 +236,6 @@ echo -e "\n"
 sleep 5
 
 
-
-
 echo "==============================================="
 echo "--- 5 Ajuste de Permisos de www-data (WSGI) ---"
 echo "==============================================="
@@ -315,24 +247,22 @@ echo -e "\n"
 chmod -R a+rX "$VENV_PATH"
 chmod -R a+rX "$FULL_PATH"
 echo "☑️ Permisos de lectura/ejecución asignados al Venv y código fuente."
+echo -e "\n"
 
 # 2. Permisos para la CARPETA DE DATOS PRIVADOS (Necesita Lectura/Escritura)
 # Asignamos el grupo 'www-data' y damos permisos de lectura/escritura (770) al grupo.
 chown -R "$APP_USER":www-data "$PATH_DADES_PRIVADES"
 chmod 770 "$PATH_DADES_PRIVADES"
 echo "✅ Permisos para datos privados asignados a '$APP_USER':www-data (chmod 770)."
+echo -e "\n"
 
 # 3. Asignar el grupo www-data al proyecto (por si acaso, el propietario sigue siendo $APP_USER)
 chown -R "$APP_USER":www-data "$FULL_PATH"
 chmod -R g+rx "$FULL_PATH"
 echo -e "☑️ Grupo 'www-data' asignado al directorio del proyecto.\n"
-echo -e "\n"
+echo -e "\n\n"
 
 echo -e "✅ Permisos de lectura/ejecución y grupo www-data asignados al proyecto y Venv.\n"
-
-
-
-
 
 
 # ----------------------------------------------------------------------
@@ -348,14 +278,14 @@ echo "--- 6.1 Deshabilitando Virtual Hosts por defecto ---"
 a2dissite 000-default.conf > /dev/null 2>&1
 echo "☑️ Vhost por defecto deshabilitado."
 echo -e "\n"
-sleep 2
+sleep 1
 
 echo "--- 6.2 Habilitando los nuevos Virtual Hosts ---"
 a2ensite "$PROJECT_FOLDER.conf" > /dev/null
 a2ensite "$PROJECT_FOLDER-ssl.conf" > /dev/null
 echo "☑️ Vhosts de la aplicación habilitados."
 echo -e "\n"
-sleep 3
+sleep 1
 
 echo "--- 6.3 Recargando Apache para aplicar los cambios ---"
 echo -e "\n"
@@ -377,7 +307,7 @@ sleep 5
 
 echo -e "\n"
 echo "========================================================="
-echo "--- 🟢 FASE 3. CONFIGURACIÓN DE APACHE FINALIZADA 🟢 ---"
+echo "--- 🟢 FASE 2. CONFIGURACIÓN DE APACHE FINALIZADA 🟢 ---"
 echo ""
 echo "La aplicación debería estar disponible en:"
 echo "$DOMAIN_NAME"
@@ -385,7 +315,7 @@ echo "========================================================="
 echo -e "\n"
 
 
-echo "--- SIGUIENTE FASE: FASE 4 - TAREAS PROGRAMADAS Y MANTENIMIENTO ---"
+echo "--- SIGUIENTE FASE: FASE 3 - TAREAS PROGRAMADAS Y MANTENIMIENTO ---"
 echo -e "\n"
 echo "Para continuar con la automatización de las tareas programadas (CRON) en el servidor, ejecute los siguientes comandos (Copiar/Pegar):"
 echo -e "\n"

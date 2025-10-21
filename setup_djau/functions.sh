@@ -29,7 +29,7 @@ read_prompt () {
                 break
             else
                 # A.2) Si NO hay valor por defecto, el campo es obligatorio.
-                echo "❌ ERROR: Este campo no puede dejarse en blanco."
+                echo -e "❌ ERROR: Este campo no puede dejarse en blanco.\n"
                 # Vuelve a iterar el bucle (while true)
             fi
         else
@@ -38,5 +38,6 @@ read_prompt () {
             echo "☑️ Valor introducido: '$INPUT_VALUE'"
             break
         fi
+		echo -e "\n"
     done
 }

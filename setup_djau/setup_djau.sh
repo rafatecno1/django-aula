@@ -4,84 +4,13 @@
 # y personaliza el archivo settings_local.py para la aplicación Django.
 # DEBE EJECUTARSE como el usuario de la aplicación (djau).
 
+clear
+
 echo -e "\n"
-echo "==========================================================================="
-echo "--- 🟢 FASE 2: CONFIGURACIÓN DE DJANGO Y BASE DE DATOS setup_djau.sh 🟢 ---"
-echo "==========================================================================="
+echo "==================================================================="
+echo "--- 🟢 CONFIGURACIÓN DE DJANGO Y BASE DE DATOS setup_djau.sh 🟢 ---"
+echo "==================================================================="
 echo -e "\n"
-
-# ----------------------------------------------------------------------
-# FUNCIONES DE AYUDA (Lectura de entrada con valor por defecto)
-# ----------------------------------------------------------------------
-
-read_prompt () {
-    # $1: Mensaje (prompt)
-    # $2: Nombre de la variable a asignar (sin $)
-    # $3: [Opcional] Valor por defecto (si se omite o es vacío, el campo es obligatorio)
-
-    local PROMPT_MSG="$1"
-    local VAR_NAME="$2"
-    local DEFAULT_VALUE="$3"
-    local INPUT_VALUE=""
-
-    while true; do
-        # 1. Leer la entrada del usuario
-        read -p "$PROMPT_MSG" INPUT_VALUE
-
-        # 2. Eliminar espacios en blanco alrededor (trim)
-        INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
-
-        if [ -z "$INPUT_VALUE" ]; then
-            # A) Si no hay entrada del usuario:
-            
-            if [ -n "$DEFAULT_VALUE" ]; then
-                # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
-                eval "$VAR_NAME='$DEFAULT_VALUE'"
-                echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
-                break
-            else
-                # A.2) Si NO hay valor por defecto, el campo es obligatorio.
-                echo "❌ ERROR: Este campo no puede dejarse en blanco."
-                # Vuelve a iterar el bucle (while true)
-            fi
-        else
-            # B) Si hay entrada del usuario, usarla y salir.
-            eval "$VAR_NAME='$INPUT_VALUE'"
-            echo "☑️ Valor introducido: '$INPUT_VALUE'"
-            break
-        fi
-    done
-}
-
-
-
-
-# Función para leer la entrada de datos del usuario o asignar un valor por defecto
-# Uso: read_or_default "Mensaje de la pregunta" VARIABLE_NAME "VALOR_POR_DEFECTO"
-read_or_default () {
-    # $1: Mensaje (prompt), $2: Nombre de la variable (sin $), $3: Valor por defecto
-    local PROMPT_MSG="$1"
-    local VAR_NAME="$2"
-    local DEFAULT_VALUE="$3"
-    local INPUT_VALUE=""
-    
-    # Leer la entrada del usuario
-    read -p "$PROMPT_MSG" INPUT_VALUE
-    
-    # Eliminar espacios en blanco alrededor (trim)
-    INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
-    
-    if [ -z "$INPUT_VALUE" ]; then
-        # Asignar el valor por defecto
-        eval "$VAR_NAME='$DEFAULT_VALUE'"
-        echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
-    else
-        # Asignar el valor introducido por el usuario
-        eval "$VAR_NAME='$INPUT_VALUE'"
-        echo "☑️ Valor introducido: '$INPUT_VALUE'"
-    fi
-	echo -e "\n"
-}
 
 # ------------------------------------------------------------------------------------------
 # 1. PREPARACIÓN DEL ENTORNO, CARGA DE VARIABLES COMPARTIDAS, AJUSTE DE RUTA Y BASE DE DATOS
@@ -93,12 +22,16 @@ echo "==========================================================================
 echo -e "\n"
 
 # 1.1 Càrrega de variables comunes
-echo "--- 1.1 Càrrega de variables comunes per la instalación ---"
+echo "--- 1.1 Carga de funciones y variables comunes per la instalación ---"
 
 # El script se ejecuta desde /opt/djau/setup_djau, por lo que el directorio padre es /opt/djau
 FULL_PATH=$(dirname "$PWD")
 SETUP_DIR="$PWD" # La ubicación actual del script
 
+# 1. CARGAR LIBRERÍA DE FUNCIONES
+source "$SETUP_DIR/functions.sh"
+
+# 2. CARGAR VARIABLES DE CONFIGURACIÓN
 CONFIG_FILE="$SETUP_DIR/config_vars.sh"
 
 if [ -f "$CONFIG_FILE" ]; then
@@ -109,7 +42,7 @@ else
     exit 1
 fi
 
-#echo "Ruta de datos privados: $PATH_DADES_PRIVADES"
+
 echo -e "\n"
 
 
@@ -439,39 +372,8 @@ if [ $? -ne 0 ]; then
 fi
 rm "$PYTHON_SCRIPT"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#echo -e "Este superusuario es el que tiene el control total de la gestión de la aplicación una vez instalada y será quien cargue los datos del centro educativo.\n"
-#echo -e "\n"
-#echo "⚠️  ATENCIÓN: Se abrirá el modo interactivo para crear el superusuario 'admin'."
-#echo -e "   Por favor, utiliza el nombre de usuario 'admin', en vez del que el sistema sugiere por defecto, y una contraseña segura.\n"
-#python manage.py createsuperuser
-#sleep 3
-
-
-
-
-
-
-
 echo -e "\n"
+
 echo "--- 5.4 Creando Grupos y asignando a 'admin' ---"
 
 PYTHON_SCRIPT="temp_setup_groups.py"
@@ -548,8 +450,8 @@ echo "✅ Credenciales de BD añadidas a config_vars.sh."
 echo -e "\n"
 
 
-echo "=================================================================================================="
-echo "--- 🟢 FASE 2 COMPLETADA. CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA (setup_djau.sh) 🟢 ---"
+echo "============================================================================================="
+echo "--- 🟢 COMPLETADA LA CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA (setup_djau.sh) 🟢 ---"
 echo "Devolviendo el control al script install_djau.sh"
-echo "=================================================================================================="
+echo "============================================================================================="
 echo -e "\n"

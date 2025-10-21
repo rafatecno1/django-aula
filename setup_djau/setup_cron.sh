@@ -8,9 +8,11 @@
 # 1. DEFINICIONES Y VERIFICACIÓN INICIAL
 # ----------------------------------------------------------------------
 
+clear 
+
 echo -e "\n"
 echo "======================================================================="
-echo "--- ⏱️ FASE 4: TAREAS PROGRAMADAS Y MANTENIMIENTO setup_cron.sh ⏱️ ---"
+echo "--- ⏱️ FASE 3: TAREAS PROGRAMADAS Y MANTENIMIENTO setup_cron.sh ⏱️ ---"
 echo "======================================================================="
 echo -e "\n"
 
@@ -26,12 +28,17 @@ echo "--- 📝 1. PREPARACIÓN DEL ENTORNO Y CARGA DE VARIABLES COMPARTIDAS ---"
 echo "======================================================================"
 echo -e "\n"
 
-# Càrrega de variables comunes
+# 1.1 Càrrega de variables comunes
+echo "--- 1.1 Carga de funciones y variables comunes per la instalación ---"
 
 # El script se ejecuta desde /opt/djau/setup_djau, por lo que el directorio padre es /opt/djau
 FULL_PATH=$(dirname "$PWD")
 SETUP_DIR="$PWD" # La ubicación actual del script
 
+# 1. CARGAR LIBRERÍA DE FUNCIONES
+source "$SETUP_DIR/functions.sh"
+
+# 2. CARGAR VARIABLES DE CONFIGURACIÓN
 CONFIG_FILE="$SETUP_DIR/config_vars.sh"
 
 if [ -f "$CONFIG_FILE" ]; then
@@ -46,12 +53,6 @@ echo -e "\n"
 
 # Definiciones de Variables Clave que no existen en config_vars.sh
 
-#PROJECT_FOLDER=$(basename "$PWD") # Obtiene el nombre del directorio actual (ej: djau)
-#FULL_PATH="/opt/$PROJECT_FOLDER"
-#APP_USER="djau" # El usuario de la aplicación
-#DB_USER="djau2025" # Usuario de la Base de Datos (del ejemplo)
-#DB_NAME="djau2025" # Nombre de la Base de Datos (del ejemplo)
-
 LOG_DIR="$FULL_PATH/log" # Directorio para guardar logs
 
 
@@ -61,7 +62,7 @@ LOG_DIR="$FULL_PATH/log" # Directorio para guardar logs
 
 echo "==============================================================================================================="
 echo "--- 📝 2. CREACIÓN Y CONFIGURACIÓN DEL SCRIPT QUE HARÁ LAS COPIAS DE SEGURIDAD DE LA BASE DE DATOS (BACKUP) ---"
-echo "================================================================================================================"
+echo "==============================================================================================================="
 echo -e "\n"
 
 NOM_SCRIPT_BACKUP="backup-bd-djau.sh"
@@ -120,7 +121,7 @@ echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
-# 3. INSTALACIÓN DE TAREAS CRON
+# 3. GENERACIÓN DE TAREAS CRON
 # ----------------------------------------------------------------------
 
 echo "================================================================="
@@ -211,10 +212,10 @@ sleep 3
 rm "$CRONTAB_FILE"
 
 echo -e "\n"
-echo "================================================================="
-echo "--- 🟢 CONFIGURACIÓN DE CRON FINALIZADA 🟢 ---"
+echo "=============================================================="
+echo "--- 🟢 FASE 3: CONFIGURACIÓN DE CRON FINALIZADA 🟢 ---"
 echo "La instalación de las tareas programadas han sido completadas."
-echo "================================================================="
+echo "=============================================================="
 echo -e "\n"
 echo "Para comprobar si las tareas han quedado instaladas teclee:"
 echo "    $ sudo crontab -u djau -l"
@@ -233,7 +234,7 @@ echo -e "${C_EXITO}=============================================================
 echo -e "${C_EXITO}--- 🎉 ENHORABUENA: ¡INSTALACIÓN DE DJANGO-AULA COMPLETADA! ---${RESET}"
 echo -e "${C_EXITO}===============================================================${RESET}"
 echo -e "\n"
-echo -e "${NEGRITA}Si ha seguido las 4 fases en el orden correcto, la aplicación ha quedado instalada con éxito.${RESET}"
+echo -e "${NEGRITA}Si ha seguido las 3 fases en el orden correcto, la aplicación ha quedado instalada con éxito.${RESET}"
 echo -e "\n"
 echo "DJANGO-AULA ya está configurada y lista para recibir los datos de su centro educativo."
 echo -e "\n"
