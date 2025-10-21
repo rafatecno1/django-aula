@@ -14,9 +14,9 @@ C_ACCION="${NEGRITA}${VERDE}"
 C_INFO="${VERDE}"
 
 echo -e "\n"
-echo -e "${C_TITULO}====================================================================================${RESET}"
+echo -e "${C_TITULO}============================================================================${RESET}"
 echo -e "${C_TITULO}--- 🟢 FLUJO DE INSTALACIÓN AUTOMATIZADA DE LA APLICACIÓN DJANGO-AULA 🟢 ---${RESET}"
-echo -e "${C_TITULO}====================================================================================${RESET}"
+echo -e "${C_TITULO}============================================================================${RESET}"
 echo -e "\n"
 
 echo -e "${C_ACCION}--- FASE 1: INSTALACIÓN BASE Y DEPENDENCIAS (Automática) ---${RESET}"
@@ -183,7 +183,7 @@ echo -e "\n"
 sleep 2
 
 
-echo "--- 3.2 Creación de Directorios del Proyecto y para los datos privados ---"
+echo "--- 3.2 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---"
 # Directorio del proyecto
 mkdir -p "$FULL_PATH"
 if [ ! -d "$FULL_PATH" ]; then
@@ -205,12 +205,8 @@ echo "--- 3.3 Asignación de Permisos de Archivos ---"
 
 # Permisos para el directorio del proyecto (propiedad del usuario de la app)
 chown -R "$APP_USER":"$APP_USER" "$FULL_PATH"
-echo "✅ Permisos de '$FULL_PATH' asignados al usuario '$APP_USER'."
+echo "✅ Permisos para '$FULL_PATH' asignados al usuario '$APP_USER'."
 
-# Permisos para el directorio de datos privados (www-data necesita acceso de lectura/escritura)
-chown -R "$APP_USER":www-data "$PATH_DADES_PRIVADES"
-chmod 770 "$PATH_DADES_PRIVADES"
-echo "✅ Permisos de '$PATH_DADES_PRIVADES' asignados a '$APP_USER':www-data (chmod 770)."
 echo -e "\n"
 sleep 2
 
@@ -253,7 +249,7 @@ export SETUP_DIR="$SETUP_DIR"
 export PATH_DADES_PRIVADES="$PATH_DADES_PRIVADES"
 
 EOF
-
+chown -R "$APP_USER":"$APP_USER" "$CONFIG_FILE"
 
 # ----------------------------------------------------------------------
 # 5. DELEGACIÓN AL SCRIPT DE CONFIGURACIÓN DE DJANGO
@@ -264,7 +260,8 @@ echo "--- 🚀 5. INICIO DE LA CONFIGURACIÓN ESPECÍFICA DE DJANGO-AULA ---"
 echo "=================================================================="
 echo -e "\n"
 
-echo -e "--- A partir de este momento, el usuario '$APP_USER' ejecutarà el script setup_djau.sh que se encuentra en '$SETUP_DIR' ---\n"
+echo "--- A partir de este momento la FASE 1, gestionada por el script install_djau.sh, cedeix el control al usuario '$APP_USER',"
+echo -e "    que ejecutarà autmáticamente el script setup_djau.sh, que se encuentra en '$SETUP_DIR' ---\n"
 
 # Transfiere la ejecución al script de configuración de Django DENTRO del repositorio clonado
 cd "$SETUP_DIR"
@@ -272,7 +269,7 @@ chmod +x setup_djau.sh
 chmod +x setup_apache.sh
 chmod +x setup_cron.sh
 
-echo -e "ℹ️  **ATENCIÓN:** Espere la solicitud de parámetros para configurar la Base de Datos y la Aplicación.\n"
+echo -e "ℹ️  **ATENCIÓN:** La instalación no es desatendida. Haurà de proporcionar datos para configurar la Base de Datos y la Aplicación.\n"
 sleep 3
 
 # Ejecuta el script de configuración de Django, pasando la ruta privada como argumento
@@ -294,10 +291,10 @@ echo -e "\n"
 echo "Para continuar con la configuración del servidor web Apache, ejecute los siguientes comandos (Copiar/Pegar):"
 echo -e "\n"
 echo "   1. Cambie al directorio del proyecto:"
-echo "      $ cd \"$FULL_PATH\""
+echo "      $ cd \"$SETUP_DIR\""
 echo -e "\n"
 echo "   2. Ejecute el script de configuración del servidor web Apache (DEBE SER con sudo):"
-echo "      $ sudo bash setup_djau/setup_apache.sh"
+echo "      $ sudo bash setup_apache.sh"
 echo -e "\n"
 echo "¡Puede proceder con la configuración del servidor web Apache!"
 echo -e "\n"
