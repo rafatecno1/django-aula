@@ -13,36 +13,85 @@ C_TITULO="${NEGRITA}${AZUL}"
 C_ACCION="${NEGRITA}${VERDE}"
 C_INFO="${VERDE}"
 
+clear
+
 echo -e "\n"
 echo -e "${C_TITULO}============================================================================${RESET}"
 echo -e "${C_TITULO}--- 🟢 FLUJO DE INSTALACIÓN AUTOMATIZADA DE LA APLICACIÓN DJANGO-AULA 🟢 ---${RESET}"
 echo -e "${C_TITULO}============================================================================${RESET}"
 echo -e "\n"
 
-echo -e "${C_ACCION}--- FASE 1: INSTALACIÓN BASE Y DEPENDENCIAS (Automática) ---${RESET}"
-echo -e "   ${NEGRITA}ACCIÓN:${RESET} Ejecución inicial del script maestro."
-echo "   \$ sudo bash install_djau.sh"
-echo -e "   ${VERDE}FUNCIÓN:${RESET} Crea directorios, configura permisos de usuario (para PostgreSQL), instala dependencias base y clona el repositorio."
+echo -e "${C_ACCION}--- FASE 1: INSTALACIÓN Y CONFIGURACIÓN DE DJANGO-AULA, CON SUS DEPENDENCIAS Y LA BASE DE DATOS ---${RESET}"
+echo -e "   ${NEGRITA}PRIMERA ACCIÓN:${RESET} Ejecución inicial del script maestro obteniéndolo directamente del repositorio de Github."
+echo "      \$ sudo bash install_djau.sh"
+echo -e "   ${VERDE}FUNCIÓN:${RESET} Crea directorios, configura permisos de usuarios, instala dependencias y clona el repositorio."
+echo -e "\n"
+echo -e "   ${NEGRITA}SEGUNDA ACCIÓN:${RESET} Se ejecuta automáticamente el script ${C_INFO}setup_djau.sh${RESET} (sin intervención del usuario)."
+echo -e "   ${VERDE}FUNCIÓN:${RESET} Crea la BD en PostgreSQL, configura el entorno virtual (venv), personaliza ${NEGRITA}settings_local.py${RESET},"
+echo -e "            realiza las migraciones, crea el superusuario de Django y prepara la BD para el centro educativo."
 echo -e "\n"
 
-echo -e "${C_ACCION}--- FASE 2: CONFIGURACIÓN DE DJANGO Y BASE DE DATOS (Interactivo) ---${RESET}"
-echo -e "   ${NEGRITA}ACCIÓN:${RESET} Se ejecuta automáticamente el script ${C_INFO}setup_djau.sh${RESET} (sin intervención del usuario)."
-echo -e "   ${C_INFO}FUNCIÓN:${RESET} Crea la BD en PostgreSQL, configura el entorno virtual (venv), personaliza ${NEGRITA}settings_local.py${RESET}, realiza las migraciones, crea el superusuario de Django y configura la base de datos interna."
+echo -e "${C_ACCION}--- FASE 2: SERVIDOR WEB Y CERTIFICADOS SSL ---${RESET}"
+echo -e "   ${NEGRITA}ACCIÓN:${RESET} El usuario debe entrar manualmente al directorio ${NEGRITA}/opt/djau/setup_djau${RESET} y ejecutar el siguiente script:"
+echo "      \$ sudo bash setup_apache.sh"
+echo -e "   ${VERDE}FUNCIÓN:${RESET} Instala el servidor web Apache, genera los archivos de conexión ${NEGRITA}vhost${RESET} para el dominio proporcionado,"
+echo -e "            y crea los certificados SSL (autofirmados o Let's Encrypt)."
 echo -e "\n"
 
-echo -e "${C_ACCION}--- FASE 3: SERVIDOR WEB Y CERTIFICADOS SSL (Manual) ---${RESET}"
-echo -e "   ${NEGRITA}ACCIÓN:${RESET} El usuario debe entrar al directorio ${NEGRITA}/opt/djau${RESET} y ejecutar el siguiente script:"
-echo "   \$ sudo bash setup_djau/setup_apache.sh"
-echo -e "   ${VERDE}FUNCIÓN:${RESET} Instala Apache, genera los archivos de conexión ${NEGRITA}vhost${RESET} (incluyendo SSL) según el dominio proporcionado y crea los certificados SSL (autofirmados o Let's Encrypt)."
+echo -e "${C_ACCION}--- FASE 3: TAREAS PROGRAMADAS Y MANTENIMIENTO ---${RESET}"
+echo -e "   ${NEGRITA}ACCIÓN:${RESET} El usuario debe seguir en ${NEGRITA}/opt/djau/setup_djau${RESET} y ejecutar el siguiente script:"
+echo "      \$ sudo bash setup_cron.sh"
+echo -e "   ${VERDE}FUNCIÓN:${RESET} Automatiza la configuración de tareas programadas (CRON) en el servidor, como el ${NEGRITA}backup de la base de datos${RESET}"
+echo -e "            y la ejecución de scripts de mantenimiento de la aplicación."
 echo -e "\n"
 
-echo -e "${C_ACCION}--- FASE 4: TAREAS PROGRAMADAS Y MANTENIMIENTO (Manual) ---${RESET}"
-echo -e "   ${NEGRITA}ACCIÓN:${RESET} El usuario debe seguir en ${NEGRITA}/opt/djau${RESET} y ejecutar el siguiente script:"
-echo "   \$ sudo bash setup_djau/setup_cron.sh"
-echo -e "   ${VERDE}FUNCIÓN:${RESET} Automatiza la configuración de tareas programadas (CRON) en el servidor, como el ${NEGRITA}backup de la base de datos${RESET} y la ejecución de scripts de mantenimiento de la aplicación."
-echo -e "\n"
+read -p "Presione una tecla para continuar" -n1 -s
 
-sleep 10
+
+# ----------------------------------------------------------------------
+# FUNCION DE AYUDA (Lectura de entrada con valor por defecto)
+# ----------------------------------------------------------------------
+
+read_prompt () {
+    # $1: Mensaje (prompt)
+    # $2: Nombre de la variable a asignar (sin $)
+    # $3: [Opcional] Valor por defecto (si se omite o es vacío, el campo es obligatorio)
+
+    local PROMPT_MSG="$1"
+    local VAR_NAME="$2"
+    local DEFAULT_VALUE="$3"
+    local INPUT_VALUE=""
+
+    while true; do
+        # 1. Leer la entrada del usuario
+        read -p "$PROMPT_MSG" INPUT_VALUE
+
+        # 2. Eliminar espacios en blanco alrededor (trim)
+        INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
+
+        if [ -z "$INPUT_VALUE" ]; then
+            # A) Si no hay entrada del usuario:
+            
+            if [ -n "$DEFAULT_VALUE" ]; then
+                # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
+                eval "$VAR_NAME='$DEFAULT_VALUE'"
+                echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
+                break
+            else
+                # A.2) Si NO hay valor por defecto, el campo es obligatorio.
+                echo "❌ ERROR: Este campo no puede dejarse en blanco."
+                # Vuelve a iterar el bucle (while true)
+            fi
+        else
+            # B) Si hay entrada del usuario, usarla y salir.
+            eval "$VAR_NAME='$INPUT_VALUE'"
+            echo "☑️ Valor introducido: '$INPUT_VALUE'"
+            break
+        fi
+    done
+}
+
+
 
 
 echo -e "\n"
@@ -50,37 +99,6 @@ echo "====================================================================="
 echo "--- 🔴 FASE 1: INSTALACIÓN BASE Y DEPENDENCIAS install_djau.sh 🔴 ---"
 echo "====================================================================="
 echo -e "\n"
-
-
-# ----------------------------------------------------------------------
-# FUNCIONES DE AYUDA (Lectura de entrada con valor por defecto)
-# ----------------------------------------------------------------------
-
-# Función para leer la entrada de datos del usuario o asignar un valor por defecto
-# Uso: read_or_default "Mensaje de la pregunta" VARIABLE_NAME "VALOR_POR_DEFECTO"
-read_or_default () {
-    # $1: Mensaje (prompt), $2: Nombre de la variable (sin $), $3: Valor por defecto
-    local PROMPT_MSG="$1"
-    local VAR_NAME="$2"
-    local DEFAULT_VALUE="$3"
-    local INPUT_VALUE=""
-    
-    # Leer la entrada del usuario
-    read -p "$PROMPT_MSG" INPUT_VALUE
-    
-    # Eliminar espacios en blanco alrededor (trim)
-    INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
-    
-    if [ -z "$INPUT_VALUE" ]; then
-        # Asignar el valor por defecto
-        eval "$VAR_NAME='$DEFAULT_VALUE'"
-        echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
-    else
-        # Asignar el valor introducido por el usuario
-        eval "$VAR_NAME='$INPUT_VALUE'"
-        echo "☑️ Valor introducido: '$INPUT_VALUE'"
-    fi
-}
 
 
 # ----------------------------------------------------------------------
@@ -100,7 +118,7 @@ echo -e "ℹ️  Pulse Enter para aceptar el valor por defecto.\n"
 echo -e "--- 1.1 Solicitud de Parámetros de Ruta ---\n"
 
 # 1. Carpeta del Proyecto
-read_or_default "Introduce el nombre del DIRECTORIO del proyecto (por defecto: djau): " PROJECT_FOLDER "djau"
+read_prompt "Introduce el nombre del DIRECTORIO del proyecto (por defecto: djau): " PROJECT_FOLDER "djau"
 INSTALL_DIR="/opt"
 FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
 echo -e "La ruta completa de instalación serà: '$FULL_PATH'."
@@ -109,7 +127,7 @@ sleep 1
 
 
 # 2. Carpeta de Datos Privados
-read_or_default "Introduce el nombre del DIRECTORIO para datos privados (por defecto: djau-dades-privades): " DADES_PRIVADES "djau-dades-privades"
+read_prompt "Introduce el nombre del DIRECTORIO para datos privados (por defecto: djau-dades-privades): " DADES_PRIVADES "djau-dades-privades"
 PATH_DADES_PRIVADES="$INSTALL_DIR/$DADES_PRIVADES"
 export PATH_DADES_PRIVADES
 echo -e "La ruta completa de datos privados serà: '$PATH_DADES_PRIVADES'."
@@ -120,7 +138,7 @@ sleep 1
 echo -e "--- 1.2 Solicitud y Validación de Usuario de la Aplicación ---\n"
 
 # 3. Usuario de la Aplicación
-read_or_default "Introduce el nombre del USUARIO de la aplicación (debe existir y tener sudo) (defecto: djau): " APP_USER "djau"
+read_prompt "Introduce el nombre del USUARIO de la aplicación (debe existir y tener sudo) (por defecto: djau): " APP_USER "djau"
 echo -e "\n"
 
 # Verifica si el usuario existe antes de continuar (Verificación crucial)
@@ -251,6 +269,7 @@ export PATH_DADES_PRIVADES="$PATH_DADES_PRIVADES"
 EOF
 chown -R "$APP_USER":"$APP_USER" "$CONFIG_FILE"
 
+
 # ----------------------------------------------------------------------
 # 5. DELEGACIÓN AL SCRIPT DE CONFIGURACIÓN DE DJANGO
 # ----------------------------------------------------------------------
@@ -268,9 +287,11 @@ cd "$SETUP_DIR"
 chmod +x setup_djau.sh
 chmod +x setup_apache.sh
 chmod +x setup_cron.sh
+chmod +x functions.sh 
+chown "$APP_USER":"$APP_USER" functions.sh
 
 echo -e "ℹ️  **ATENCIÓN:** La instalación no es desatendida. Haurà de proporcionar datos para configurar la Base de Datos y la Aplicación.\n"
-sleep 3
+sleep 5
 
 # Ejecuta el script de configuración de Django, pasando la ruta privada como argumento
 sudo -u "$APP_USER" bash setup_djau.sh
@@ -282,11 +303,11 @@ fi
 
 
 echo -e "\n"
-echo "============================================================================"
-echo "--- 🟢 FASE 1 y FASE 2 COMPLETADAS (install_djau.sh i setup_djau.sh) 🟢 ---"
-echo "============================================================================"
+echo "=================================================================="
+echo "--- 🟢 FASE 1 COMPLETADA (install_djau.sh i setup_djau.sh) 🟢 ---"
+echo "=================================================================="
 echo -e "\n"
-echo "--- SIGUIENTE FASE: FASE 3 - CONFIGURACIÓN DEL SERVIDOR WEB APACHE ---"
+echo "--- SIGUIENTE FASE: FASE 2 - CONFIGURACIÓN DEL SERVIDOR WEB APACHE ---"
 echo -e "\n"
 echo "Para continuar con la configuración del servidor web Apache, ejecute los siguientes comandos (Copiar/Pegar):"
 echo -e "\n"
