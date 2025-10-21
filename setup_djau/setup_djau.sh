@@ -5,14 +5,56 @@
 # DEBE EJECUTARSE como el usuario de la aplicación (djau).
 
 echo -e "\n"
-echo "============================================================================"
+echo "==========================================================================="
 echo "--- 🟢 FASE 2: CONFIGURACIÓN DE DJANGO Y BASE DE DATOS setup_djau.sh 🟢 ---"
-echo "============================================================================"
+echo "==========================================================================="
 echo -e "\n"
 
 # ----------------------------------------------------------------------
 # FUNCIONES DE AYUDA (Lectura de entrada con valor por defecto)
 # ----------------------------------------------------------------------
+
+read_prompt () {
+    # $1: Mensaje (prompt)
+    # $2: Nombre de la variable a asignar (sin $)
+    # $3: [Opcional] Valor por defecto (si se omite o es vacío, el campo es obligatorio)
+
+    local PROMPT_MSG="$1"
+    local VAR_NAME="$2"
+    local DEFAULT_VALUE="$3"
+    local INPUT_VALUE=""
+
+    while true; do
+        # 1. Leer la entrada del usuario
+        read -p "$PROMPT_MSG" INPUT_VALUE
+
+        # 2. Eliminar espacios en blanco alrededor (trim)
+        INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
+
+        if [ -z "$INPUT_VALUE" ]; then
+            # A) Si no hay entrada del usuario:
+            
+            if [ -n "$DEFAULT_VALUE" ]; then
+                # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
+                eval "$VAR_NAME='$DEFAULT_VALUE'"
+                echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
+                break
+            else
+                # A.2) Si NO hay valor por defecto, el campo es obligatorio.
+                echo "❌ ERROR: Este campo no puede dejarse en blanco."
+                # Vuelve a iterar el bucle (while true)
+            fi
+        else
+            # B) Si hay entrada del usuario, usarla y salir.
+            eval "$VAR_NAME='$INPUT_VALUE'"
+            echo "☑️ Valor introducido: '$INPUT_VALUE'"
+            break
+        fi
+    done
+}
+
+
+
 
 # Función para leer la entrada de datos del usuario o asignar un valor por defecto
 # Uso: read_or_default "Mensaje de la pregunta" VARIABLE_NAME "VALOR_POR_DEFECTO"
@@ -38,18 +80,20 @@ read_or_default () {
         eval "$VAR_NAME='$INPUT_VALUE'"
         echo "☑️ Valor introducido: '$INPUT_VALUE'"
     fi
+	echo -e "\n"
 }
 
 # ------------------------------------------------------------------------------------------
 # 1. PREPARACIÓN DEL ENTORNO, CARGA DE VARIABLES COMPARTIDAS, AJUSTE DE RUTA Y BASE DE DATOS
 # ------------------------------------------------------------------------------------------
 
-echo "======================================================================================================"
+echo "====================================================================================================="
 echo "--- 📝 1. PREPARACIÓN DEL ENTORNO, CARGA DE VARIABLES COMPARTIDAS, AJUSTE DE RUTA Y BASE DE DATOS ---"
-echo "======================================================================================================"
+echo "====================================================================================================="
 echo -e "\n"
 
 # 1.1 Càrrega de variables comunes
+echo "--- 1.1 Càrrega de variables comunes per la instalación ---"
 
 # El script se ejecuta desde /opt/djau/setup_djau, por lo que el directorio padre es /opt/djau
 FULL_PATH=$(dirname "$PWD")
@@ -74,8 +118,8 @@ echo "--- 1.2 Solicitud de Parámetros de PostgreSQL ---"
 echo -e "\n"
 
 # La función read_and_validate ya no permite dejar campos en blanco.
-read_or_default "Introduzca el NOMBRE de la BASE DE DATOS (por defecto: djau_db): " DB_NAME "djau_db"
-read_or_default "Introduzca el USUARIO de la BD (por defecto: djau): " DB_USER "djau"
+read_prompt "Introduzca el NOMBRE de la BASE DE DATOS (por defecto: djau_db): " DB_NAME "djau_db"
+read_prompt "Introduzca el USUARIO de la BD (por defecto: djau): " DB_USER "djau"
 
 # Validación de contraseñas
 while true; do
@@ -203,12 +247,12 @@ echo -e "\n"
 echo "--- 4.1 Parámetros de la Aplicación ---"
 echo -e "\n"
 
-read_or_default "Introduzca el nombre del CENTRO EDUCATIVO (por defecto: Centre de Demo): " NOM_CENTRE "Centre de Demo"
-read_or_default "Introduzca la LOCALIDAD del centro educativo (por defecto: Badia del Vallés): " LOCALITAT "Badia del Vallés"
-read_or_default "Introduzca el CÓDIGO del centro (por defecto: 00000000): " CODI_CENTRE "00000000"
-read_or_default "Introduzca la URL base de la aplicación (por defecto: https://djau.elteudomini.cat): " DOMAIN_NAME "https://djau.elteudomini.cat"
-read_or_default "Introduzca los HOSTS permitidos separados por comas. (por defecto: djau.elteudomini.cat,127.0.0.1): " ALLOWED_HOSTS_LIST "djau.elteudomini.cat,127.0.0.1"
-read_or_default "Introduzca la dirección de CORREO del administrador (por defecto: ui@mega.cracs.cat): " ADMIN_EMAIL "ui@mega.cracs.cat"
+read_prompt "Introduzca el nombre del CENTRO EDUCATIVO (por defecto: Centre de Demo): " NOM_CENTRE "Centre de Demo"
+read_prompt "Introduzca la LOCALIDAD del centro educativo (por defecto: Badia del Vallés): " LOCALITAT "Badia del Vallés"
+read_prompt "Introduzca el CÓDIGO del centro (por defecto: 00000000): " CODI_CENTRE "00000000"
+read_prompt "Introduzca la URL base de la aplicación (por defecto: https://djau.elteudomini.cat): " DOMAIN_NAME "https://djau.elteudomini.cat"
+read_prompt "Introduzca los HOSTS permitidos separados por comas. (por defecto: djau.elteudomini.cat,127.0.0.1): " ALLOWED_HOSTS_LIST "djau.elteudomini.cat,127.0.0.1"
+read_prompt "Introduzca la dirección de CORREO del administrador (por defecto: ui@mega.cracs.cat): " ADMIN_EMAIL "ui@mega.cracs.cat"
 echo -e "\n"
 echo -e "☑️ Parámetros generales definidos.\n"
 echo -e "\n"
@@ -217,7 +261,7 @@ echo "--- 4.2 Parámetros de Correo SMTP (Google/App Password) ---"
 echo "ℹ️  Para el envío de correos se requiere una contraseña de aplicación de Google."
 echo -e "    La información se puede encontrar aquí: https://support.google.com/mail/answer/185833?hl=ca\n"
 
-read_or_default "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
+read_prompt "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
 
 while true; do
     read -sp "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
@@ -234,7 +278,7 @@ while true; do
     fi
 done
 
-read_or_default "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
+read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
 
 echo -e "\n"
 echo -e "☑️ Parámetros SMTP definidos.\n"
@@ -311,7 +355,7 @@ echo "✅ Migraciones aplicadas correctamente."
 echo -e "\n"
 sleep 3
 
-echo -e "--- 5.2 Ejecutando 'scripts/fixtures.sh' (si existe) ---\n"
+echo -e "--- 5.2 Ejecutando 'scripts/fixtures.sh' ---\n"
 if [ -f "scripts/fixtures.sh" ]; then
     bash scripts/fixtures.sh
 	echo -e "\n"
@@ -327,10 +371,105 @@ sleep 3
 
 echo "--- 5.3 Creación de Superusuario 'admin' en la aplicación DJANGO ---"
 echo -e "\n"
-echo "⚠️  ATENCIÓN: Se abrirá el modo interactivo para crear el superusuario 'admin'."
-echo -e "   Por favor, utiliza el nombre de usuario 'admin', en vez del que el sistema sugiere por defecto, y una contraseña segura.\n"
-python manage.py createsuperuser
-sleep 3
+
+echo -e "--- Solicitud de Credenciales para el Superusuario 'admin' ---\n"
+
+# 1. SOLICITAR EL EMAIL
+read_prompt "Introduce el CORREO ELECTRÓNICO para el superusuario 'admin': " ADMIN_EMAIL
+
+#if [ -z "$ADMIN_EMAIL" ]; then
+#    echo "❌ ERROR: El correo electrónico del administrador no puede estar en blanco. Saliendo."
+#    exit 1
+#fi
+echo -e "\n"
+
+# 2. SOLICITAR Y VALIDAR LA CONTRASEÑA
+read -sp "Introduce la CONTRASEÑA para el superusuario 'admin': " ADMIN_PASS
+echo
+read -sp "Repite la CONTRASEÑA: " ADMIN_PASS2
+echo
+echo -e "\n"
+
+if [ "$ADMIN_PASS" != "$ADMIN_PASS2" ]; then
+    echo "❌ ERROR: Las contraseñas del superusuario no coinciden. Saliendo."
+    exit 1
+fi
+
+echo -e "--- Creando Superusuario 'admin' automáticamente ---\n"
+
+# 3. CREAR EL SCRIPT DE PYTHON TEMPORAL
+
+PYTHON_SCRIPT="temp_create_admin.py"
+
+cat << EOF > "$PYTHON_SCRIPT"
+from django.contrib.auth.models import User
+import sys
+
+try:
+    # 1. Intentar obtener el usuario. Si no existe, lanza la excepción DoesNotExist.
+    try:
+        user = User.objects.get(username='admin')
+        
+        # 2. Si existe, actualizar sus credenciales.
+        user.email = '${ADMIN_EMAIL}'
+        user.set_password('${ADMIN_PASS}') # set_password maneja el hashing de la contraseña
+        user.is_superuser = True
+        user.is_staff = True
+        user.save()
+        sys.stdout.write("☑️ Superusuario 'admin' actualizado correctamente.\n")
+
+    except User.DoesNotExist:
+        # 3. Si no existe, crearlo.
+        User.objects.create_superuser(
+            username='admin',
+            email='${ADMIN_EMAIL}',
+            password='${ADMIN_PASS}'
+        )
+        sys.stdout.write("✅ Superusuario 'admin' creado automáticamente.\n")
+
+except Exception as e:
+    sys.stdout.write(f"❌ Error al procesar superusuario: {e}\n")
+    sys.exit(1)
+EOF
+
+# 4. EJECUTAR EL SCRIPT
+python3 manage.py shell < "$PYTHON_SCRIPT"
+if [ $? -ne 0 ]; then
+    echo "❌ Error al ejecutar el script de creación de superusuario. Revisa el log."
+fi
+rm "$PYTHON_SCRIPT"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#echo -e "Este superusuario es el que tiene el control total de la gestión de la aplicación una vez instalada y será quien cargue los datos del centro educativo.\n"
+#echo -e "\n"
+#echo "⚠️  ATENCIÓN: Se abrirá el modo interactivo para crear el superusuario 'admin'."
+#echo -e "   Por favor, utiliza el nombre de usuario 'admin', en vez del que el sistema sugiere por defecto, y una contraseña segura.\n"
+#python manage.py createsuperuser
+#sleep 3
+
+
+
+
+
+
 
 echo -e "\n"
 echo "--- 5.4 Creando Grupos y asignando a 'admin' ---"
@@ -410,7 +549,7 @@ echo -e "\n"
 
 
 echo "=================================================================================================="
-echo "--- 🟢 FASE 2. CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA COMPLETADA (setup_djau.sh) 🟢 ---"
+echo "--- 🟢 FASE 2 COMPLETADA. CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA (setup_djau.sh) 🟢 ---"
 echo "Devolviendo el control al script install_djau.sh"
 echo "=================================================================================================="
 echo -e "\n"

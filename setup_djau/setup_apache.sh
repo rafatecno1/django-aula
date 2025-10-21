@@ -18,6 +18,49 @@ fi
 # FUNCIONES DE AYUDA Y VALIDACIÓN
 # ----------------------------------------------------------------------
 
+read_prompt () {
+    # $1: Mensaje (prompt)
+    # $2: Nombre de la variable a asignar (sin $)
+    # $3: [Opcional] Valor por defecto (si se omite o es vacío, el campo es obligatorio)
+
+    local PROMPT_MSG="$1"
+    local VAR_NAME="$2"
+    local DEFAULT_VALUE="$3"
+    local INPUT_VALUE=""
+
+    while true; do
+        # 1. Leer la entrada del usuario
+        read -p "$PROMPT_MSG" INPUT_VALUE
+
+        # 2. Eliminar espacios en blanco alrededor (trim)
+        INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
+
+        if [ -z "$INPUT_VALUE" ]; then
+            # A) Si no hay entrada del usuario:
+            
+            if [ -n "$DEFAULT_VALUE" ]; then
+                # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
+                eval "$VAR_NAME='$DEFAULT_VALUE'"
+                echo "☑️ Valor por defecto usado: '$DEFAULT_VALUE'"
+                break
+            else
+                # A.2) Si NO hay valor por defecto, el campo es obligatorio.
+                echo "❌ ERROR: Este campo no puede dejarse en blanco."
+                # Vuelve a iterar el bucle (while true)
+            fi
+        else
+            # B) Si hay entrada del usuario, usarla y salir.
+            eval "$VAR_NAME='$INPUT_VALUE'"
+            echo "☑️ Valor introducido: '$INPUT_VALUE'"
+            break
+        fi
+    done
+}
+
+
+
+
+
 # Función para leer la entrada de datos del usuario o asignar un valor por defecto
 # Uso: read_or_default "Mensaje de la pregunta" VARIABLE_NAME "VALOR_POR_DEFECTO"
 read_or_default () {
@@ -95,12 +138,12 @@ echo -e "\n"
 
 # Implementación de read_and_validate
 #read_and_validate "Introduce el dominio principal (ej: elteudomini.cat): " DOMAIN_NAME
-read_or_default "Introduce el correo del administrador (por defecto: juan@xtec.cat): " SERVER_ADMIN "juan@xtec.cat"
+read_prompt "Introduce el correo del administrador (por defecto: juan@xtec.cat): " SERVER_ADMIN "juan@xtec.cat"
 #read_and_validate "Introduce el nombre de la carpeta del proyecto (ej: djau): " PROJECT_FOLDER
 
 #INSTALL_DIR="/opt"
 #FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
-#VENV_PATH="$FULL_PATH/venv"
+VENV_PATH="$FULL_PATH/venv"
 WSGI_PATH="$FULL_PATH/aula/wsgi.py"
 
 echo "☑️ Parámetros definidos."
@@ -155,10 +198,16 @@ CERT_CRT="/etc/ssl/certs/$PROJECT_FOLDER-selfsigned.crt"
 LOCALITAT_CLEAN=$(echo "$LOCALITAT" | iconv -t ascii//TRANSLIT | tr ' ' '_')
 LOCALITAT_CLEAN=$(echo "$LOCALITAT_CLEAN" | sed 's/[^a-zA-Z0-9_]//g')
 
+# Limpiar la variable DOMAIN_NAME para obtener solo el host/dominio
+# Usamos sustitución de shell de Bash para eliminar el prefijo http(s)://
+DOMAIN_CLEAN="${DOMAIN_NAME#https://}"  # Elimina el prefijo 'https://'
+DOMAIN_CLEAN="${DOMAIN_CLEAN#http://}"  # Elimina el prefijo 'http://' (si existiera)
+DOMAIN_CLEAN="${DOMAIN_CLEAN%/}"        # Elimina la barra '/' final (si existiera)
+
 # Se genera el certificado para evitar errores al activar el vhost SSL
-echo "     -> Generando certificado Self-Signed para $DOMAIN_NAME"
+echo "     -> Generando certificado Self-Signed para $DOMAIN_CLEAN"
 echo -e "\n"
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$CERT_KEY" -out "$CERT_CRT" -subj "/C=ES/ST=Catalonia/L=$LOCALITAT_CLEAN/O=$PROJECT_FOLDER/CN=$DOMAIN_NAME" > /dev/null 2>&1
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$CERT_KEY" -out "$CERT_CRT" -subj "/C=ES/ST=Catalonia/L=$LOCALITAT_CLEAN/O=$PROJECT_FOLDER/CN=$DOMAIN_CLEAN" > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     echo "❌ ERROR: Fallo al generar el certificado SSL autofirmado."
@@ -187,12 +236,12 @@ echo "--- 4.1 Creando archivo para acceso por HTTP (Redirección) ---"
 cat << EOF | sudo tee "$HTTP_CONF" > /dev/null
 <VirtualHost *:80>
 	ServerAdmin $SERVER_ADMIN
-	ServerName $DOMAIN_NAME
+	ServerName $DOMAIN_CLEAN
 	# Redirección permanente a HTTPS
 	# NOTA: Para testing local en VirtualBox con port forwarding desde la máquina Host (8080->80, 4443->443),
-	#       esta redirección debe ser: https://$DOMAIN_NAME:4443$1
-	#       además será necesario añadir una linea en el archivo host para hacer ligar la ip con el https://$DOMAIN_NAME
-	RedirectMatch permanent ^(.*)$ https://$DOMAIN_NAME$1
+	#       esta redirección debe ser: https://$DOMAIN_CLEAN:4443$1
+	#       además será necesario añadir una linea en el archivo host para hacer ligar la ip con el https://$DOMAIN_CLEAN
+	RedirectMatch permanent ^(.*)$ https://$DOMAIN_CLEAN$1
 </VirtualHost>
 EOF
 
@@ -205,7 +254,7 @@ echo "--- 4.2 Creando archivo para acceso HTTPS (SSL) ---"
 cat << EOF | sudo tee "$SSL_CONF" > /dev/null
 <VirtualHost *:443>
 	ServerAdmin $SERVER_ADMIN
-	ServerName $DOMAIN_NAME
+	ServerName $DOMAIN_CLEAN
 
 	# Configuración WSGI
 	WSGIDaemonProcess $PROJECT_FOLDER python-home=$VENV_PATH python-path=$FULL_PATH \\
@@ -252,29 +301,63 @@ echo "✅ Archivo SSL ($SSL_CONF) creado (Servicio principal)."
 echo -e "\n"
 sleep 5
 
+
+
+
+echo "==============================================="
+echo "--- 5 Ajuste de Permisos de www-data (WSGI) ---"
+echo "==============================================="
+echo -e "\n"
+
+# 1. Aseguramos que www-data pueda leer y ejecutar todos los directorios (X) y archivos (r) 
+#    dentro del VENV ($VENV_PATH) y el proyecto ($FULL_PATH).
+#    Esto es crucial ya que el VENV fue creado por el usuario '$APP_USER'.
+chmod -R a+rX "$VENV_PATH"
+chmod -R a+rX "$FULL_PATH"
+echo "☑️ Permisos de lectura/ejecución asignados al Venv y código fuente."
+
+# 2. Permisos para la CARPETA DE DATOS PRIVADOS (Necesita Lectura/Escritura)
+# Asignamos el grupo 'www-data' y damos permisos de lectura/escritura (770) al grupo.
+chown -R "$APP_USER":www-data "$PATH_DADES_PRIVADES"
+chmod 770 "$PATH_DADES_PRIVADES"
+echo "✅ Permisos para datos privados asignados a '$APP_USER':www-data (chmod 770)."
+
+# 3. Asignar el grupo www-data al proyecto (por si acaso, el propietario sigue siendo $APP_USER)
+chown -R "$APP_USER":www-data "$FULL_PATH"
+chmod -R g+rx "$FULL_PATH"
+echo -e "☑️ Grupo 'www-data' asignado al directorio del proyecto.\n"
+echo -e "\n"
+
+echo -e "✅ Permisos de lectura/ejecución y grupo www-data asignados al proyecto y Venv.\n"
+
+
+
+
+
+
 # ----------------------------------------------------------------------
-# 5. HABILITACIÓN DE VIRTUAL HOSTS Y REINICIO
+# 6. HABILITACIÓN DE VIRTUAL HOSTS Y REINICIO
 # ----------------------------------------------------------------------
 
 echo "========================================================"
-echo "--- 🚀 5. HABILITACIÓN DE SITIOS Y RECARGA DE APACHE ---"
+echo "--- 🚀 6. HABILITACIÓN DE SITIOS Y RECARGA DE APACHE ---"
 echo "========================================================"
 echo -e "\n"
 
-echo "--- 5.1 Deshabilitando Virtual Hosts por defecto ---"
+echo "--- 6.1 Deshabilitando Virtual Hosts por defecto ---"
 a2dissite 000-default.conf > /dev/null 2>&1
 echo "☑️ Vhost por defecto deshabilitado."
 echo -e "\n"
 sleep 2
 
-echo "--- 5.2 Habilitando los nuevos Virtual Hosts ---"
+echo "--- 6.2 Habilitando los nuevos Virtual Hosts ---"
 a2ensite "$PROJECT_FOLDER.conf" > /dev/null
 a2ensite "$PROJECT_FOLDER-ssl.conf" > /dev/null
 echo "☑️ Vhosts de la aplicación habilitados."
 echo -e "\n"
 sleep 3
 
-echo "--- 5.3 Recargando Apache para aplicar los cambios ---"
+echo "--- 6.3 Recargando Apache para aplicar los cambios ---"
 echo -e "\n"
 
 systemctl reload apache2
@@ -284,7 +367,7 @@ if [ $? -ne 0 ]; then
     exit 1
 else
 	# Mostrar el estado del servicio para confirmación
-	echo "- Estado del servicio Apache2:"
+	echo -e "        Estado del servicio Apache2:\n"
 	systemctl status apache2 | grep Loaded
 	systemctl status apache2 | grep Active
 	echo -e "\n"
@@ -297,20 +380,20 @@ echo "========================================================="
 echo "--- 🟢 FASE 3. CONFIGURACIÓN DE APACHE FINALIZADA 🟢 ---"
 echo ""
 echo "La aplicación debería estar disponible en:"
-echo "https://$DOMAIN_NAME"
+echo "$DOMAIN_NAME"
 echo "========================================================="
 echo -e "\n"
 
 
 echo "--- SIGUIENTE FASE: FASE 4 - TAREAS PROGRAMADAS Y MANTENIMIENTO ---"
 echo -e "\n"
-echo "Para continuar con la configuración de las automatizaciones para las tareas programadas (CRON) en el servidor, ejecute los siguientes comandos (Copiar/Pegar):"
+echo "Para continuar con la automatización de las tareas programadas (CRON) en el servidor, ejecute los siguientes comandos (Copiar/Pegar):"
 echo -e "\n"
 echo "   1. Cambie al directorio del proyecto:"
-echo "      $ cd \"$FULL_PATH\""
+echo "      $ cd \"$SETUP_DIR\""
 echo -e "\n"
 echo "   2. Ejecute el script de configuración del servidor web Apache (DEBE SER con sudo):"
-echo "      $ sudo bash setup_djau/setup_cron.sh"
+echo "      $ sudo bash setup_cron.sh"
 echo -e "\n"
 echo "¡Puede proceder con la configuración de las automatizaciones (CRON)"
 echo -e "\n"

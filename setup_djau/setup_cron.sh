@@ -217,11 +217,29 @@ echo "La instalación de las tareas programadas han sido completadas."
 echo "================================================================="
 echo -e "\n"
 echo "Para comprobar si las tareas han quedado instaladas teclee:"
-echo "--- $ sudo crontab -u djau -l"
-echo "--- $ sudo crontab -u www-data -l"
+echo "    $ sudo crontab -u djau -l"
+echo "    $ sudo crontab -u www-data -l"
+echo -e "\n\n"
 
 
-echo "--- ENHORABUENA. Si ha seguido las 4 fases en el orden incicado y no ha habido errores, la aplicación DJANGO-AULA (DjAu) ha quedado correctamente instalada ---"
+# Definiciones de Color (se asume que están definidas al inicio del script)
+RESET='\e[0m'
+VERDE='\e[32m'
+NEGRITA='\e[1m'
+C_EXITO="${NEGRITA}${VERDE}"
+
 echo -e "\n"
-echo "--- Ahora, DJANGO-AULA está preparada para ser carcada con los datos del centro educativo. Siga las instrucciones para ello en https://github.com/ctrl-alt-d/django-aula/tree/master/docs/Wiki ---"
+echo -e "${C_EXITO}===============================================================${RESET}"
+echo -e "${C_EXITO}--- 🎉 ENHORABUENA: ¡INSTALACIÓN DE DJANGO-AULA COMPLETADA! ---${RESET}"
+echo -e "${C_EXITO}===============================================================${RESET}"
+echo -e "\n"
+echo -e "${NEGRITA}Si ha seguido las 4 fases en el orden correcto, la aplicación ha quedado instalada con éxito.${RESET}"
+echo -e "\n"
+echo "DJANGO-AULA ya está configurada y lista para recibir los datos de su centro educativo."
+echo -e "\n"
+echo -e "${NEGRITA}➡️ SIGUIENTE PASO: Carga de Datos y Configuración Final${RESET}"
+echo -e "   Consulte las instrucciones detalladas en la Wiki del proyecto:"
+echo -e "   ${VERDE}https://github.com/ctrl-alt-d/django-aula/tree/master/docs/Wiki${RESET}"
+echo -e "\n"
+echo -e "${C_EXITO}===================================================================================${RESET}"
 echo -e "\n"
