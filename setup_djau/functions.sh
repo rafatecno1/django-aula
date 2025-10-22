@@ -49,6 +49,7 @@ read_prompt () {
                 # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
                 eval "$VAR_NAME='$DEFAULT_VALUE'"
                 echo -e "${C_EXITO}☑️ Valor por defecto usado: '$DEFAULT_VALUE'${RESET}"
+				echo -e "\n"
                 break
             else
                 # A.2) Si NO hay valor por defecto, el campo es obligatorio.
@@ -59,8 +60,8 @@ read_prompt () {
             # B) Si hay entrada del usuario, usarla y salir.
             eval "$VAR_NAME='$INPUT_VALUE'"
             echo -e "${C_EXITO}☑️ Valor introducido: '$INPUT_VALUE'${RESET}"
+			echo -e "\n"
             break
         fi
-		echo -e "\n"
     done
 }

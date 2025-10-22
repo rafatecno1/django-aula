@@ -10,8 +10,8 @@ clear
 # CARGA DE VARIABLES Y FUNCIONES COMUNES A LOS SCRIPTS DE AUTOMATIZACIÓN
 # ----------------------------------------------------------------------
 
-echo -e "Ejecutando script setup_djau.sh."
 echo -e "\n"
+echo -e "Ejecutando script setup_djau.sh."
 echo -e "Cargando archivo functions.sh y config_vars.sh."
 echo -e "\n"
 
@@ -180,7 +180,7 @@ sleep 3
 
 echo -e "\n"
 echo -e "${C_CAPITULO}========================================================"
-echo -e "${C_CAPITULO}--- 4. PERSONALIZACIÓN DEL ARCHIVO${RESET} ${CIANO}settings_local.py${RESET} ${C_CAPITULO} ---"
+echo -e "${C_CAPITULO}--- 4. PERSONALIZACIÓN DEL ARCHIVO${RESET} ${CIANO}settings_local.py${RESET} ${C_CAPITULO}---"
 echo -e "${C_CAPITULO}========================================================${RESET}"
 echo -e "\n"
 
@@ -310,7 +310,7 @@ echo -e "${C_EXITO}✅ Migraciones aplicadas correctamente.${RESET}"
 echo -e "\n"
 sleep 3
 
-echo -e "${C_SUBTITULO}--- 5.2 Ejecutando el script${RESET} ${CIANO} fixtures.sh${RESET} ${C_SUBTITULO} ---${RESET}"
+echo -e "${C_SUBTITULO}--- 5.2 Ejecutando el script${RESET} ${CIANO}fixtures.sh${RESET} ${C_SUBTITULO}---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------${RESET}"
 echo -e "\n"
 
@@ -336,16 +336,23 @@ echo -e "\n"
 read_prompt "Introduce el CORREO ELECTRÓNICO para el superusuario 'admin': " ADMIN_EMAIL
 
 # 2. SOLICITAR Y VALIDAR LA CONTRASEÑA
-read -sp "Introduce la CONTRASEÑA para el superusuario 'admin': " ADMIN_PASS
-echo
-read -sp "Repite la CONTRASEÑA: " ADMIN_PASS2
-echo
-echo -e "\n"
 
-if [ "$ADMIN_PASS" != "$ADMIN_PASS2" ]; then
-    echo -e "${C_ERROR}❌ ERROR: Las contraseñas del superusuario no coinciden. Saliendo.${RESET}"
-    exit 1
-fi
+while true; do
+    read -sp "Introduzca la CONTRASEÑA para el superusuario 'admin': " ADMIN_PASS
+    echo
+    read -sp "Repita la CONTRASEÑA: " ADMIN_PASS2
+    echo 
+
+    if [ -z "$ADMIN_PASS" ] || [ -z "$ADMIN_PASS2" ]; then
+        echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
+    elif [ "$ADMIN_PASS" != "$ADMIN_PASS2" ]; then
+        echo -e "${C_ERROR}❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.${RESET}\n"
+    else
+        break
+    fi
+done
+
+echo -e "\n"
 
 echo -e "${C_INFO}--- Creando Superusuario 'admin' automáticamente ---${RESET}\n"
 
