@@ -150,6 +150,7 @@ echo -e "\n"
 read_prompt "Introduce el nombre del DIRECTORIO del proyecto (por defecto: djau): " PROJECT_FOLDER "djau"
 INSTALL_DIR="/opt"
 FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
+
 echo -e "La ruta completa de instalación serà: ${NEGRITA}'$FULL_PATH'${RESET}."
 echo -e "\n"
 sleep 1
@@ -170,7 +171,6 @@ echo -e "\n"
 
 # 3. Usuario de la Aplicación
 read_prompt "Introduce el nombre del USUARIO de la aplicación (debe existir y tener sudo) (por defecto: djau): " APP_USER "djau"
-echo -e "\n"
 
 # Verifica si el usuario existe antes de continuar (Verificación crucial)
 if id -u "$APP_USER" >/dev/null 2>&1; then
@@ -240,8 +240,10 @@ echo -e "\n"
 apt upgrade -y
 
 if [ $? -ne 0 ]; then
+    echo -e "\n"
     echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar los paquetes existentes (apt upgrade).${RESET}"
     echo -e "${C_INFO}⚠️ Este fallo puede indicar dependencias rotas o problemas de sistema, pero puede ser un error de red temporal.${RESET}"
+    echo -e "\n"
     
     # Pregunta de continuación
     read_prompt "¿Desea continuar igualmente con la instalación de dependencias? (sí/NO - Enter para NO): " CONTINUE_ACTION "no"
@@ -250,6 +252,7 @@ if [ $? -ne 0 ]; then
     
     if [[ "$RESPONSE_LOWER" != "sí" ]] && [[ "$RESPONSE_LOWER" != "si" ]]; then
         echo -e "${C_ERROR}🛑 Instalación cancelada por el usuario.${RESET}"
+		echo -e "\n"
         exit 1
     fi
     echo -e "\n"
@@ -262,8 +265,10 @@ echo -e "${C_INFO}ℹ️ Instalando dependencias requeridas...${RESET}"
 apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql
 
 if [ $? -ne 0 ]; then
+    echo -e "\n"
     echo -e "${C_ERROR}❌ ERROR: Fallo CRÍTICO en la instalación de dependencias del sistema (apt install).${RESET}"
     echo -e "${C_INFO}ℹ️ No es posible continuar sin estos paquetes. Revise la conexión, el log y ejecute el script de nuevo.${RESET}"
+	echo -e "\n"
     exit 1
 fi
 
@@ -282,6 +287,7 @@ echo -e "\n"
 mkdir -p "$FULL_PATH"
 if [ ! -d "$FULL_PATH" ]; then
     echo -e "${C_ERROR}❌ ERROR: No se pudo crear el directorio del proyecto '$FULL_PATH'. Saliendo.${RESET}"
+	echo -e "\n"
     exit 1
 fi
 
@@ -289,6 +295,7 @@ fi
 mkdir -p "$PATH_DADES_PRIVADES"
 if [ ! -d "$PATH_DADES_PRIVADES" ]; then
     echo -e "${C_ERROR}❌ ERROR: No se pudo crear el directorio de datos privados '$PATH_DADES_PRIVADES'. Saliendo.${RESET}"
+	echo -e "\n"
     exit 1
 fi
 echo -e "${C_EXITO}✅ Directorios creados: '$FULL_PATH' y '$PATH_DADES_PRIVADES'.${RESET}"
@@ -333,6 +340,7 @@ sudo -u "$APP_USER" git clone "$REPO_URL" "$FULL_PATH"
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al clonar el repositorio '$REPO_URL'.${RESET}"
     echo "Comprueba que la URL sea correcta, que haiga conexión a internet, o que el usuario '$APP_USER' tenga permisos de red."
+	echo -e "\n"
     exit 1
 fi
 echo -e "\n"
@@ -396,6 +404,7 @@ sudo -u "$APP_USER" bash setup_djau.sh
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo en el script de configuración de Django (setup_djau.sh). Revisa los logs anteriores.${RESET}"
+	echo -e "\n"
     exit 1
 fi
 
