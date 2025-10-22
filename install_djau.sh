@@ -106,6 +106,7 @@ read_prompt () {
                 # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
                 eval "$VAR_NAME='$DEFAULT_VALUE'"
                 echo -e "${C_EXITO}☑️ Valor por defecto usado: '$DEFAULT_VALUE'${RESET}"
+				echo -e "\n"
                 break
             else
                 # A.2) Si NO hay valor por defecto, el campo es obligatorio.
@@ -116,9 +117,9 @@ read_prompt () {
             # B) Si hay entrada del usuario, usarla y salir.
             eval "$VAR_NAME='$INPUT_VALUE'"
             echo -e "${C_EXITO}☑️ Valor introducido: '$INPUT_VALUE'${RESET}"
+			echo -e "\n"
             break
         fi
-		echo -e "\n"
     done
 }
 
@@ -138,8 +139,9 @@ echo -e "${C_CAPITULO}--- 1. DEFINICIÓN DE DIRECTORIOS Y USUARIOS CLAVE ---"
 echo -e "${C_CAPITULO}=====================================================${RESET}"
 echo -e "\n"
 
-echo -e "${C_INFO}ℹ️  **ATENCIÓN:**${RESET} Cuando se indique que existe un valor por defecto, puede pulsar Enter para aceptarlo si lo desea.\n\n"
+echo -e "${C_INFO}ℹ️  **ATENCIÓN:**${RESET} Cuando se indique que existe un valor por defecto, puede pulsar Enter para aceptarlo si lo desea.\n"
 
+echo -e "\n"
 echo -e "${C_SUBTITULO}--- 1.1 Solicitud de Parámetros de Ruta ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------${RESET}"
 echo -e "\n"
@@ -160,6 +162,7 @@ echo -e	"La ruta completa de datos privados serà: ${NEGRITA}'$PATH_DADES_PRIVAD
 echo -e "\n"
 sleep 1
 
+echo -e "\n"
 echo -e "${C_SUBTITULO}--- 1.2 Solicitud y Validación de Usuario de la Aplicación ---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------------------------${RESET}"
 echo -e "\n"
@@ -179,7 +182,6 @@ else
     echo -e "${C_INFO}ℹ️ Por favor, cree el usuario antes de continuar y asegúrese de que esté en el grupo 'sudoers'.${RESET}"
     exit 1
 fi
-echo -e "\n"
 sleep 2
 
 # ----------------------------------------------------------------------
@@ -210,7 +212,6 @@ printf "%s\n" "$PSQL_RULE" | sudo tee $SUDOERS_RULE > /dev/null
 sudo chmod 0440 $SUDOERS_RULE
 
 echo -e "${C_EXITO}✅ Permisos NOPASSWD configurados para '$APP_USER' para psql y pg_dump.${RESET}"
-echo -e "\n"
 sleep 2
 
 # ----------------------------------------------------------------------
@@ -227,16 +228,50 @@ echo -e "${C_SUBTITULO}--- 3.1 Instalando dependencias del sistema (Python, Git,
 echo -e "${C_SUBTITULO}---------------------------------------------------------------------------------------------------------------------${RESET}"
 echo -e "\n"
 
-apt update && apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql
+# 1. Actualizar la lista de paquetes
+echo -e "${C_INFO}ℹ️ Actualizando la lista de paquetes (apt update)...${RESET}"
+echo -e "\n"
+apt update
+echo -e "\n"
+
+# 2. Actualizar los paquetes existentes
+echo -e "${C_INFO}ℹ️ Actualizando el sistema (apt upgrade -y)...${RESET}"
+echo -e "\n"
+apt upgrade -y
 
 if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ERROR: Fallo en la instalación de dependencias del sistema. Saliendo.${RESET}"
-    exit 1
+    echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar los paquetes existentes (apt upgrade).${RESET}"
+    echo -e "${C_INFO}⚠️ Este fallo puede indicar dependencias rotas o problemas de sistema, pero puede ser un error de red temporal.${RESET}"
+    
+    # Pregunta de continuación
+    read_prompt "¿Desea continuar igualmente con la instalación de dependencias? (sí/NO - Enter para NO): " CONTINUE_ACTION "no"
+    
+    RESPONSE_LOWER=$(echo "$CONTINUE_ACTION" | tr '[:upper:]' '[:lower:]')
+    
+    if [[ "$RESPONSE_LOWER" != "sí" ]] && [[ "$RESPONSE_LOWER" != "si" ]]; then
+        echo -e "${C_ERROR}🛑 Instalación cancelada por el usuario.${RESET}"
+        exit 1
+    fi
+    echo -e "\n"
 fi
 echo -e "\n"
-echo -e "${C_EXITO}✅ Dependencias del sistema instaladas correctamente.${RESET}"
+
+# 3. Instalar las dependencias necesarias (Solo se ejecuta si el usuario continuó o no hubo errores)
+echo -e "${C_INFO}ℹ️ Instalando dependencias requeridas...${RESET}"
+
+apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql
+
+if [ $? -ne 0 ]; then
+    echo -e "${C_ERROR}❌ ERROR: Fallo CRÍTICO en la instalación de dependencias del sistema (apt install).${RESET}"
+    echo -e "${C_INFO}ℹ️ No es posible continuar sin estos paquetes. Revise la conexión, el log y ejecute el script de nuevo.${RESET}"
+    exit 1
+fi
+
+echo -e "\n"
+echo -e "${C_EXITO}✅ Dependencias del sistema instaladas y sistema actualizado correctamente.${RESET}"
 echo -e "\n"
 sleep 2
+
 
 echo -e "${C_SUBTITULO}--- 3.2 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------------------------------------------------------${RESET}"
@@ -291,13 +326,13 @@ REPO_URL="https://github.com/rafatecno1/django-aula.git"
 
 # Usamos sudo -u para clonar como el usuario de la aplicación
 
-echo "Clonando $REPO_URL en $FULL_PATH. Esto puede tardar un rato..."
+echo -e "${C_INFO}Clonando $REPO_URL en $FULL_PATH. Esto puede tardar un rato...${RESET}"
 echo -e "\n"
 
 sudo -u "$APP_USER" git clone "$REPO_URL" "$FULL_PATH"
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al clonar el repositorio '$REPO_URL'.${RESET}"
-    echo "Comprueba que la URL sea correcta o que el usuario '$APP_USER' tenga permisos de red."
+    echo "Comprueba que la URL sea correcta, que haiga conexión a internet, o que el usuario '$APP_USER' tenga permisos de red."
     exit 1
 fi
 echo -e "\n"
@@ -309,12 +344,12 @@ sleep 3
 # CREACIÓN DEL ARCHIVO config_vars.sh CON LAS VARIABLES COMUNES PER LA INSTALACIÓN DE LA APLICACIÓN
 # -------------------------------------------------------------------------------------------------
 
-echo -e "${C_SUBTITULO}--- 4.2 Creación del archivo config_vars.sh en el directorio setup_djau ---${RESET}"
-echo -e "${C_SUBTITULO}---------------------------------------------------------------------------${RESET}"
-echo -e "\n"
-
 SETUP_DIR="$FULL_PATH/setup_djau"
 CONFIG_FILE="$SETUP_DIR/config_vars.sh"
+
+echo -e "${C_SUBTITULO}--- 4.2 Creación del archivo${RESET} ${CIANO}config_vars.sh${RESET} ${C_SUBTITULO}en el directorio${RESET} ${CIANO}$SETUP_DIR${RESET} ${C_SUBTITULO} ---${RESET}"
+echo -e "${C_SUBTITULO}-------------------------------------------------------------------------------------${RESET}"
+echo -e "\n"
 
 cat << EOF > "$CONFIG_FILE"
 
@@ -339,8 +374,8 @@ echo -e "${C_CAPITULO}==========================================================
 echo -e "\n"
 
 
-echo -e "--- A partir de este momento es cedeix el control al usuario ${C_INFO}'$APP_USER'${RESET},"
-echo -e "    que ejecutarà autmáticamente el script ${C_INFO}setup_djau.sh${RESET}, que se encuentra en ${NEGRITA}'$SETUP_DIR'${RESET} ---"
+echo -e "--- A partir de ahora el usuario ${C_INFO}'$APP_USER'${RESET} ejecutarà autmáticamente el script ${C_INFO}setup_djau.sh${RESET}."
+echo -e "    Este script se encuentra en ${C_INFO}'$SETUP_DIR'${RESET}."
 echo -e "\n"
 
 # Transfiere la ejecución al script de configuración de Django DENTRO del repositorio clonado
