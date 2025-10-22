@@ -6,51 +6,51 @@
 
 clear
 
+# ----------------------------------------------------------------------
+# CARGA DE VARIABLES Y FUNCIONES COMUNES A LOS SCRIPTS DE AUTOMATIZACIÓN
+# ----------------------------------------------------------------------
+
+echo -e "Ejecutando script setup_djau.sh."
 echo -e "\n"
-echo "==================================================================="
-echo "--- 🟢 CONFIGURACIÓN DE DJANGO Y BASE DE DATOS setup_djau.sh 🟢 ---"
-echo "==================================================================="
+echo -e "Cargando archivo functions.sh y config_vars.sh."
 echo -e "\n"
+
+# 1. CARGAR LIBRERÍA DE FUNCIONES (Contiene variables de color y read_prompt)
+source "./functions.sh"
+
+# 2. CARGAR VARIABLES DE CONFIGURACIÓN
+CONFIG_FILE="./config_vars.sh"
+
+if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
+    echo -e "${C_EXITO}☑️ Variables de configuración cargadas.${RESET}"
+else
+    # Usar variables de color si están definidas en functions.sh
+    echo -e "${C_ERROR}❌ ERROR: Archivo de configuración ($CONFIG_FILE) no encontrado. Saliendo.${RESET}"
+    exit 1
+fi
+
+echo -e "\n"
+echo -e "${C_PRINCIPAL}==============================================================="
+echo -e "${C_PRINCIPAL}--- CONFIGURACIÓN DE DJANGO Y BASE DE DATOS${RESET} ${CIANO}(setup_djau.sh)${RESET} ${C_PRINCIPAL}---"
+echo -e "${C_PRINCIPAL}===============================================================${RESET}"
 
 # ------------------------------------------------------------------------------------------
 # 1. PREPARACIÓN DEL ENTORNO, CARGA DE VARIABLES COMPARTIDAS, AJUSTE DE RUTA Y BASE DE DATOS
 # ------------------------------------------------------------------------------------------
 
-echo "====================================================================================================="
-echo "--- 📝 1. PREPARACIÓN DEL ENTORNO, CARGA DE VARIABLES COMPARTIDAS, AJUSTE DE RUTA Y BASE DE DATOS ---"
-echo "====================================================================================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}============================================================="
+echo -e "${C_CAPITULO}--- 1. PREPARACIÓN DE LOS PARÁMETRO PARA LA BASE DE DATOS ---"
+echo -e "${C_CAPITULO}=============================================================${RESET}"
 echo -e "\n"
 
-# 1.1 Càrrega de variables comunes
-echo "--- 1.1 Carga de funciones y variables comunes per la instalación ---"
+# 1.1 Solicitud de Parámetros de la Base de Datos
 
-# El script se ejecuta desde /opt/djau/setup_djau, por lo que el directorio padre es /opt/djau
-FULL_PATH=$(dirname "$PWD")
-SETUP_DIR="$PWD" # La ubicación actual del script
-
-# 1. CARGAR LIBRERÍA DE FUNCIONES
-source "$SETUP_DIR/functions.sh"
-
-# 2. CARGAR VARIABLES DE CONFIGURACIÓN
-CONFIG_FILE="$SETUP_DIR/config_vars.sh"
-
-if [ -f "$CONFIG_FILE" ]; then
-    source "$CONFIG_FILE"
-    echo "☑️ Variables de configuración cargadas desde $CONFIG_FILE."
-else
-    echo "❌ ERROR: Archivo de configuración ($CONFIG_FILE) no encontrado. Saliendo."
-    exit 1
-fi
-
-
+echo -e "${C_SUBTITULO}--- Solicitud de Parámetros de PostgreSQL ---${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
 echo -e "\n"
 
-
-# 1.2 Solicitud de Parámetros de la Base de Datos
-echo "--- 1.2 Solicitud de Parámetros de PostgreSQL ---"
-echo -e "\n"
-
-# La función read_and_validate ya no permite dejar campos en blanco.
 read_prompt "Introduzca el NOMBRE de la BASE DE DATOS (por defecto: djau_db): " DB_NAME "djau_db"
 read_prompt "Introduzca el USUARIO de la BD (por defecto: djau): " DB_USER "djau"
 
@@ -62,15 +62,15 @@ while true; do
     echo 
 
     if [ -z "$DB_PASS" ] || [ -z "$DB_PASS2" ]; then
-        echo -e "❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.\n"
+        echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
     elif [ "$DB_PASS" != "$DB_PASS2" ]; then
-        echo -e "❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.\n"
+        echo -e "${C_ERROR}❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.${RESET}\n"
     else
         break
     fi
 done
 echo -e "\n"
-echo "☑️ Parámetros de la Base de Datos definidos."
+echo -e "${C_EXITO}☑️ Parámetros de la Base de Datos definidos.${RESET}"
 echo -e "\n"
 sleep 3
 
@@ -78,12 +78,15 @@ sleep 3
 # 2. CONFIGURACIÓN DEL ENTORNO VIRTUAL Y CLAVE SECRETA
 # ----------------------------------------------------------------------
 
-echo "======================================================="
-echo "--- ⚙️ 2. PREPARACIÓN DEL ENTORNO VIRTUAL DE DJANGO ---"
-echo "======================================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}===================================================="
+echo -e "${C_CAPITULO}--- 2. PREPARACIÓN DEL ENTORNO VIRTUAL DE DJANGO ---"
+echo -e "${C_CAPITULO}====================================================${RESET}"
 echo -e "\n"
 
-echo -e "--- 2.1 Creando Entorno Virtual (venv) e instalando requisitios ---\n"
+echo -e "${C_SUBTITULO}--- 2.1 Creando Entorno Virtual (venv) e instalando requerimientos ---${RESET}"
+echo -e "${C_SUBTITULO}----------------------------------------------------------------------${RESET}"
+echo -e "\n"
 
 cd "$FULL_PATH"
 
@@ -94,26 +97,28 @@ pip install --upgrade pip wheel
 pip install -r requirements.txt
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al instalar las dependencias de Python. Saliendo."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al instalar las dependencias de Python. Saliendo.${RESET}"
     deactivate
     exit 1
 fi
 echo -e "\n"
-echo "✅ Entorno virtual creado y paquetes instalados."
-echo -e "\n"
+echo -e "${C_EXITO}✅ Entorno virtual creado y paquetes instalados.${RESET}"
+echo -e "\n\n"
 sleep 3
 
-echo "--- 2.2 Generando Clave Secreta de Django ---"
+echo -e "${C_SUBTITULO}--- 2.2 Generando Clave Secreta de Django ---${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
+echo -e "\n"
 
 SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
 
 if [ ${#SECRET_KEYPASS} -lt 32 ]; then
-    echo "❌ ERROR: No se pudo generar una clave secreta válida. Saliendo."
+    echo -e "${C_ERROR}❌ ERROR: No se pudo generar una clave secreta válida. Saliendo.${RESET}"
     deactivate
     exit 1
 fi
 
-# FILTRADO DEFINITIVO Y ROBUSTO:
+# FILTRADO ROBUSTO DE LA SECRET_KEYPASS:
 # 1. Eliminamos retornos de carro/saltos de línea.
 # 2. Usamos 'printf' para construir una cadena con la clave y la pasamos a 'tr'.
 #    El comando 'tr' filtra TODOS los caracteres conflictivos de Bash/Sed/Python:
@@ -124,8 +129,8 @@ REPLACEMENT_CHARS='------'
 # Ejecutamos el filtro:
 SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr "$FILTER_CHARS" "$REPLACEMENT_CHARS")
 
-echo "✅ Clave secreta generada y filtrada automáticamente."
-echo -e "\n"
+echo -e "${C_EXITO}✅ Clave secreta generada automáticamente.${RESET}"
+echo -e "\n\n"
 
 sleep 3
 
@@ -133,13 +138,15 @@ sleep 3
 # 3. CREACIÓN Y CONFIGURACIÓN DE POSTGRESQL
 # ----------------------------------------------------------------------
 
-echo "=================================================================="
-echo "--- 💾 3. CREACIÓN Y CONFIGURACIÓN DE BASE DE DATOS POSTGRESQL ---"
-echo "=================================================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}==============================================================="
+echo -e "${C_CAPITULO}--- 3. CREACIÓN Y CONFIGURACIÓN DE BASE DE DATOS POSTGRESQL ---"
+echo -e "${C_CAPITULO}===============================================================${RESET}"
 echo -e "\n"
 
 # Crear el script SQL temporal
 SQL_FILE="temp_setup_${DB_NAME}.sql"
+
 cat << EOF > "$SQL_FILE"
 DROP DATABASE IF EXISTS $DB_NAME;
 DROP ROLE IF EXISTS $DB_USER;
@@ -149,13 +156,13 @@ GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
 EOF
 
-echo "--- Ejecutando Script SQL con 'psql' (NOPASSWD) ---"
+echo -e "${C_INFO}--- Ejecutando Script SQL con 'psql' (NOPASSWD) ---${RESET}"
 
 # Se ejecuta con NOPASSWD configurado en el script padre, la salida se redirige a /dev/null
 sudo -u postgres psql -t -f "$SQL_FILE" > /dev/null 2>&1 
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al configurar PostgreSQL. Revisa la regla NOPASSWD o la sintaxis SQL."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al configurar PostgreSQL. Revisa la regla NOPASSWD o la sintaxis SQL.${RESET}"
     rm "$SQL_FILE"
     deactivate
     exit 1
@@ -163,7 +170,7 @@ fi
 rm "$SQL_FILE"
 
 echo -e "\n"
-echo "✅ Base de datos '$DB_NAME' y usuario '$DB_USER' configurados en PostgreSQL."
+echo -e "${C_EXITO}✅ Base de datos '$DB_NAME' y usuario '$DB_USER' configurados en PostgreSQL.${RESET}"
 echo -e "\n"
 sleep 3
 
@@ -171,13 +178,15 @@ sleep 3
 # 4. PERSONALIZACIÓN DEL ARCHIVO settings_local.py
 # ----------------------------------------------------------------------
 
-echo "==========================================================="
-echo "--- 📝 4. PERSONALIZACIÓN DEL ARCHIVO settings_local.py ---"
-echo "==========================================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}========================================================"
+echo -e "${C_CAPITULO}--- 4. PERSONALIZACIÓN DEL ARCHIVO${RESET} ${CIANO}settings_local.py${RESET} ${C_CAPITULO} ---"
+echo -e "${C_CAPITULO}========================================================${RESET}"
 echo -e "\n"
 
 # --- 4.1 Solicitud de Parámetros de la Aplicación (Usuario) ---
-echo "--- 4.1 Parámetros de la Aplicación ---"
+echo -e "${C_SUBTITULO}--- 4.1 Parámetros de la Aplicación ---${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------------${RESET}"
 echo -e "\n"
 
 read_prompt "Introduzca el nombre del CENTRO EDUCATIVO (por defecto: Centre de Demo): " NOM_CENTRE "Centre de Demo"
@@ -187,12 +196,15 @@ read_prompt "Introduzca la URL base de la aplicación (por defecto: https://djau
 read_prompt "Introduzca los HOSTS permitidos separados por comas. (por defecto: djau.elteudomini.cat,127.0.0.1): " ALLOWED_HOSTS_LIST "djau.elteudomini.cat,127.0.0.1"
 read_prompt "Introduzca la dirección de CORREO del administrador (por defecto: ui@mega.cracs.cat): " ADMIN_EMAIL "ui@mega.cracs.cat"
 echo -e "\n"
-echo -e "☑️ Parámetros generales definidos.\n"
+echo -e "${C_EXITO}☑️ Parámetros generales definidos.${RESET}"
 echo -e "\n"
 
-echo "--- 4.2 Parámetros de Correo SMTP (Google/App Password) ---"
-echo "ℹ️  Para el envío de correos se requiere una contraseña de aplicación de Google."
-echo -e "    La información se puede encontrar aquí: https://support.google.com/mail/answer/185833?hl=ca\n"
+echo -e "${C_SUBTITULO}--- 4.2 Parámetros de Correo SMTP (Google/App Password) ---${RESET}"
+echo -e "${C_SUBTITULO}-----------------------------------------------------------${RESET}"
+echo -e "\n"
+
+echo -e "${C_INFO}ℹ️ Para el envío de correos se requiere una contraseña de aplicación de Google.${RESET}"
+echo -e "    La información se puede encontrar aquí: ${C_SUBTITULO}'https://support.google.com/mail/answer/185833?hl=ca'${RESET}\n"
 
 read_prompt "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
 
@@ -203,9 +215,9 @@ while true; do
     echo 
 
     if [ -z "$EMAIL_HOST_PASS" ] || [ -z "$EMAIL_HOST_PASS2" ]; then
-        echo -e "❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.\n"
+        echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
     elif [ "$EMAIL_HOST_PASS" != "$EMAIL_HOST_PASS2" ]; then
-        echo -e "❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.\n"
+        echo -e "${C_ERROR}❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.${RESET}\n"
     else
         break
     fi
@@ -214,55 +226,61 @@ done
 read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
 
 echo -e "\n"
-echo -e "☑️ Parámetros SMTP definidos.\n"
+echo -e "${C_EXITO}☑️ Parámetros SMTP definidos.${RESET}\n"
 echo -e "\n"
 
 
 # 4.3 Copiar y Aplicar Sustituciones
-CONFIG_FILE="aula/settings_local.sample"
-FINAL_FILE="aula/settings_local.py"
 
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo "❌ ERROR: No se encontró el archivo sample en '$CONFIG_FILE'. Saliendo."
+echo -e "${C_SUBTITULO}--- 4.3 Aplicando Sustituciones con 'sed' ---${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
+echo -e "\n"
+
+SETTINGS_LOCAL_SAMPLE_FILE="aula/settings_local.sample"
+SETTINGS_LOCAL_FINAL_FILE="aula/settings_local.py"
+
+if [ ! -f "$SETTINGS_LOCAL_SAMPLE_FILE" ]; then
+    echo -e "${C_ERROR}❌ ERROR: No se encontró el archivo sample en '$SETTINGS_LOCAL_SAMPLE_FILE'. Saliendo.${RESET}"
     deactivate
     exit 1
 fi
-cp "$CONFIG_FILE" "$FINAL_FILE"
 
-echo "--- 4.3 Aplicando Sustituciones con 'sed' ---"
+cp "$SETTINGS_LOCAL_SAMPLE_FILE" "$SETTINGS_LOCAL_FINAL_FILE"
 
-# Base de Datos
-sed -i "s#^        'NAME': 'djau2025',#        'NAME': '$DB_NAME',#" "$FINAL_FILE"
-sed -i "s#^        'USER': 'djau2025',#        'USER': '$DB_USER',#" "$FINAL_FILE"
-sed -i "s#^        'PASSWORD': \"XXXXXXXXXX\",#        'PASSWORD': \"$DB_PASS\",#" "$FINAL_FILE"
+# Aplicando substituciones
+
+#Base de Datos
+sed -i "s#^        'NAME': 'djau2025',#        'NAME': '$DB_NAME',#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^        'USER': 'djau2025',#        'USER': '$DB_USER',#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^        'PASSWORD': \"XXXXXXXXXX\",#        'PASSWORD': \"$DB_PASS\",#" "$SETTINGS_LOCAL_FINAL_FILE"
 
 # Variables de la aplicación:
-sed -i "s#^NOM_CENTRE = 'Centre de Demo'#NOM_CENTRE = u'$NOM_CENTRE'#" "$FINAL_FILE"
-sed -i "s#^LOCALITAT = u\"Badia del Vallés\"#LOCALITAT = u\"$LOCALITAT\"#" "$FINAL_FILE"
-sed -i "s#^CODI_CENTRE = u\"00000000\"#CODI_CENTRE = u\"$CODI_CENTRE\"#" "$FINAL_FILE"
-sed -i "s#^URL_DJANGO_AULA = r'http://elteudomini.cat'#URL_DJANGO_AULA = r'$DOMAIN_NAME'#" "$FINAL_FILE"
+sed -i "s#^NOM_CENTRE = 'Centre de Demo'#NOM_CENTRE = u'$NOM_CENTRE'#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^LOCALITAT = u\"Badia del Vallés\"#LOCALITAT = u\"$LOCALITAT\"#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^CODI_CENTRE = u\"00000000\"#CODI_CENTRE = u\"$CODI_CENTRE\"#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^URL_DJANGO_AULA = r'http://elteudomini.cat'#URL_DJANGO_AULA = r'$DOMAIN_NAME'#" "$SETTINGS_LOCAL_FINAL_FILE"
 
 # ALLOWED_HOSTS
 ALLOWED_HOSTS_PYTHON_LIST="'${ALLOWED_HOSTS_LIST//,/\', \'}'"
-sed -i "s#^ALLOWED_HOSTS = \[ 'elteudomini.cat', '127.0.0.1', \]#ALLOWED_HOSTS = [ $ALLOWED_HOSTS_PYTHON_LIST, ]#" "$FINAL_FILE"
+sed -i "s#^ALLOWED_HOSTS = \[ 'elteudomini.cat', '127.0.0.1', \]#ALLOWED_HOSTS = [ $ALLOWED_HOSTS_PYTHON_LIST, ]#" "$SETTINGS_LOCAL_FINAL_FILE"
 
 # Clave Secreta y Datos Privados
-sed -i "s|^SECRET_KEY = .*|SECRET_KEY = '$SECRET_KEYPASS_FILTERED'|" "$FINAL_FILE"
-sed -i "s#^PRIVATE_STORAGE_ROOT =.*#PRIVATE_STORAGE_ROOT = '$PATH_DADES_PRIVADES'#" "$FINAL_FILE"
+sed -i "s|^SECRET_KEY = .*|SECRET_KEY = '$SECRET_KEYPASS_FILTERED'|" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^PRIVATE_STORAGE_ROOT =.*#PRIVATE_STORAGE_ROOT = '$PATH_DADES_PRIVADES'#" "$SETTINGS_LOCAL_FINAL_FILE"
 
 # Datos de Email/Admin
-sed -i "s#('admin', 'ui@mega.cracs.cat'),#('admin', '$ADMIN_EMAIL'),#" "$FINAL_FILE"
-sed -i "s#^EMAIL_HOST_USER='el-meu-centre@el-meu-centre.net'#EMAIL_HOST_USER='$EMAIL_HOST_USER'#" "$FINAL_FILE"
-sed -i "s#^EMAIL_HOST_PASSWORD='xxxx xxxx xxxx xxxx'#EMAIL_HOST_PASSWORD='$EMAIL_HOST_PASS'#" "$FINAL_FILE"
-sed -i "s#^SERVER_EMAIL='el-meu-centre@el-meu-centre.net'#SERVER_EMAIL='$SERVER_MAIL'#" "$FINAL_FILE"
-sed -i "s#^DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'#DEFAULT_FROM_EMAIL = '$NOM_CENTRE <$SERVER_MAIL>'#" "$FINAL_FILE"
-sed -i "s/EMAIL_SUBJECT_PREFIX = .*/EMAIL_SUBJECT_PREFIX = '[Comunicació $NOM_CENTRE]'/" "$FINAL_FILE"
+sed -i "s#('admin', 'ui@mega.cracs.cat'),#('admin', '$ADMIN_EMAIL'),#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^EMAIL_HOST_USER='el-meu-centre@el-meu-centre.net'#EMAIL_HOST_USER='$EMAIL_HOST_USER'#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^EMAIL_HOST_PASSWORD='xxxx xxxx xxxx xxxx'#EMAIL_HOST_PASSWORD='$EMAIL_HOST_PASS'#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^SERVER_EMAIL='el-meu-centre@el-meu-centre.net'#SERVER_EMAIL='$SERVER_MAIL'#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'#DEFAULT_FROM_EMAIL = '$NOM_CENTRE <$SERVER_MAIL>'#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s/EMAIL_SUBJECT_PREFIX = .*/EMAIL_SUBJECT_PREFIX = '[Comunicació $NOM_CENTRE]'/" "$SETTINGS_LOCAL_FINAL_FILE"
 
 # Forzar SSL en cookies si la URL es HTTPS (se asume que sí)
-sed -i "s/^SESSION_COOKIE_SECURE=False/SESSION_COOKIE_SECURE=True/" "$FINAL_FILE"
-sed -i "s/^CSRF_COOKIE_SECURE=False/CSRF_COOKIE_SECURE=True/" "$FINAL_FILE"
+sed -i "s/^SESSION_COOKIE_SECURE=False/SESSION_COOKIE_SECURE=True/" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s/^CSRF_COOKIE_SECURE=False/CSRF_COOKIE_SECURE=True/" "$SETTINGS_LOCAL_FINAL_FILE"
 
-echo "✅ settings_local.py configurado y personalizado."
+echo -e "${C_EXITO}✅ settings_local.py configurado y personalizado.${RESET}"
 echo -e "\n"
 sleep 3
 
@@ -270,51 +288,52 @@ sleep 3
 # 5. MIGRACIONES Y CONFIGURACIÓN DE USUARIOS
 # ----------------------------------------------------------------------
 
-echo "=================================================================="
-echo "--- 🔄 5. APLICACIÓN DE MIGRACIONES Y CONFIGURACIÓN DE USUARIO ---"
-echo "=================================================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}==============================================================="
+echo -e "${C_CAPITULO}--- 5. APLICACIÓN DE MIGRACIONES Y CONFIGURACIÓN DE USUARIO ---"
+echo -e "${C_CAPITULO}===============================================================${RESET}"
 echo -e "\n"
 
-echo -e "--- 5.1 Aplicando Migraciones de Base de Datos ---\n"
+echo -e "${C_SUBTITULO}--- 5.1 Aplicando Migraciones de Base de Datos ---${RESET}"
+echo -e "${C_SUBTITULO}--------------------------------------------------${RESET}"
+echo -e "\n"
+
 python manage.py migrate --noinput
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al aplicar las migraciones. Revisa la conexión a la Base de Datos."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al aplicar las migraciones. Revisa la conexión a la Base de Datos.${RESET}"
     deactivate
     exit 1
 fi
 echo -e "\n"
-echo "✅ Migraciones aplicadas correctamente."
+echo -e "${C_EXITO}✅ Migraciones aplicadas correctamente.${RESET}"
 echo -e "\n"
 sleep 3
 
-echo -e "--- 5.2 Ejecutando 'scripts/fixtures.sh' ---\n"
+echo -e "${C_SUBTITULO}--- 5.2 Ejecutando el script${RESET} ${CIANO} fixtures.sh${RESET} ${C_SUBTITULO} ---${RESET}"
+echo -e "${C_SUBTITULO}--------------------------------------------${RESET}"
+echo -e "\n"
+
 if [ -f "scripts/fixtures.sh" ]; then
     bash scripts/fixtures.sh
 	echo -e "\n"
     if [ $? -ne 0 ]; then
-        echo "❌ Advertencia: Fallo al ejecutar 'scripts/fixtures.sh'."
+        echo -e "${C_ERROR}❌ Advertencia: Fallo al ejecutar 'scripts/fixtures.sh'.${RESET}"
     fi
-    echo -e "✅ Fixtures ejecutados.\n"
+    echo -e "${C_EXITO}✅ Fixtures ejecutados.${RESET}\n"
 else
-    echo -e "☑️ scripts/fixtures.sh no encontrado. Paso omitido.\n"
+    echo -e "${C_ERROR}❌ scripts/fixtures.sh no encontrado. Paso omitido.${RESET}\n"
 fi
+
 echo -e "\n"
 sleep 3
 
-echo "--- 5.3 Creación de Superusuario 'admin' en la aplicación DJANGO ---"
+echo -e "${C_SUBTITULO}--- 5.3 Creación de Superusuario 'admin' en la aplicación DJANGO ---${RESET}"
+echo -e "${C_SUBTITULO}--------------------------------------------------------------------${RESET}"
 echo -e "\n"
-
-echo -e "--- Solicitud de Credenciales para el Superusuario 'admin' ---\n"
 
 # 1. SOLICITAR EL EMAIL
 read_prompt "Introduce el CORREO ELECTRÓNICO para el superusuario 'admin': " ADMIN_EMAIL
-
-#if [ -z "$ADMIN_EMAIL" ]; then
-#    echo "❌ ERROR: El correo electrónico del administrador no puede estar en blanco. Saliendo."
-#    exit 1
-#fi
-echo -e "\n"
 
 # 2. SOLICITAR Y VALIDAR LA CONTRASEÑA
 read -sp "Introduce la CONTRASEÑA para el superusuario 'admin': " ADMIN_PASS
@@ -324,11 +343,11 @@ echo
 echo -e "\n"
 
 if [ "$ADMIN_PASS" != "$ADMIN_PASS2" ]; then
-    echo "❌ ERROR: Las contraseñas del superusuario no coinciden. Saliendo."
+    echo -e "${C_ERROR}❌ ERROR: Las contraseñas del superusuario no coinciden. Saliendo.${RESET}"
     exit 1
 fi
 
-echo -e "--- Creando Superusuario 'admin' automáticamente ---\n"
+echo -e "${C_INFO}--- Creando Superusuario 'admin' automáticamente ---${RESET}\n"
 
 # 3. CREAR EL SCRIPT DE PYTHON TEMPORAL
 
@@ -368,15 +387,19 @@ EOF
 # 4. EJECUTAR EL SCRIPT
 python3 manage.py shell < "$PYTHON_SCRIPT"
 if [ $? -ne 0 ]; then
-    echo "❌ Error al ejecutar el script de creación de superusuario. Revisa el log."
+    echo -e "${C_ERROR}❌ Error al ejecutar el script de creación de superusuario. Revisa el log.${RESET}"
 fi
+
 rm "$PYTHON_SCRIPT"
 
 echo -e "\n"
 
-echo "--- 5.4 Creando Grupos y asignando a 'admin' ---"
+echo -e "${C_SUBTITULO}--- 5.4 Creando Grupos y asignando a 'admin' ---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------${RESET}"
+echo -e "\n"
 
 PYTHON_SCRIPT="temp_setup_groups.py"
+
 cat << EOF > "$PYTHON_SCRIPT"
 from django.contrib.auth.models import User, Group
 try:
@@ -394,12 +417,13 @@ EOF
 
 python manage.py shell < "$PYTHON_SCRIPT" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "❌ Error al ejecutar el script de configuración de grupos."
+    echo -e "${C_ERROR}❌ Error al ejecutar el script de configuración de grupos.${RESET}"
 fi
+
 rm "$PYTHON_SCRIPT"
 
 echo -e "\n"
-echo "✅ Grupos configurados."
+echo -e "${C_EXITO}✅ Grupos configurados.${RESET}"
 echo -e "\n"
 sleep 3
 
@@ -407,20 +431,21 @@ sleep 3
 # 6. RECOLECCIÓN DE ESTÁTICOS Y FINALIZACIÓN
 # ----------------------------------------------------------------------
 
-echo "==============================================="
-echo "--- 🖼️ 6. RECOLECCIÓN DE ARCHIVOS ESTÁTICOS ---"
-echo "==============================================="
-#echo -e "\n"
+echo -e "\n"
+echo -e "${C_CAPITULO}============================================"
+echo -e "${C_CAPITULO}--- 6. RECOLECCIÓN DE ARCHIVOS ESTÁTICOS ---"
+echo -e "${C_CAPITULO}============================================${RESET}"
+echo -e "\n"
 
 python manage.py collectstatic -c --no-input
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al recolectar archivos estáticos."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al recolectar archivos estáticos.${RESET}"
     deactivate
     exit 1
 fi
 echo -e "\n"
-echo "✅ Archivos estáticos recolectados."
+echo -e "${C_EXITO}✅ Archivos estáticos recolectados.${RESET}"
 echo -e "\n"
 
 deactivate
@@ -430,28 +455,32 @@ sleep 3
 # 7. GUARDAR VARIABLES EN config_vars.sh QUE SERÁN NECESARIAS
 # ===================================================================
 
-echo "============================================================================================"
-echo "--- 🖼️ 7. ACTUALIZACIÓN DE ARCHIVO DE VARIABLES COMUNES A LOS SCRIPTS DE AUTOMATIZACIÓN ---"
-echo "============================================================================================"
 echo -e "\n"
-echo -e "--- Actualizando archivo de variables con credenciales de la BD ---\n"
+echo -e "${C_CAPITULO}============================================================================================"
+echo -e "${C_CAPITULO}--- 7. ACTUALIZACIÓN DEL ARCHIVO DE VARIABLES COMUNES PARA LOS SCRIPTS DE AUTOMATIZACIÓN ---"
+echo -e "${C_CAPITULO}============================================================================================${RESET}"
+echo -e "\n"
+
+echo -e "${C_INFO}--- Añadiendo variables al archivo${RESET} ${CIANO}config_vars.sh${RESET} ${C_INFO}automáticamente ---${RESET}\n"
+
 # Añadir la nueva información al archivo (usamos >> para append)
 # El archivo está en $SETUP_DIR
+
 echo "export DB_NAME='$DB_NAME'" >> "$SETUP_DIR/config_vars.sh"
 echo "export DB_USER='$DB_USER'" >> "$SETUP_DIR/config_vars.sh"
 echo "export DOMAIN_NAME='$DOMAIN_NAME'" >> "$SETUP_DIR/config_vars.sh"
 echo "export LOCALITAT='$LOCALITAT'" >> "$SETUP_DIR/config_vars.sh"
 
-
 # Reasignar permisos de forma preventiva
 chmod 600 "$SETUP_DIR/config_vars.sh"
 chown "$APP_USER":"$APP_USER" "$SETUP_DIR/config_vars.sh"
-echo "✅ Credenciales de BD añadidas a config_vars.sh."
+
+echo -e "${C_EXITO}✅ Credenciales de BD añadidas a${RESET} ${CIANO}config_vars.sh${RESET}${C_EXITO}.${RESET}"
 echo -e "\n"
 
-
-echo "============================================================================================="
-echo "--- 🟢 COMPLETADA LA CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA (setup_djau.sh) 🟢 ---"
-echo "Devolviendo el control al script install_djau.sh"
-echo "============================================================================================="
+echo -e "\n"
+echo -e "${C_PRINCIPAL}======================================================================================"
+echo -e "${C_PRINCIPAL}--- COMPLETADA LA CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA${RESET} ${CIANO}(setup_djau.sh)${RESET} ${C_PRINCIPAL}---"
+echo -e "${C_PRINCIPAL}Devolviendo el control al script${RESET} ${CIANO}(install_djau.sh)${RESET}"
+echo -e "${C_PRINCIPAL}======================================================================================${RESET}"
 echo -e "\n"
