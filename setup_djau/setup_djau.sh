@@ -27,6 +27,7 @@ if [ -f "$CONFIG_FILE" ]; then
 else
     # Usar variables de color si están definidas en functions.sh
     echo -e "${C_ERROR}❌ ERROR: Archivo de configuración ($CONFIG_FILE) no encontrado. Saliendo.${RESET}"
+	echo -e "\n"
     exit 1
 fi
 
@@ -98,7 +99,9 @@ pip install -r requirements.txt
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al instalar las dependencias de Python. Saliendo.${RESET}"
+	echo -e "\n"
     deactivate
+	echo -e "\n"
     exit 1
 fi
 echo -e "\n"
@@ -114,7 +117,9 @@ SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
 
 if [ ${#SECRET_KEYPASS} -lt 32 ]; then
     echo -e "${C_ERROR}❌ ERROR: No se pudo generar una clave secreta válida. Saliendo.${RESET}"
+	echo -e "\n"
     deactivate
+	echo -e "\n"
     exit 1
 fi
 
@@ -163,8 +168,10 @@ sudo -u postgres psql -t -f "$SQL_FILE" > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al configurar PostgreSQL. Revisa la regla NOPASSWD o la sintaxis SQL.${RESET}"
+	echo -e "\n"
     rm "$SQL_FILE"
     deactivate
+	echo -e "\n"
     exit 1
 fi
 rm "$SQL_FILE"
@@ -223,6 +230,8 @@ while true; do
     fi
 done
 
+echo -e "\n"
+
 read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
 
 echo -e "\n"
@@ -241,7 +250,9 @@ SETTINGS_LOCAL_FINAL_FILE="aula/settings_local.py"
 
 if [ ! -f "$SETTINGS_LOCAL_SAMPLE_FILE" ]; then
     echo -e "${C_ERROR}❌ ERROR: No se encontró el archivo sample en '$SETTINGS_LOCAL_SAMPLE_FILE'. Saliendo.${RESET}"
+	echo -e "\n"
     deactivate
+	echo -e "\n"
     exit 1
 fi
 
@@ -302,7 +313,9 @@ python manage.py migrate --noinput
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al aplicar las migraciones. Revisa la conexión a la Base de Datos.${RESET}"
+	echo -e "\n"
     deactivate
+	echo -e "\n"
     exit 1
 fi
 echo -e "\n"
@@ -429,7 +442,6 @@ fi
 
 rm "$PYTHON_SCRIPT"
 
-echo -e "\n"
 echo -e "${C_EXITO}✅ Grupos configurados.${RESET}"
 echo -e "\n"
 sleep 3
@@ -448,7 +460,9 @@ python manage.py collectstatic -c --no-input
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al recolectar archivos estáticos.${RESET}"
+	echo -e "\n"
     deactivate
+	echo -e "\n"
     exit 1
 fi
 echo -e "\n"

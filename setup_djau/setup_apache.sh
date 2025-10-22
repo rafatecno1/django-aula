@@ -5,118 +5,122 @@
 
 clear
 
+# ----------------------------------------------------------------------
+# CARGA DE VARIABLES Y FUNCIONES COMUNES A LOS SCRIPTS DE AUTOMATIZACIÓN
+# ----------------------------------------------------------------------
+
 echo -e "\n"
-echo "======================================================================"
-echo "--- 🟢 FASE 2: SERVIDOR WEB Y CERTIFICADOS SSL setup_apache.sh 🟢 ---"
-echo "======================================================================"
-echo -e "\n"
-
-if [ "$(id -u)" -ne 0 ]; then
-    echo "❌ ADVERTENCIA: Este script debe ejecutarse con 'sudo bash setup_apache.sh' para modificar las tareas programadas en crontab."
-    sleep 3
-fi
-
-
-echo "======================================================================"
-echo "--- 📝 1. PREPARACIÓN DEL ENTORNO Y CARGA DE VARIABLES COMPARTIDAS ---"
-echo "======================================================================"
+echo -e "Ejecutando script setup_apache.sh."
+echo -e "Cargando archivo functions.sh y config_vars.sh."
 echo -e "\n"
 
-# 1.1 Càrrega de variables comunes
-echo "--- 1.1 Carga de funciones y variables comunes per la instalación ---"
-
-# El script se ejecuta desde /opt/djau/setup_djau, por lo que el directorio padre es /opt/djau
-FULL_PATH=$(dirname "$PWD")
-SETUP_DIR="$PWD" # La ubicación actual del script
-
-# 1. CARGAR LIBRERÍA DE FUNCIONES
-source "$SETUP_DIR/functions.sh"
+# 1. CARGAR LIBRERÍA DE FUNCIONES (Contiene variables de color y read_prompt)
+source "./functions.sh"
 
 # 2. CARGAR VARIABLES DE CONFIGURACIÓN
-CONFIG_FILE="$SETUP_DIR/config_vars.sh"
+CONFIG_FILE="./config_vars.sh"
 
 if [ -f "$CONFIG_FILE" ]; then
     source "$CONFIG_FILE"
-    echo "☑️ Variables de configuración cargadas desde $CONFIG_FILE."
+    echo -e "${C_EXITO}☑️ Variables de configuración cargadas.${RESET}"
 else
-    echo "❌ ERROR: Archivo de configuración ($CONFIG_FILE) no encontrado. Saliendo."
+    # Usar variables de color si están definidas en functions.sh
+    echo -e "${C_ERROR}❌ ERROR: Archivo de configuración ($CONFIG_FILE) no encontrado. Saliendo.${RESET}"
     exit 1
 fi
 
 echo -e "\n"
-
-# ----------------------------------------------------------------------
-# 2. INSTALACIÓN Y DEFINICIÓN DE PARÁMETROS
-# ----------------------------------------------------------------------
-
-echo "================================================================="
-echo "--- ⚙️ 2. INSTALACIÓN Y DEFINICIÓN DE PARÁMETROS DEL SERVIDOR ---"
-echo "================================================================="
+echo -e "${C_PRINCIPAL}================================================================="
+echo -e "${C_PRINCIPAL}--- FASE 2: SERVIDOR WEB Y CERTIFICADOS SSL${RESET} ${CIANO}(setup_apache.sh)${RESET} ${C_PRINCIPAL}---"
+echo -e "${C_PRINCIPAL}=================================================================${RESET}"
 echo -e "\n"
 
-echo -e "--- 2.1 Instalación del Servidor Apache y Módulo WSGI ---\n"
 
-apt update && apt install -y apache2 libapache2-mod-wsgi-py3
+if [ "$(id -u)" -ne 0 ]; then
+    echo -e "${C_ERROR}❌ ADVERTENCIA: Este script debe ejecutarse con ${RESET} ${C_INFO}'sudo bash setup_apache.sh'${RESET} ${C_ERROR}para modificar las tareas programadas en crontab.${RESET}"
+    sleep 3
+fi
+
+# ----------------------------------------------------------------------
+# 1. INSTALACIÓN Y DEFINICIÓN DE PARÁMETROS
+# ----------------------------------------------------------------------
+
+echo -e "\n"
+echo -e "${C_CAPITULO}=============================================================="
+echo -e "${C_CAPITULO}--- 1. INSTALACIÓN Y DEFINICIÓN DE PARÁMETROS DEL SERVIDOR ---"
+echo -e "${C_CAPITULO}==============================================================${RESET}"
+echo -e "\n"
+
+echo -e "${C_SUBTITULO}--- 1.1 Instalación del Servidor Apache y Módulo WSGI ---${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------------------------------${RESET}"
+echo -e "\n"
+
+# 1. Actualizar la lista de paquetes
+echo -e "${C_INFO}ℹ️ Actualizando la lista de paquetes (apt update)...${RESET}"
+echo -e "\n"
+apt update
+echo -e "\n"
+
+# 2. Instalar el servidor Apache y el módulo WSGI
+echo -e "${C_INFO}ℹ️ Instalando servidor Apache y módulo WSGI.${RESET}"
+
+apt install -y apache2 libapache2-mod-wsgi-py3
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo en la instalación del servidor Apache. Saliendo."
+    echo -e "\n"
+    echo -e "${C_ERROR}❌ ERROR: Fallo CRÍTICO en la instalación del servidor Apache.${RESET}"
+    echo -e "${C_INFO}ℹ️ No es posible continuar sin el servidor Apache. Revise la conexión, el log y ejecute el script de nuevo.${RESET}"
+	echo -e "\n"
     exit 1
 fi
+
 echo -e "\n"
-echo "✅ Servidor Apache y WSGI instalados."
+echo -e "${C_EXITO}✅ Servidor Apache y WSGI instalados correctamente.${RESET}"
 echo -e "\n"
 sleep 3
 
-echo "--- 2.2 Solicitud y Validación de Parámetros ---"
+
+echo -e "${C_SUBTITULO}--- 1.2 Solicitud y Validación de Parámetros ---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------${RESET}"
 echo -e "\n"
 
-# Implementación de read_and_validate
-#read_and_validate "Introduce el dominio principal (ej: elteudomini.cat): " DOMAIN_NAME
 read_prompt "Introduce el correo del administrador (por defecto: juan@xtec.cat): " SERVER_ADMIN "juan@xtec.cat"
-#read_and_validate "Introduce el nombre de la carpeta del proyecto (ej: djau): " PROJECT_FOLDER
 
-#INSTALL_DIR="/opt"
-#FULL_PATH="$INSTALL_DIR/$PROJECT_FOLDER"
 VENV_PATH="$FULL_PATH/venv"
 WSGI_PATH="$FULL_PATH/aula/wsgi.py"
 
-echo "☑️ Parámetros definidos."
-echo -e "\n"
-sleep 3
-
-# ESTE PUNTO ES REDUNDANTE PORQUE AHORA $FULL_PATH LO CARGAMOS DE config_vars.sh CON LO QUE TIENE QUE SER VÁLIDO
-echo "--- 2.3 Verificando la existencia del directorio del proyecto ---"
-
-if [ ! -d "$FULL_PATH" ]; then
-    echo "❌ ERROR: No se encuentra el directorio del proyecto esperado en '$FULL_PATH'."
-    echo "Asegúrate de que el script 'install_djau.sh' y 'setup_djau.sh' se hayan ejecutado correctamente."
-    exit 1
-fi
-echo "✅ Directorio del proyecto proporcionado '$FULL_PATH' ha sido encontrado."
+echo -e "${C_EXITO}✅ Parámetros definidos.${RESET}"
 echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
-# 3. HABILITACIÓN DE MÓDULOS Y GENERACIÓN DE CERTIFICADO
+# 2. HABILITACIÓN DE MÓDULOS Y GENERACIÓN DE CERTIFICADO
 # ----------------------------------------------------------------------
 
-echo "========================================================"
-echo "--- 🛡️ 3. CONFIGURACIÓN DE MÓDULOS Y CERTIFICADO SSL ---"
-echo "========================================================"
+echo -e "\n"
+echo -e "${C_CAPITULO}====================================================="
+echo -e "${C_CAPITULO}--- 2. CONFIGURACIÓN DE MÓDULOS Y CERTIFICADO SSL ---"
+echo -e "${C_CAPITULO}=====================================================${RESET}"
 echo -e "\n"
 
-echo "--- 3.1 Habilitación de Módulos de Apache ---"
+echo -e "${C_SUBTITULO}--- 2.1 Habilitación de Módulos de Apache ---${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
+echo -e "\n"
+
 a2enmod wsgi ssl headers rewrite > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al habilitar módulos de Apache (wsgi, ssl, headers, rewrite)."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al habilitar módulos de Apache (wsgi, ssl, headers, rewrite).${RESET}"
+	echo -e "\n"
     exit 1
 fi
-echo "✅ Módulos habilitados: wsgi, ssl, headers, rewrite."
+echo -e "${C_EXITO}✅ Módulos habilitados: wsgi, ssl, headers, rewrite.${RESET}"
 echo -e "\n"
 sleep 3
 
-echo "--- 3.2 Generación de Certificado Self-Signed (para Desarrollo) ---"
+echo -e "${C_SUBTITULO}--- 2.2 Generación de Certificado autofirmados (Self-Signed) normalmente usados para pruebas ---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------------------------------------------------------${RESET}"
+echo -e "\n"
 
 CERT_KEY="/etc/ssl/private/$PROJECT_FOLDER-selfsigned.key"
 CERT_CRT="/etc/ssl/certs/$PROJECT_FOLDER-selfsigned.crt"
@@ -139,33 +143,37 @@ DOMAIN_CLEAN="${DOMAIN_CLEAN#http://}"  # Elimina el prefijo 'http://' (si exist
 DOMAIN_CLEAN="${DOMAIN_CLEAN%/}"        # Elimina la barra '/' final (si existiera)
 
 # Se genera el certificado para evitar errores al activar el vhost SSL
-echo "     -> Generando certificado Self-Signed para $DOMAIN_CLEAN"
+echo -e "${C_INFO}     -> Generando certificado Self-Signed para $DOMAIN_CLEAN${RESET}"
 echo -e "\n"
+
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$CERT_KEY" -out "$CERT_CRT" -subj "/C=ES/ST=Catalonia/L=$LOCALITAT_CLEAN/O=$PROJECT_FOLDER/CN=$DOMAIN_CLEAN" > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al generar el certificado SSL autofirmado."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al generar el certificado SSL autofirmado.${RESET}"
+	echo -e "\n"
     exit 1
 fi
-echo "✅ Certificado Self-Signed (para Desarrollo) generado en $CERT_CRT."
+echo -e "${C_EXITO}✅ Certificado Self-Signed (para Desarrollo) generado en $CERT_CRT.${RESET}"
 echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
-# 4. CREACIÓN DE ARCHIVOS VIRTUAL HOST
+# 3. CREACIÓN DE ARCHIVOS VIRTUAL HOST
 # ----------------------------------------------------------------------
 
-echo "================================================================"
-echo "--- 📝 4. CREACIÓN DE ARCHIVOS DE CONFIGURACIÓN VIRTUAL HOST ---"
-echo "================================================================"
+echo -e "\n"
+echo -e "${C_CAPITULO}============================================================="
+echo -e "${C_CAPITULO}--- 3. CREACIÓN DE ARCHIVOS DE CONFIGURACIÓN VIRTUAL HOST ---"
+echo -e "${C_CAPITULO}=============================================================${RESET}"
 echo -e "\n"
 
 VHOST_DIR="/etc/apache2/sites-available"
 HTTP_CONF="$VHOST_DIR/$PROJECT_FOLDER.conf"
 SSL_CONF="$VHOST_DIR/$PROJECT_FOLDER-ssl.conf"
 
-
-echo "--- 4.1 Creando archivo para acceso por HTTP (Redirección) ---"
+echo -e "${C_SUBTITULO}--- 3.1 Creando archivo para acceso por HTTP (Redirección) ---${RESET}"
+echo -e "${C_SUBTITULO}--------------------------------------------------------------${RESET}"
+echo -e "\n"
 
 cat << EOF | sudo tee "$HTTP_CONF" > /dev/null
 <VirtualHost *:80>
@@ -179,11 +187,14 @@ cat << EOF | sudo tee "$HTTP_CONF" > /dev/null
 </VirtualHost>
 EOF
 
-echo "✅ Archivo HTTP ($HTTP_CONF) creado (Redirección)."
+echo -e "${C_EXITO}✅ Archivo HTTP ($HTTP_CONF) creado (Redirección).${RESET}"
 echo -e "\n"
 sleep 3
 
-echo "--- 4.2 Creando archivo para acceso HTTPS (SSL) ---"
+echo -e "${C_SUBTITULO}--- 3.2 Creando archivo para acceso seguro HTTPS (SSL) ---${RESET}"
+echo -e "${C_SUBTITULO}----------------------------------------------------------${RESET}"
+echo -e "\n"
+
 
 cat << EOF | sudo tee "$SSL_CONF" > /dev/null
 <VirtualHost *:443>
@@ -231,14 +242,15 @@ cat << EOF | sudo tee "$SSL_CONF" > /dev/null
 </VirtualHost>
 EOF
 
-echo "✅ Archivo SSL ($SSL_CONF) creado (Servicio principal)."
+echo -e "${C_EXITO}✅ Archivo SSL ($SSL_CONF) creado (Servicio principal).${RESET}"
 echo -e "\n"
 sleep 5
 
 
-echo "==============================================="
-echo "--- 5 Ajuste de Permisos de www-data (WSGI) ---"
-echo "==============================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}================================================"
+echo -e "${C_CAPITULO}--- 4. AJUSTE DE PERMISOS DE www-data (WSGI) ---"
+echo -e "${C_CAPITULO}================================================${RESET}"
 echo -e "\n"
 
 # 1. Aseguramos que www-data pueda leer y ejecutar todos los directorios (X) y archivos (r) 
@@ -246,54 +258,66 @@ echo -e "\n"
 #    Esto es crucial ya que el VENV fue creado por el usuario '$APP_USER'.
 chmod -R a+rX "$VENV_PATH"
 chmod -R a+rX "$FULL_PATH"
-echo "☑️ Permisos de lectura/ejecución asignados al Venv y código fuente."
+echo -e "${C_EXITO}✅ Permisos de lectura/ejecución asignados al Venv y código fuente.${RESET}"
 echo -e "\n"
 
 # 2. Permisos para la CARPETA DE DATOS PRIVADOS (Necesita Lectura/Escritura)
 # Asignamos el grupo 'www-data' y damos permisos de lectura/escritura (770) al grupo.
 chown -R "$APP_USER":www-data "$PATH_DADES_PRIVADES"
 chmod 770 "$PATH_DADES_PRIVADES"
-echo "✅ Permisos para datos privados asignados a '$APP_USER':www-data (chmod 770)."
+echo -e "${C_EXITO}✅ Permisos para datos privados asignados a '$APP_USER':www-data (chmod 770).${RESET}"
 echo -e "\n"
 
 # 3. Asignar el grupo www-data al proyecto (por si acaso, el propietario sigue siendo $APP_USER)
 chown -R "$APP_USER":www-data "$FULL_PATH"
 chmod -R g+rx "$FULL_PATH"
-echo -e "☑️ Grupo 'www-data' asignado al directorio del proyecto.\n"
+echo -e "${C_EXITO}✅️ Grupo 'www-data' asignado al directorio del proyecto.${RESET}"
 echo -e "\n\n"
 
-echo -e "✅ Permisos de lectura/ejecución y grupo www-data asignados al proyecto y Venv.\n"
-
-
-# ----------------------------------------------------------------------
-# 6. HABILITACIÓN DE VIRTUAL HOSTS Y REINICIO
-# ----------------------------------------------------------------------
-
-echo "========================================================"
-echo "--- 🚀 6. HABILITACIÓN DE SITIOS Y RECARGA DE APACHE ---"
-echo "========================================================"
+echo -e "${C_EXITO}✅ Permisos de lectura/ejecución y grupo www-data asignados al proyecto y Venv.${RESET}"
 echo -e "\n"
 
-echo "--- 6.1 Deshabilitando Virtual Hosts por defecto ---"
+# ----------------------------------------------------------------------
+# 5. HABILITACIÓN DE VIRTUAL HOSTS Y REINICIO
+# ----------------------------------------------------------------------
+
+echo -e "\n"
+echo -e "${C_CAPITULO}====================================================="
+echo -e "${C_CAPITULO}--- 5. HABILITACIÓN DE SITIOS Y RECARGA DE APACHE ---"
+echo -e "${C_CAPITULO}=====================================================${RESET}"
+echo -e "\n"
+
+echo -e "${C_SUBTITULO}--- 5.1 Deshabilitando Virtual Hosts por defecto ---${RESET}"
+echo -e "${C_SUBTITULO}----------------------------------------------------${RESET}"
+echo -e "\n"
+
 a2dissite 000-default.conf > /dev/null 2>&1
-echo "☑️ Vhost por defecto deshabilitado."
+
+echo -e "${C_EXITO}✅ Vhost por defecto deshabilitado.${RESET}"
 echo -e "\n"
 sleep 1
 
-echo "--- 6.2 Habilitando los nuevos Virtual Hosts ---"
+echo -e "${C_SUBTITULO}--- 5.2 Habilitando los nuevos Virtual Hosts ---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------${RESET}"
+echo -e "\n"
+
 a2ensite "$PROJECT_FOLDER.conf" > /dev/null
+echo -e "${C_EXITO}✅ Vhost HTTP (80) habilitado y listo para redireccionar.${RESET}"
+
 a2ensite "$PROJECT_FOLDER-ssl.conf" > /dev/null
-echo "☑️ Vhosts de la aplicación habilitados."
+echo -e "${C_EXITO}✅ Vhost HTTPS (443) habilitado. Servidor web listo.${RESET}"
 echo -e "\n"
 sleep 1
 
-echo "--- 6.3 Recargando Apache para aplicar los cambios ---"
+echo -e "${C_SUBTITULO}--- 5.3 Recargando la configuración del servidor Apache para aplicar los cambios ---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------------------------------------------${RESET}"
 echo -e "\n"
 
 systemctl reload apache2
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al recargar Apache2. Revisa los logs y la sintaxis de los Vhosts."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al recargar Apache2. Revisa los logs y la sintaxis de los Vhosts.${RESET}"
+	echo -e "\n"
     exit 1
 else
 	# Mostrar el estado del servicio para confirmación
@@ -301,29 +325,33 @@ else
 	systemctl status apache2 | grep Loaded
 	systemctl status apache2 | grep Active
 	echo -e "\n"
-	echo "✅ Recarga de Apache2 completada sin errores."
+	echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
 fi
 sleep 5
 
+
 echo -e "\n"
-echo "========================================================="
-echo "--- 🟢 FASE 2. CONFIGURACIÓN DE APACHE FINALIZADA 🟢 ---"
-echo ""
-echo "La aplicación debería estar disponible en:"
-echo "$DOMAIN_NAME"
-echo "========================================================="
+echo -e "${C_PRINCIPAL}===================================================================="
+echo -e "${C_PRINCIPAL}--- FASE 2. CONFIGURACIÓN DE APACHE FINALIZADA${RESET} ${CIANO}(setup_apache.sh)${RESET} ${C_PRINCIPAL}---"
+echo -e "${C_PRINCIPAL}====================================================================${RESET}"
 echo -e "\n"
 
+echo -e "${C_INFO}La aplicación debería estar disponible en: ${RESET}${C_SUBTITULO}$DOMAIN_NAME${RESET}"
+echo -e "\n"
 
-echo "--- SIGUIENTE FASE: FASE 3 - TAREAS PROGRAMADAS Y MANTENIMIENTO ---"
+echo -e "${C_INFO}--- SIGUIENTE FASE: FASE 3 - TAREAS PROGRAMADAS Y MANTENIMIENTO ---${RESET}"
 echo -e "\n"
-echo "Para continuar con la automatización de las tareas programadas (CRON) en el servidor, ejecute los siguientes comandos (Copiar/Pegar):"
+
+echo -e "Para continuar con la automatización de las tareas programadas (CRON) en el servidor, ${NEGRITA}ejecute los siguientes comandos (Copiar/Pegar)${RESET}:"
 echo -e "\n"
+
 echo "   1. Cambie al directorio del proyecto:"
-echo "      $ cd \"$SETUP_DIR\""
+echo -e "      \$ ${C_SUBTITULO} cd \"$SETUP_DIR\"${RESET}"
 echo -e "\n"
-echo "   2. Ejecute el script de configuración del servidor web Apache (DEBE SER con sudo):"
-echo "      $ sudo bash setup_cron.sh"
+
+echo "   2. Ejecute el script que configurará las tareas programada (CRON) en el servidor (DEBE SER con sudo):"
+echo -e "      \$ ${C_SUBTITULO} sudo bash setup_cron.sh${RESET}"
 echo -e "\n"
+
 echo "¡Puede proceder con la configuración de las automatizaciones (CRON)"
 echo -e "\n"

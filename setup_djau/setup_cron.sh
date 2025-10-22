@@ -4,80 +4,78 @@
 # DEBE EJECUTARSE con privilegios de root (sudo bash setup_cron.sh)
 # Asume que se ejecuta desde el directorio del proyecto (/opt/djau)
 
-# ----------------------------------------------------------------------
-# 1. DEFINICIONES Y VERIFICACIÓN INICIAL
-# ----------------------------------------------------------------------
+clear
 
-clear 
+# ----------------------------------------------------------------------
+# CARGA DE VARIABLES Y FUNCIONES COMUNES A LOS SCRIPTS DE AUTOMATIZACIÓN
+# ----------------------------------------------------------------------
 
 echo -e "\n"
-echo "======================================================================="
-echo "--- ⏱️ FASE 3: TAREAS PROGRAMADAS Y MANTENIMIENTO setup_cron.sh ⏱️ ---"
-echo "======================================================================="
+echo -e "Ejecutando script setup_cron.sh."
+echo -e "Cargando archivo functions.sh y config_vars.sh."
+echo -e "\n"
+
+# 1. CARGAR LIBRERÍA DE FUNCIONES (Contiene variables de color y read_prompt)
+source "./functions.sh"
+
+# 2. CARGAR VARIABLES DE CONFIGURACIÓN
+CONFIG_FILE="./config_vars.sh"
+
+if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
+    echo -e "${C_EXITO}☑️ Variables de configuración cargadas.${RESET}"
+else
+    # Usar variables de color si están definidas en functions.sh
+    echo -e "${C_ERROR}❌ ERROR: Archivo de configuración ($CONFIG_FILE) no encontrado. Saliendo.${RESET}"
+    exit 1
+fi
+
+# Definiciones de Variables Clave que no existen en config_vars.sh
+LOG_DIR="$FULL_PATH/log" # Directorio para guardar logs
+
+echo -e "\n"
+echo -e "${C_PRINCIPAL}=================================================================="
+echo -e "${C_PRINCIPAL}--- FASE 3: TAREAS PROGRAMADAS Y MANTENIMIENTO${RESET} ${CIANO}(setup_cron.sh)${RESET} ${C_PRINCIPAL}---"
+echo -e "${C_PRINCIPAL}==================================================================${RESET}"
 echo -e "\n"
 
 # Verificación de usuario (solo informativa)
 
 if [ "$(id -u)" -ne 0 ]; then
-    echo "❌ ADVERTENCIA: Este script debe ejecutarse con 'sudo bash setup_cron.sh' para modificar las tareas programadas en crontab."
+    echo -e "${C_ERROR}❌ ADVERTENCIA: Este script debe ejecutarse con 'sudo bash setup_cron.sh' para modificar las tareas programadas en crontab.${RESET}"
     sleep 3
 fi
 
-echo "======================================================================"
-echo "--- 📝 1. PREPARACIÓN DEL ENTORNO Y CARGA DE VARIABLES COMPARTIDAS ---"
-echo "======================================================================"
-echo -e "\n"
-
-# 1.1 Càrrega de variables comunes
-echo "--- 1.1 Carga de funciones y variables comunes per la instalación ---"
-
-# El script se ejecuta desde /opt/djau/setup_djau, por lo que el directorio padre es /opt/djau
-FULL_PATH=$(dirname "$PWD")
-SETUP_DIR="$PWD" # La ubicación actual del script
-
-# 1. CARGAR LIBRERÍA DE FUNCIONES
-source "$SETUP_DIR/functions.sh"
-
-# 2. CARGAR VARIABLES DE CONFIGURACIÓN
-CONFIG_FILE="$SETUP_DIR/config_vars.sh"
-
-if [ -f "$CONFIG_FILE" ]; then
-    source "$CONFIG_FILE"
-    echo "☑️ Variables de configuración cargadas desde $CONFIG_FILE."
-else
-    echo "❌ ERROR: Archivo de configuración ($CONFIG_FILE) no encontrado. Saliendo."
-    exit 1
-fi
-
-echo -e "\n"
-
-# Definiciones de Variables Clave que no existen en config_vars.sh
-
-LOG_DIR="$FULL_PATH/log" # Directorio para guardar logs
-
 
 # ----------------------------------------------------------------------
-# 2. CREACIÓN DEL SCRIPT DE BACKUP 
+# 1. CREACIÓN DEL SCRIPT DE BACKUP 
 # ----------------------------------------------------------------------
 
-echo "==============================================================================================================="
-echo "--- 📝 2. CREACIÓN Y CONFIGURACIÓN DEL SCRIPT QUE HARÁ LAS COPIAS DE SEGURIDAD DE LA BASE DE DATOS (BACKUP) ---"
-echo "==============================================================================================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}============================================================================================================"
+echo -e "${C_CAPITULO}--- 1. CREACIÓN Y CONFIGURACIÓN DEL SCRIPT QUE HARÁ LAS COPIAS DE SEGURIDAD DE LA BASE DE DATOS (BACKUP) ---"
+echo -e "${C_CAPITULO}============================================================================================================${RESET}"
 echo -e "\n"
 
 NOM_SCRIPT_BACKUP="backup-bd-djau.sh"
 BACKUP_SCRIPT="$FULL_PATH/$NOM_SCRIPT_BACKUP"
 BACKUP_DIR="$FULL_PATH/djauBK/"
 
-echo "--- 2.1 Creando el directorio de backups ---"
+
+echo -e "${C_SUBTITULO}--- 1.1 Creando el directorio de backups ---${RESET}"
+echo -e "${C_SUBTITULO}--------------------------------------------${RESET}"
+echo -e "\n"
+
 mkdir -p "$BACKUP_DIR"
 chown "$APP_USER":"$APP_USER" "$BACKUP_DIR"
-echo "✅ Directorio para las copias de seguridad (backup) '$BACKUP_DIR' creado."
+echo -e "${C_EXITO}✅ Directorio para las copias de seguridad (backup) '$BACKUP_DIR' creado.${RESET}"
 echo -e "\n"
 sleep 3
 
+echo -e "${C_SUBTITULO}--- 1.2 Creando el archivo${RESET} $(CIANO)'$BACKUP_SCRIPT'${RESET} ${C_SUBTITULO}---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
+echo -e "\n"
 
-echo "--- 2.2 Creando el archivo '$BACKUP_SCRIPT' ---"
 cat << EOF > "$BACKUP_SCRIPT"
 #!/bin/bash
 # Script de backup de PostgreSQL (Necesita permisos NOPASSWD para pg_dump instalados con el script install_app.sh)
@@ -116,17 +114,22 @@ EOF
 # Asignar propietario y permisos de ejecución
 chown "$APP_USER":"$APP_USER" "$BACKUP_SCRIPT"
 chmod +x "$BACKUP_SCRIPT"
-echo "✅ Script de backup creado ($BACKUP_SCRIPT) y permisos asignados a '$APP_USER'."
+echo -e "${C_EXITO}✅ Script de backup creado${RESET} ${C_INFO}($BACKUP_SCRIPT)${RESET} ${C_EXITO}y permisos asignados a${RESET} ${C_INFO}'$APP_USER'.${RESET}"
 echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
-# 3. GENERACIÓN DE TAREAS CRON
+# 2. GENERACIÓN DE TAREAS CRON
 # ----------------------------------------------------------------------
 
-echo "================================================================="
-echo "--- 🚀 3. GENERACIÓN DE TAREAS CRON PARA LOS USUARIOS ---"
-echo "================================================================="
+echo -e "\n"
+echo -e "${C_CAPITULO}================================================="
+echo -e "${C_CAPITULO}--- 2. GENERACIÓN DE TAREAS PROGRMADAS (CRON) ---"
+echo -e "${C_CAPITULO}=================================================${RESET}"
+echo -e "\n"
+
+echo -e "${C_SUBTITULO}--- 2.1 Directorio de logs${RESET} $(CIANO)($LOG_DIR)${RESET} ${C_SUBTITULO}creado ---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------${RESET}"
 echo -e "\n"
 
 # Crear el directorio de logs si no existe, y darle permisos a www-data y djau
@@ -134,7 +137,8 @@ mkdir -p "$LOG_DIR"
 chown "$APP_USER":www-data "$LOG_DIR"
 chmod 775 "$LOG_DIR"
 
-echo "--- 3.1 Directorio de logs ($LOG_DIR) creado ---"
+echo -e "${C_EXITO}✅ Directorio de logs${RESET} $(CIANO)($LOG_DIR)${RESET} ${C_EXITO}creado y permisos asignados a${RESET} ${C_INFO}'$APP_USER' y www-data.${RESET}"
+
 sleep 3
 
 # La sintaxis de los comandos en crontab cambia ligeramente para adaptarse a la ejecución directa
@@ -171,40 +175,46 @@ cat <<- CRONEOF > "$CRONTAB_FILE"
 
 CRONEOF
 # ...
-echo "--- 3.2 Archivo temporal para Crontab generado para '$APP_USER' y 'www-data' ---"
+echo -e"\n"
+echo -e "${C_EXITO}✅ Archivo temporal para Crontab generado para${RESET} ${C_INFO}'$APP_USER' y www-data.${RESET}"
 sleep 3
 
 # ----------------------------------------------------------------------
-# 4. INSTALAR CRONTAB
+# 3. INSTALAR CRONTAB
 # ----------------------------------------------------------------------
 
 echo -e "\n"
-echo "================================================================="
-echo "--- 🚀 4. INSTALACIÓN DE TAREAS CRON PARA CADA USUARIO ---"
-echo "================================================================="
+echo -e "${C_CAPITULO}======================================================="
+echo -e "${C_CAPITULO}--- 3. INSTALACIÓN DE TAREAS CRON PARA CADA USUARIO ---"
+echo -e "${C_CAPITULO}=======================================================${RESET}"
 echo -e "\n"
 
-echo "--- 4.1 Instalando crontab para el usuario '$APP_USER' (Backup) ---"
+echo -e "${C_SUBTITULO}--- 3.1 Instalando crontab para el usuario${RESET} ${C_INFO}'$APP_USER'${RESET} ${C_SUBTITULO} (Backup) ---${RESET}"
+echo -e "${C_SUBTITULO}--------------------------------------------------------------${RESET}"
+echo -e "\n"
 
 # Leemos sólo la tarea 1
 head -n 6 "$CRONTAB_FILE" | tail -n 2 | crontab -u "$APP_USER" -
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al instalar la tarea de backup para '$APP_USER'."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al instalar la tarea de backup para '$APP_USER'.${RESET}"
 else
-    echo "✅ Tarea de backup instalada en crontab de '$APP_USER'."
+    echo -e "${C_EXITO}✅ Tarea de backup instalada en crontab de '$APP_USER'.${RESET}"
 fi
 echo -e "\n"
 sleep 3
 
-echo "--- 4.2 Instalando crontab para el usuario 'www-data' (Scripts) ---"
+echo -e "${C_SUBTITULO}--- 3.2 Instalando crontab para el usuario${RESET} ${C_INFO}'www-data'${RESET} ${C_SUBTITULO} (Scripts) ---${RESET}"
+echo -e "${C_SUBTITULO}-------------------------------------------------------------------${RESET}"
+echo -e "\n"
+
 # Leemos las tareas 2, 3, 4, 5 (las líneas restantes)
 tail -n +8 "$CRONTAB_FILE" | crontab -u www-data -
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al instalar las tareas para 'www-data'."
+    echo -e "${C_ERROR}❌ ERROR: Fallo al instalar las tareas para 'www-data'.${RESET}"
 else
-    echo "✅ Tareas de scripts instaladas en crontab de 'www-data'."
+    echo -e "${C_EXITO}✅ Tareas de scripts instaladas en crontab de 'www-data'.${RESET}"
 fi
 sleep 3
 
@@ -212,22 +222,14 @@ sleep 3
 rm "$CRONTAB_FILE"
 
 echo -e "\n"
-echo "=============================================================="
-echo "--- 🟢 FASE 3: CONFIGURACIÓN DE CRON FINALIZADA 🟢 ---"
-echo "La instalación de las tareas programadas han sido completadas."
-echo "=============================================================="
+echo -e "${C_PRINCIPAL}================================================================"
+echo -e "${C_PRINCIPAL}--- FASE 3: CONFIGURACIÓN DE CRON FINALIZADA${RESET} ${CIANO}(setup_cron.sh)${RESET} ${C_PRINCIPAL}---"
+echo -e "${C_PRINCIPAL}================================================================${RESET}"
 echo -e "\n"
 echo "Para comprobar si las tareas han quedado instaladas teclee:"
-echo "    $ sudo crontab -u djau -l"
-echo "    $ sudo crontab -u www-data -l"
+echo -e "    $ ${C_SUBTITULO}sudo crontab -u djau -l${RESET}"
+echo -e "    $ ${C_SUBTITULO}sudo crontab -u www-data -l${RESET}"
 echo -e "\n\n"
-
-
-# Definiciones de Color (se asume que están definidas al inicio del script)
-RESET='\e[0m'
-VERDE='\e[32m'
-NEGRITA='\e[1m'
-C_EXITO="${NEGRITA}${VERDE}"
 
 echo -e "\n"
 echo -e "${C_EXITO}===============================================================${RESET}"
