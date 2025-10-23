@@ -261,6 +261,7 @@ echo -e "\n"
 
 # 3. Instalar las dependencias necesarias (Solo se ejecuta si el usuario continuó o no hubo errores)
 echo -e "${C_INFO}ℹ️ Instalando dependencias requeridas...${RESET}"
+echo -e "\n"
 
 apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql
 
