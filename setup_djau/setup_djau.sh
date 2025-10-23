@@ -50,7 +50,6 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- Solicitud de Parámetros de PostgreSQL ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
-echo -e "\n"
 
 read_prompt "Introduzca el NOMBRE de la BASE DE DATOS (por defecto: djau_db): " DB_NAME "djau_db"
 read_prompt "Introduzca el USUARIO de la BD (por defecto: djau): " DB_USER "djau"
@@ -72,14 +71,13 @@ while true; do
 done
 echo -e "\n"
 echo -e "${C_EXITO}☑️ Parámetros de la Base de Datos definidos.${RESET}"
-echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
 # 2. CONFIGURACIÓN DEL ENTORNO VIRTUAL Y CLAVE SECRETA
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}===================================================="
 echo -e "${C_CAPITULO}--- 2. PREPARACIÓN DEL ENTORNO VIRTUAL DE DJANGO ---"
 echo -e "${C_CAPITULO}====================================================${RESET}"
@@ -87,7 +85,6 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 2.1 Creando Entorno Virtual (venv) e instalando requerimientos ---${RESET}"
 echo -e "${C_SUBTITULO}----------------------------------------------------------------------${RESET}"
-echo -e "\n"
 
 cd "$FULL_PATH"
 
@@ -106,18 +103,16 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "\n"
 echo -e "${C_EXITO}✅ Entorno virtual creado y paquetes instalados.${RESET}"
-echo -e "\n\n"
+echo -e "\n"
 sleep 3
 
 echo -e "${C_SUBTITULO}--- 2.2 Generando Clave Secreta de Django ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
-echo -e "\n"
 
 SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
 
 if [ ${#SECRET_KEYPASS} -lt 32 ]; then
     echo -e "${C_ERROR}❌ ERROR: No se pudo generar una clave secreta válida. Saliendo.${RESET}"
-	echo -e "\n"
     deactivate
 	echo -e "\n"
     exit 1
@@ -135,7 +130,7 @@ REPLACEMENT_CHARS='------'
 SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr "$FILTER_CHARS" "$REPLACEMENT_CHARS")
 
 echo -e "${C_EXITO}✅ Clave secreta generada automáticamente.${RESET}"
-echo -e "\n\n"
+
 
 sleep 3
 
@@ -143,7 +138,7 @@ sleep 3
 # 3. CREACIÓN Y CONFIGURACIÓN DE POSTGRESQL
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}==============================================================="
 echo -e "${C_CAPITULO}--- 3. CREACIÓN Y CONFIGURACIÓN DE BASE DE DATOS POSTGRESQL ---"
 echo -e "${C_CAPITULO}===============================================================${RESET}"
@@ -168,7 +163,6 @@ sudo -u postgres psql -t -f "$SQL_FILE" > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al configurar PostgreSQL. Revisa la regla NOPASSWD o la sintaxis SQL.${RESET}"
-	echo -e "\n"
     rm "$SQL_FILE"
     deactivate
 	echo -e "\n"
@@ -178,14 +172,13 @@ rm "$SQL_FILE"
 
 echo -e "\n"
 echo -e "${C_EXITO}✅ Base de datos '$DB_NAME' y usuario '$DB_USER' configurados en PostgreSQL.${RESET}"
-echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
 # 4. PERSONALIZACIÓN DEL ARCHIVO settings_local.py
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}========================================================"
 echo -e "${C_CAPITULO}--- 4. PERSONALIZACIÓN DEL ARCHIVO${RESET} ${CIANO}settings_local.py${RESET} ${C_CAPITULO}---"
 echo -e "${C_CAPITULO}========================================================${RESET}"
@@ -194,7 +187,6 @@ echo -e "\n"
 # --- 4.1 Solicitud de Parámetros de la Aplicación (Usuario) ---
 echo -e "${C_SUBTITULO}--- 4.1 Parámetros de la Aplicación ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------${RESET}"
-echo -e "\n"
 
 read_prompt "Introduzca el nombre del CENTRO EDUCATIVO (por defecto: Centre de Demo): " NOM_CENTRE "Centre de Demo"
 read_prompt "Introduzca la LOCALIDAD del centro educativo (por defecto: Badia del Vallés): " LOCALITAT "Badia del Vallés"
@@ -208,7 +200,6 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 4.2 Parámetros de Correo SMTP (Google/App Password) ---${RESET}"
 echo -e "${C_SUBTITULO}-----------------------------------------------------------${RESET}"
-echo -e "\n"
 
 echo -e "${C_INFO}ℹ️ Para el envío de correos se requiere una contraseña de aplicación de Google.${RESET}"
 echo -e "    La información se puede encontrar aquí: ${C_SUBTITULO}'https://support.google.com/mail/answer/185833?hl=ca'${RESET}\n"
@@ -219,7 +210,7 @@ while true; do
     read -sp "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
     echo
     read -sp "Repita la CONTRASEÑA: " EMAIL_HOST_PASS2
-    echo 
+    echo -e "\n" 
 
     if [ -z "$EMAIL_HOST_PASS" ] || [ -z "$EMAIL_HOST_PASS2" ]; then
         echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
@@ -230,11 +221,8 @@ while true; do
     fi
 done
 
-echo -e "\n"
-
 read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
 
-echo -e "\n"
 echo -e "${C_EXITO}☑️ Parámetros SMTP definidos.${RESET}\n"
 echo -e "\n"
 
@@ -243,14 +231,12 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 4.3 Aplicando Sustituciones con 'sed' ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
-echo -e "\n"
 
 SETTINGS_LOCAL_SAMPLE_FILE="aula/settings_local.sample"
 SETTINGS_LOCAL_FINAL_FILE="aula/settings_local.py"
 
 if [ ! -f "$SETTINGS_LOCAL_SAMPLE_FILE" ]; then
     echo -e "${C_ERROR}❌ ERROR: No se encontró el archivo sample en '$SETTINGS_LOCAL_SAMPLE_FILE'. Saliendo.${RESET}"
-	echo -e "\n"
     deactivate
 	echo -e "\n"
     exit 1
@@ -292,14 +278,13 @@ sed -i "s/^SESSION_COOKIE_SECURE=False/SESSION_COOKIE_SECURE=True/" "$SETTINGS_L
 sed -i "s/^CSRF_COOKIE_SECURE=False/CSRF_COOKIE_SECURE=True/" "$SETTINGS_LOCAL_FINAL_FILE"
 
 echo -e "${C_EXITO}✅ settings_local.py configurado y personalizado.${RESET}"
-echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
 # 5. MIGRACIONES Y CONFIGURACIÓN DE USUARIOS
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}==============================================================="
 echo -e "${C_CAPITULO}--- 5. APLICACIÓN DE MIGRACIONES Y CONFIGURACIÓN DE USUARIO ---"
 echo -e "${C_CAPITULO}===============================================================${RESET}"
@@ -307,7 +292,7 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 5.1 Aplicando Migraciones de Base de Datos ---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------------${RESET}"
-echo -e "\n"
+
 
 python manage.py migrate --noinput
 
@@ -325,7 +310,7 @@ sleep 3
 
 echo -e "${C_SUBTITULO}--- 5.2 Ejecutando el script${RESET} ${CIANO}fixtures.sh${RESET} ${C_SUBTITULO}---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------${RESET}"
-echo -e "\n"
+
 
 if [ -f "scripts/fixtures.sh" ]; then
     bash scripts/fixtures.sh
@@ -333,9 +318,9 @@ if [ -f "scripts/fixtures.sh" ]; then
     if [ $? -ne 0 ]; then
         echo -e "${C_ERROR}❌ Advertencia: Fallo al ejecutar 'scripts/fixtures.sh'.${RESET}"
     fi
-    echo -e "${C_EXITO}✅ Fixtures ejecutados.${RESET}\n"
+    echo -e "${C_EXITO}✅ Fixtures ejecutados.${RESET}"
 else
-    echo -e "${C_ERROR}❌ scripts/fixtures.sh no encontrado. Paso omitido.${RESET}\n"
+    echo -e "${C_ERROR}❌ scripts/fixtures.sh no encontrado. Paso omitido.${RESET}"
 fi
 
 echo -e "\n"
@@ -343,7 +328,7 @@ sleep 3
 
 echo -e "${C_SUBTITULO}--- 5.3 Creación de Superusuario 'admin' en la aplicación DJANGO ---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------------------------------${RESET}"
-echo -e "\n"
+
 
 # 1. SOLICITAR EL EMAIL
 read_prompt "Introduce el CORREO ELECTRÓNICO para el superusuario 'admin': " ADMIN_EMAIL
@@ -354,7 +339,7 @@ while true; do
     read -sp "Introduzca la CONTRASEÑA para el superusuario 'admin': " ADMIN_PASS
     echo
     read -sp "Repita la CONTRASEÑA: " ADMIN_PASS2
-    echo 
+    echo -e "\n" 
 
     if [ -z "$ADMIN_PASS" ] || [ -z "$ADMIN_PASS2" ]; then
         echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
@@ -364,8 +349,6 @@ while true; do
         break
     fi
 done
-
-echo -e "\n"
 
 echo -e "${C_INFO}--- Creando Superusuario 'admin' automáticamente ---${RESET}\n"
 
@@ -416,7 +399,7 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 5.4 Creando Grupos y asignando a 'admin' ---${RESET}"
 echo -e "${C_SUBTITULO}------------------------------------------------${RESET}"
-echo -e "\n"
+
 
 PYTHON_SCRIPT="temp_setup_groups.py"
 
@@ -443,14 +426,13 @@ fi
 rm "$PYTHON_SCRIPT"
 
 echo -e "${C_EXITO}✅ Grupos configurados.${RESET}"
-echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
 # 6. RECOLECCIÓN DE ESTÁTICOS Y FINALIZACIÓN
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}============================================"
 echo -e "${C_CAPITULO}--- 6. RECOLECCIÓN DE ARCHIVOS ESTÁTICOS ---"
 echo -e "${C_CAPITULO}============================================${RESET}"
@@ -460,14 +442,12 @@ python manage.py collectstatic -c --no-input
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al recolectar archivos estáticos.${RESET}"
-	echo -e "\n"
     deactivate
 	echo -e "\n"
     exit 1
 fi
 echo -e "\n"
 echo -e "${C_EXITO}✅ Archivos estáticos recolectados.${RESET}"
-echo -e "\n"
 
 deactivate
 sleep 3
@@ -476,7 +456,7 @@ sleep 3
 # 7. GUARDAR VARIABLES EN config_vars.sh QUE SERÁN NECESARIAS
 # ===================================================================
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}============================================================================================"
 echo -e "${C_CAPITULO}--- 7. ACTUALIZACIÓN DEL ARCHIVO DE VARIABLES COMUNES PARA LOS SCRIPTS DE AUTOMATIZACIÓN ---"
 echo -e "${C_CAPITULO}============================================================================================${RESET}"

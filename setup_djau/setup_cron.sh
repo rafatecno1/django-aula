@@ -37,7 +37,6 @@ echo -e "\n"
 echo -e "${C_PRINCIPAL}=================================================================="
 echo -e "${C_PRINCIPAL}--- FASE 3: TAREAS PROGRAMADAS Y MANTENIMIENTO${RESET} ${CIANO}(setup_cron.sh)${RESET} ${C_PRINCIPAL}---"
 echo -e "${C_PRINCIPAL}==================================================================${RESET}"
-echo -e "\n"
 
 # Verificación de usuario (solo informativa)
 
@@ -51,7 +50,7 @@ fi
 # 1. CREACIÓN DEL SCRIPT DE BACKUP 
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}============================================================================================================"
 echo -e "${C_CAPITULO}--- 1. CREACIÓN Y CONFIGURACIÓN DEL SCRIPT QUE HARÁ LAS COPIAS DE SEGURIDAD DE LA BASE DE DATOS (BACKUP) ---"
 echo -e "${C_CAPITULO}============================================================================================================${RESET}"
@@ -64,7 +63,6 @@ BACKUP_DIR="$FULL_PATH/djauBK/"
 
 echo -e "${C_SUBTITULO}--- 1.1 Creando el directorio de backups ---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------${RESET}"
-echo -e "\n"
 
 mkdir -p "$BACKUP_DIR"
 chown "$APP_USER":"$APP_USER" "$BACKUP_DIR"
@@ -72,9 +70,8 @@ echo -e "${C_EXITO}✅ Directorio para las copias de seguridad (backup) '$BACKUP
 echo -e "\n"
 sleep 3
 
-echo -e "${C_SUBTITULO}--- 1.2 Creando el archivo${RESET} $(CIANO)'$BACKUP_SCRIPT'${RESET} ${C_SUBTITULO}---${RESET}"
+echo -e "${C_SUBTITULO}--- 1.2 Creando el archivo${RESET} ${CIANO}'$BACKUP_SCRIPT'${RESET} ${C_SUBTITULO}---${RESET}"
 echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
-echo -e "\n"
 
 cat << EOF > "$BACKUP_SCRIPT"
 #!/bin/bash
@@ -115,86 +112,99 @@ EOF
 chown "$APP_USER":"$APP_USER" "$BACKUP_SCRIPT"
 chmod +x "$BACKUP_SCRIPT"
 echo -e "${C_EXITO}✅ Script de backup creado${RESET} ${C_INFO}($BACKUP_SCRIPT)${RESET} ${C_EXITO}y permisos asignados a${RESET} ${C_INFO}'$APP_USER'.${RESET}"
-echo -e "\n"
 sleep 3
 
 # ----------------------------------------------------------------------
 # 2. GENERACIÓN DE TAREAS CRON
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}================================================="
 echo -e "${C_CAPITULO}--- 2. GENERACIÓN DE TAREAS PROGRMADAS (CRON) ---"
 echo -e "${C_CAPITULO}=================================================${RESET}"
 echo -e "\n"
 
-echo -e "${C_SUBTITULO}--- 2.1 Directorio de logs${RESET} $(CIANO)($LOG_DIR)${RESET} ${C_SUBTITULO}creado ---${RESET}"
-echo -e "${C_SUBTITULO}------------------------------------------------${RESET}"
-echo -e "\n"
+echo -e "${C_SUBTITULO}--- 2.1 Directorio de logs${RESET} ${CIANO}($LOG_DIR)${RESET} ${C_SUBTITULO}creado ---${RESET}"
+echo -e "${C_SUBTITULO}-----------------------------------------------------${RESET}"
 
 # Crear el directorio de logs si no existe, y darle permisos a www-data y djau
 mkdir -p "$LOG_DIR"
 chown "$APP_USER":www-data "$LOG_DIR"
 chmod 775 "$LOG_DIR"
 
-echo -e "${C_EXITO}✅ Directorio de logs${RESET} $(CIANO)($LOG_DIR)${RESET} ${C_EXITO}creado y permisos asignados a${RESET} ${C_INFO}'$APP_USER' y www-data.${RESET}"
-
+echo -e "${C_EXITO}✅ Directorio de logs${RESET} ${C_INFO}($LOG_DIR)${RESET} ${C_EXITO}creado y permisos asignados a${RESET} ${C_INFO}'$APP_USER'${RESET} ${C_EXITO}y${RESET} ${C_INFO}www-data.${RESET}"
+echo -e "\n"
 sleep 3
 
-# La sintaxis de los comandos en crontab cambia ligeramente para adaptarse a la ejecución directa
-CRONTAB_FILE="/tmp/crontab_${PROJECT_FOLDER}.tmp"
+# =====================================================================
+# CREACIÓN DE ARCHIVOS TEMPORALES SEPARADOS PARA CRONTAB
+# =====================================================================
 
-# Crear el contenido del crontab
-# NOTA: Se usa el comando 'bash -c' para que CRON interprete correctamente las barras invertidas
-# y las variables de fecha (`date`).
-# setup_cron.sh - Bloque de Generación de Crontab (Asegúrate de usar TAB para la indentación)
+CRONTAB_FILE_APP_USER="/tmp/crontab_${PROJECT_FOLDER}_app.tmp"
+CRONTAB_FILE_WWW_DATA="/tmp/crontab_${PROJECT_FOLDER}_www.tmp"
 
-cat <<- CRONEOF > "$CRONTAB_FILE"
+# --- 2.2 Archivo Temporal para el usuario de la aplicación ($APP_USER) ---
+echo -e "${C_SUBTITULO}--- 2.2 Generando archivo temporal para el usuario '$APP_USER' ---${RESET}"
+echo -e "${C_SUBTITULO}------------------------------------------------------------------${RESET}"
+
+cat <<- CRONEOF_APP > "$CRONTAB_FILE_APP_USER"
 # =================================================================
 # TAREAS PROGRAMADAS PARA DJANGO-AULA ($PROJECT_FOLDER)
+# USUARIO: $APP_USER
 # =================================================================
 
-# Tarea 1: Backup de Base de Datos (EJECUTADO COMO USUARIO '$APP_USER')
+# Tarea 1: Backup de Base de Datos (Ejecución cada 20 minutos)
+# Utiliza el script '$BACKUP_SCRIPT' generado en el paso 1.
 	0,20,40 * * * * $BACKUP_SCRIPT >> $LOG_DIR/backup.log 2>&1
 
-# Tarea 2: Notificación a familias
-# EJECUTADO COMO USUARIO www-data
+CRONEOF_APP
+
+echo -e "${C_EXITO}☑️ Archivo temporal para backup ($CRONTAB_FILE_APP_USER) generado.${RESET}"
+echo -e "\n"
+sleep 2
+
+# --- 2.3 Archivo Temporal para el usuario www-data ---
+echo -e "${C_SUBTITULO}--- 2.3 Generando archivo temporal para el usuario 'www-data' ---${RESET}"
+echo -e "${C_SUBTITULO}-----------------------------------------------------------------${RESET}"
+
+cat <<- CRONEOF_WWW > "$CRONTAB_FILE_WWW_DATA"
+# =================================================================
+# TAREAS PROGRAMADAS PARA DJANGO-AULA ($PROJECT_FOLDER)
+# USUARIO: www-data
+# =================================================================
+
+# Tarea 2: Notificación a familias (Horario escolar, Lunes a Viernes)
 	42 8,9,10,11,12,13,14,15,16,17,18,19,20,21 * * 1-5 bash -c "$FULL_PATH/scripts/notifica_families.sh >> $LOG_DIR/notifica_families_\`date +\%Y_\%m_\%d\`.log 2>&1"
 
-# Tarea 3: Preescritura de incidencias
-# EJECUTADO COMO USUARIO www-data
+# Tarea 3: Preescritura de incidencias (Medianoche, Lunes a Viernes)
 	41 00 * * 1-5 bash -c "$FULL_PATH/scripts/preescriu_incidencies.sh >> $LOG_DIR/prescriu_incidencies_\`date +\%Y_\%m_\%d\`.log 2>&1"
 
-# Tarea 4: Sincronización de presencia
-# EJECUTADO COMO USUARIO www-data
+# Tarea 4: Sincronización de presencia (Cada 30 minutos, Lunes a Viernes)
 	20,50 * * * 1-5 bash -c "$FULL_PATH/scripts/sortides_sincronitza_presencia.sh >> $LOG_DIR/sincro_presencia_\`date +\%Y_\%m_\%d\`.log 2>&1"
 
-# Tarea 5: Aviso a tutores de faltas
-# EJECUTADO COMO USUARIO www-data
+# Tarea 5: Aviso a tutores de faltas (Madrugada, Martes, Jueves, Sábado)
 	30 2 * * 2,4,6 bash -c "$FULL_PATH/scripts/avisa_tutor_faltes.sh >> $LOG_DIR/avisa_tutor_faltes_\`date +\%Y_\%m_\%d\`.log 2>&1"
 
-CRONEOF
-# ...
-echo -e"\n"
-echo -e "${C_EXITO}✅ Archivo temporal para Crontab generado para${RESET} ${C_INFO}'$APP_USER' y www-data.${RESET}"
+CRONEOF_WWW
+
+echo -e "${C_EXITO}☑️ Archivo temporal para scripts ($CRONTAB_FILE_WWW_DATA) generado.${RESET}"
 sleep 3
 
 # ----------------------------------------------------------------------
-# 3. INSTALAR CRONTAB
+# 3. INSTALACIÓN DE TAREAS CRON
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}======================================================="
 echo -e "${C_CAPITULO}--- 3. INSTALACIÓN DE TAREAS CRON PARA CADA USUARIO ---"
 echo -e "${C_CAPITULO}=======================================================${RESET}"
 echo -e "\n"
 
-echo -e "${C_SUBTITULO}--- 3.1 Instalando crontab para el usuario${RESET} ${C_INFO}'$APP_USER'${RESET} ${C_SUBTITULO} (Backup) ---${RESET}"
+echo -e "${C_SUBTITULO}--- 3.1 Instalando crontab para el usuario${RESET} ${C_INFO}'$APP_USER'${RESET}${C_SUBTITULO} (Backup) ---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------------------------${RESET}"
-echo -e "\n"
 
-# Leemos sólo la tarea 1
-head -n 6 "$CRONTAB_FILE" | tail -n 2 | crontab -u "$APP_USER" -
+# Instalación directa del archivo temporal para APP_USER
+crontab -u "$APP_USER" "$CRONTAB_FILE_APP_USER"
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al instalar la tarea de backup para '$APP_USER'.${RESET}"
@@ -204,12 +214,11 @@ fi
 echo -e "\n"
 sleep 3
 
-echo -e "${C_SUBTITULO}--- 3.2 Instalando crontab para el usuario${RESET} ${C_INFO}'www-data'${RESET} ${C_SUBTITULO} (Scripts) ---${RESET}"
+echo -e "${C_SUBTITULO}--- 3.2 Instalando crontab para el usuario${RESET} ${C_INFO}'www-data'${RESET}${C_SUBTITULO} (Scripts) ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------------------${RESET}"
-echo -e "\n"
 
-# Leemos las tareas 2, 3, 4, 5 (las líneas restantes)
-tail -n +8 "$CRONTAB_FILE" | crontab -u www-data -
+# Instalación directa del archivo temporal para www-data
+crontab -u www-data "$CRONTAB_FILE_WWW_DATA"
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al instalar las tareas para 'www-data'.${RESET}"
@@ -218,31 +227,34 @@ else
 fi
 sleep 3
 
-# Limpieza
-rm "$CRONTAB_FILE"
+# Limpieza de ambos archivos temporales
+rm "$CRONTAB_FILE_APP_USER" "$CRONTAB_FILE_WWW_DATA"
+
 
 echo -e "\n"
 echo -e "${C_PRINCIPAL}================================================================"
 echo -e "${C_PRINCIPAL}--- FASE 3: CONFIGURACIÓN DE CRON FINALIZADA${RESET} ${CIANO}(setup_cron.sh)${RESET} ${C_PRINCIPAL}---"
 echo -e "${C_PRINCIPAL}================================================================${RESET}"
 echo -e "\n"
-echo "Para comprobar si las tareas han quedado instaladas teclee:"
-echo -e "    $ ${C_SUBTITULO}sudo crontab -u djau -l${RESET}"
-echo -e "    $ ${C_SUBTITULO}sudo crontab -u www-data -l${RESET}"
-echo -e "\n\n"
+echo "   Para comprobar si las tareas han quedado instaladas teclee:"
+echo -e "      $ ${C_SUBTITULO}sudo crontab -u djau -l${RESET}"
+echo -e "      $ ${C_SUBTITULO}sudo crontab -u www-data -l${RESET}"
+echo -e "\n"
+
+sleep 3
 
 echo -e "\n"
 echo -e "${C_EXITO}===============================================================${RESET}"
 echo -e "${C_EXITO}--- 🎉 ENHORABUENA: ¡INSTALACIÓN DE DJANGO-AULA COMPLETADA! ---${RESET}"
 echo -e "${C_EXITO}===============================================================${RESET}"
 echo -e "\n"
-echo -e "${NEGRITA}Si ha seguido las 3 fases en el orden correcto, la aplicación ha quedado instalada con éxito.${RESET}"
+echo "Si ha seguido las 3 fases indicadas en el orden correcto y no ha habido errores en el proceso..."
+echo -e "${NEGRITA}La aplicación DJANGO-AULA habrá quedado instalada con éxito.${RESET}"
 echo -e "\n"
-echo "DJANGO-AULA ya está configurada y lista para recibir los datos de su centro educativo."
+echo "A partir de ahora DJANGO-AULA (DjAu) ya está listo para recibir los datos de su centro educativo."
 echo -e "\n"
-echo -e "${NEGRITA}➡️ SIGUIENTE PASO: Carga de Datos y Configuración Final${RESET}"
-echo -e "   Consulte las instrucciones detalladas en la Wiki del proyecto:"
+echo -e "${NEGRITA}➡️ SIGUIENTE PASO: Carga de Datos y Configuración del curso escolar${RESET}"
+echo -e "\n"
+echo -e "   Consulte las instrucciones detalladas para todo el proceso de la carga de datos en la Wiki del proyecto:"
 echo -e "   ${VERDE}https://github.com/ctrl-alt-d/django-aula/tree/master/docs/Wiki${RESET}"
-echo -e "\n"
-echo -e "${C_EXITO}===================================================================================${RESET}"
 echo -e "\n"
