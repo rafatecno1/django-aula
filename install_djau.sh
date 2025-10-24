@@ -265,13 +265,13 @@ fi
 systemctl restart fail2ban
 
 echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
-echo -e "${C_INFO}ℹ️ Puede verificar el estado con: ${C_SUBTITULO}sudo systemctl status fail2ban, $ sudo fail2ban-client status, $ sudo fail2ban-client status sshd, $ sudo tail -f /var/log/fail2ban.log${RESET}"
+echo -e "${C_INFO}ℹ️ Puede verificar el estado con: ${C_SUBTITULO}$ sudo systemctl status fail2ban, $ sudo fail2ban-client status, $ sudo fail2ban-client status sshd, $ sudo tail -f /var/log/fail2ban.log${RESET}"
 echo -e "\n"
 echo -e "${C_INFO}fail2ban-client status${RESET}"
-fail2ban-client status
+sudo fail2ban-client status
 echo -e "\n"
 echo -e "${C_INFO}fail2ban-client status sshd${RESET}"
-fail2ban-client status sshd
+sudo fail2ban-client status sshd
 echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 3.3 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
