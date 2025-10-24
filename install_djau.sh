@@ -225,10 +225,19 @@ fi
 echo -e "\n"
 
 # 3. Instalar las dependencias necesarias (Solo se ejecuta si el usuario continuó o no hubo errores)
-echo -e "${C_INFO}ℹ️ Instalando dependencias del sistema: python3, python3-pip, postgresql, libpq-dev, python3-dev, cron...${RESET}"
+
+
+echo -e "${C_INFO}ℹ️ Instalando dependencias del sistema y utilidades de administración: python3, python3-pip, postgresql, libpq-dev, python3-dev, cron...${RESET}"
 echo -e "\n"
 
-apt-get install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql cron
+# Paquetes de la aplicación: python3, python3-pip, postgresql, libpq-dev, python3-dev, cron
+# Utilidades: nano, htop, btop (si está en repositorios), ncdu
+# Seguridad: fail2ban
+
+# NOTA: btop no está siempre en los repositorios por defecto de Debian/Ubuntu. 
+# Si falla, se puede quitar o el usuario lo instalará por su cuenta.
+
+apt-get install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql cron nano htop btop ncdu fail2ban
 
 if [ $? -ne 0 ]; then
     echo -e "\n"
@@ -243,8 +252,29 @@ echo -e "${C_EXITO}✅ Dependencias del sistema instaladas y sistema actualizado
 echo -e "\n"
 sleep 2
 
+echo -e "${C_SUBTITULO}--- 3.2 Configurando Fail2Ban ---${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------${RESET}"
 
-echo -e "${C_SUBTITULO}--- 3.2 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
+# Copia de la configuración por defecto a local para evitar cambios en la original
+if [ ! -f /etc/fail2ban/jail.local ]; then
+    echo -e "${C_INFO}ℹ️ Creando jail.local para configuración local...${RESET}"
+    cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+fi
+
+# Reiniciar para asegurar que la configuración está activa
+systemctl restart fail2ban
+
+echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
+echo -e "${C_INFO}ℹ️ Puede verificar el estado con: ${C_SUBTITULO}sudo systemctl status fail2ban, $ sudo fail2ban-client status, $ sudo fail2ban-client status sshd, $ sudo tail -f /var/log/fail2ban.log${RESET}"
+echo -e "\n"
+echo -e "${C_INFO}fail2ban-client status${RESET}"
+fail2ban-client status
+echo -e "\n"
+echo -e "${C_INFO}fail2ban-client status sshd${RESET}"
+fail2ban-client status sshd
+echo -e "\n"
+
+echo -e "${C_SUBTITULO}--- 3.3 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------------------------------------------------------${RESET}"
 
 
@@ -267,7 +297,7 @@ echo -e "${C_EXITO}✅ Directorios creados: '$FULL_PATH' y '$PATH_DADES_PRIVADES
 echo -e "\n"
 sleep 2
 
-echo -e "${C_SUBTITULO}--- 3.3 Asignación de Permisos de Archivos ---${RESET}"
+echo -e "${C_SUBTITULO}--- 3.4 Asignación de Permisos de Archivos ---${RESET}"
 echo -e "${C_SUBTITULO}----------------------------------------------${RESET}"
 
 # Permisos para el directorio del proyecto (propiedad del usuario de la app)
@@ -277,7 +307,7 @@ echo -e "\n"
 
 sleep 2
 
-echo -e "${C_SUBTITULO}--- 3.4 Generando y configurando el Locale (ca_ES.utf8) ---${RESET}"
+echo -e "${C_SUBTITULO}--- 3.5 Generando y configurando el Locale (ca_ES.utf8) ---${RESET}"
 echo -e "${C_SUBTITULO}-----------------------------------------------------------${RESET}"
 
 # 1. Generar el locale
