@@ -270,8 +270,8 @@ echo -e "\n"
 echo -e "${C_INFO}systemctl status fail2ban${RESET}"
 sudo systemctl status fail2ban
 echo -e "\n"
-echo -e "${C_INFO}systemctl status sshd${RESET}"
-sudo systemctl status sshd
+echo -e "${C_INFO}fail2ban-client status sshd${RESET}"
+sudo fail2ban-client status sshd
 echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 3.3 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
@@ -329,7 +329,7 @@ echo -e "${C_INFO}ℹ️ Configurando el locale del sistema a 'ca_ES.UTF-8'...${
 sudo update-locale LANG=ca_ES.UTF-8
 
 # 4. Verificación de éxito
-if locale -a | grep -q "ca_es.utf8"; then
+if locale -a | grep -q -i "ca_es.utf8"; then
     echo -e "${C_EXITO}✅ Locale 'ca_ES.utf8' asegurado y configurado correctamente.${RESET}"
 else
     echo -e "${C_ERROR}❌ ADVERTENCIA CRÍTICA: El locale 'ca_ES.utf8' no se pudo generar. Revise manualmente /etc/locale.gen.${RESET}"
