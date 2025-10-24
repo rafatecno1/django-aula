@@ -204,13 +204,16 @@ else
         -out "$CERT_CRT" \
         -subj "/C=ES/ST=Catalonia/L=$LOCALITAT_CLEAN/O=$PROJECT_FOLDER/CN=$DOMAIN_CLEAN" > /dev/null 2>&1
 
-    if [ $? -ne 0 ]; then
-        echo -e "${C_ERROR}❌ ERROR: Fallo al generar el certificado SSL autofirmado.${RESET}"
-    	echo -e "\n"
-        exit 1
-    fi
-    echo -e "${C_EXITO}✅ Certificado Self-Signed (para Desarrollo) generado en $CERT_CRT.${RESET}"
-    echo -e "${C_INFO}⚠️ Advertencia: Los navegadores web mostrarán un mensaje que dirá que el certificado no será de confianza.${RESET}"
+	# USAMOS [ ! -s "$CERT_CRT" ] para verificar que el archivo NO existe O está vacío (tamaño cero)
+	if [ $? -ne 0 ] || [ ! -s "$CERT_CRT" ]; then
+		echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo al generar el certificado SSL autofirmado.${RESET}"
+		echo -e "${C_INFO}ℹ️ El archivo esperado '$CERT_CRT' está ausente o vacío. Revise la instalación de 'openssl' o la entropía del servidor.${RESET}"
+		echo -e "\n"
+		exit 1
+	fi
+	echo -e "${C_EXITO}✅ Certificado Self-Signed (para Desarrollo) generado en $CERT_CRT.${RESET}"
+	sleep 3
+    echo -e "${C_INFO}⚠️ Advertencia: Los navegadores web mostrarán un mensaje que dirá que el certificado no será de confianza porque no lo habrá emitido una entidad certificadora reconocida, sinó que se ha generado en su servidor.${RESET}"
     sleep 3
 fi
 
