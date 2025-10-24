@@ -273,9 +273,15 @@ echo -e "\n"
 echo -e "${C_INFO}systemctl status fail2ban${RESET}"
 sudo systemctl status fail2ban | grep Active
 echo -e "\n"
+sleep 2
+echo -e "${C_INFO}fail2ban-client status${RESET}"
+sudo fail2ban-client status
+echo -e "\n"
+sleep 2
 echo -e "${C_INFO}fail2ban-client status sshd${RESET}"
 sudo fail2ban-client status sshd
 echo -e "\n"
+sleep 2
 
 echo -e "${C_SUBTITULO}--- 3.3 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------------------------------------------------------${RESET}"
