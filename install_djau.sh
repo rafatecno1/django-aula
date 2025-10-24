@@ -194,19 +194,19 @@ echo -e "${C_SUBTITULO}--- 3.1 Instalando dependencias del sistema (Python, Git,
 echo -e "${C_SUBTITULO}---------------------------------------------------------------------------------------------------------------------${RESET}"
 
 # 1. Actualizar la lista de paquetes
-echo -e "${C_INFO}ℹ️ Actualizando la lista de paquetes (apt update)...${RESET}"
+echo -e "${C_INFO}ℹ️ Actualizando la lista de paquetes (apt-get update)...${RESET}"
 echo -e "\n"
-apt update
+apt-get update
 echo -e "\n"
 
 # 2. Actualizar los paquetes existentes
-echo -e "${C_INFO}ℹ️ Actualizando el sistema (apt upgrade -y)...${RESET}"
+echo -e "${C_INFO}ℹ️ Actualizando el sistema (apt-get upgrade -y)...${RESET}"
 echo -e "\n"
-apt upgrade -y
+apt-get upgrade -y
 
 if [ $? -ne 0 ]; then
     echo -e "\n"
-    echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar los paquetes existentes (apt upgrade).${RESET}"
+    echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar los paquetes existentes (apt-get upgrade).${RESET}"
     echo -e "${C_INFO}⚠️ Este fallo puede indicar dependencias rotas o problemas de sistema, pero puede ser un error de red temporal.${RESET}"
     echo -e "\n"
     
@@ -225,14 +225,14 @@ fi
 echo -e "\n"
 
 # 3. Instalar las dependencias necesarias (Solo se ejecuta si el usuario continuó o no hubo errores)
-echo -e "${C_INFO}ℹ️ Instalando dependencias requeridas...${RESET}"
+echo -e "${C_INFO}ℹ️ Instalando dependencias del sistema: python3, python3-pip, postgresql, libpq-dev, python3-dev, cron...${RESET}"
 echo -e "\n"
 
-apt install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql
+apt-get install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql cron
 
 if [ $? -ne 0 ]; then
     echo -e "\n"
-    echo -e "${C_ERROR}❌ ERROR: Fallo CRÍTICO en la instalación de dependencias del sistema (apt install).${RESET}"
+    echo -e "${C_ERROR}❌ ERROR: Fallo CRÍTICO en la instalación de dependencias del sistema (apt-get install).${RESET}"
     echo -e "${C_INFO}ℹ️ No es posible continuar sin estos paquetes. Revise la conexión, el log y ejecute el script de nuevo.${RESET}"
 	echo -e "\n"
     exit 1
