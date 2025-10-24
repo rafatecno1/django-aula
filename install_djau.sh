@@ -14,7 +14,7 @@ FUNCTIONS_URL="https://raw.githubusercontent.com/rafatecno1/django-aula/refs/hea
 FUNCTIONS_FILE="./functions.sh"
 
 echo -e "\n"
-echo "ℹ️ Descargando librería de funciones compartidas ($FUNCTIONS_FILE)..."
+echo "ℹ️ Descargando librería temporal de funciones compartidas ($FUNCTIONS_FILE)..."
 
 # 2. Descargar la librería de funciones usando wget
 # La opción '-O' (mayúscula) fuerza la salida al archivo local especificado.
@@ -22,7 +22,7 @@ echo "ℹ️ Descargando librería de funciones compartidas ($FUNCTIONS_FILE)...
 wget -q -O "$FUNCTIONS_FILE" "$FUNCTIONS_URL"
 
 if [ $? -ne 0 ]; then
-    echo "❌ ERROR: Fallo al descargar el archivo de funciones desde $FUNCTIONS_URL. Saliendo."
+    echo "❌ ERROR: Fallo al descargar el archivo temporal de funciones desde $FUNCTIONS_URL. Saliendo."
     # No podemos usar las variables de color aquí porque aún no se han cargado.
     exit 1
 fi
@@ -39,10 +39,19 @@ source "$FUNCTIONS_FILE"
 
 # Ahora las variables de color ($C_EXITO, $C_ERROR, etc.) y la función read_prompt están disponibles.
 echo -e "\n"
-echo -e "${C_EXITO}✅ Librería de funciones cargada con éxito. Comenzando la instalación...${RESET}"
+echo -e "${C_EXITO}✅ Librería de funciones temporal cargada con éxito.${RESET}"C_INFO
 echo -e "\n"
 
-sleep 2
+echo -e "${C_INFO}ℹ️ Se procede a eliminar el archivo temporal de funciones${RESET} ${C_SUBTITULO}${FUNCTIONS_FILE}${RESET} ${C_INFO}puesto que el funcional está permanentemente en el repositorio.${RESET}"
+rm "$FUNCTIONS_FILE"
+
+if [ $? -ne 0 ]; then
+    echo -e "${C_ERROR}❌ ADVERTENCIA: No se pudo eliminar el archivo de funciones '$FUNCTIONS_FILE'. Puede que necesite hacerlo manualmente.${RESET}"
+fi
+
+echo -e "${C_EXITO}✅ Limpieza finalizada.${RESET}"
+
+sleep 3
 
 clear
 
@@ -100,7 +109,6 @@ echo -e "${C_INFO}ℹ️  **ATENCIÓN:**${RESET} Cuando se indique que existe un
 echo -e "\n"
 echo -e "${C_SUBTITULO}--- 1.1 Solicitud de Parámetros de Ruta ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------${RESET}"
-echo -e "\n"
 
 # 1. Carpeta del Proyecto
 read_prompt "Introduce el nombre del DIRECTORIO del proyecto (por defecto: djau): " PROJECT_FOLDER "djau"
@@ -122,7 +130,6 @@ sleep 1
 echo -e "\n"
 echo -e "${C_SUBTITULO}--- 1.2 Solicitud y Validación de Usuario de la Aplicación ---${RESET}"
 echo -e "${C_SUBTITULO}--------------------------------------------------------------${RESET}"
-echo -e "\n"
 
 
 # 3. Usuario de la Aplicación
@@ -144,7 +151,7 @@ sleep 2
 # 2. CONFIGURACIÓN DE POSTGRESQL Y SUDOERS
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}========================================================="
 echo -e "${C_CAPITULO}--- 2. CONFIGURACIÓN DE SEGURIDAD (Permisos NOPASSWD) ---"
 echo -e "${C_CAPITULO}=========================================================${RESET}"
@@ -152,8 +159,6 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- Configurando Permisos NOPASSWD para PostgreSQL ---${RESET}"
 echo -e "${C_SUBTITULO}------------------------------------------------------${RESET}"
-echo -e "\n"
-
 
 PSQL_PATH="/usr/bin/psql"
 PGDUMP_PATH="/usr/bin/pg_dump"
@@ -174,7 +179,7 @@ sleep 2
 # 3. INSTALACIÓN DE DEPENDENCIAS DEL SISTEMA Y CREACIÓN DE CARPETAS
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}============================================================="
 echo -e "${C_CAPITULO}--- 3. INSTALACIÓN DE DEPENDENCIAS Y PREPARACIÓN DE RUTAS ---"
 echo -e "${C_CAPITULO}=============================================================${RESET}"
@@ -182,7 +187,6 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 3.1 Instalando dependencias del sistema (Python, Git, PostgreSQL, etc). Ahora no se instalará el servidor web ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------------------------------------------------------------------------------${RESET}"
-echo -e "\n"
 
 # 1. Actualizar la lista de paquetes
 echo -e "${C_INFO}ℹ️ Actualizando la lista de paquetes (apt update)...${RESET}"
@@ -237,7 +241,6 @@ sleep 2
 
 echo -e "${C_SUBTITULO}--- 3.2 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------------------------------------------------------${RESET}"
-echo -e "\n"
 
 
 # Directorio del proyecto
@@ -261,21 +264,18 @@ sleep 2
 
 echo -e "${C_SUBTITULO}--- 3.3 Asignación de Permisos de Archivos ---${RESET}"
 echo -e "${C_SUBTITULO}----------------------------------------------${RESET}"
-echo -e "\n"
-
 
 # Permisos para el directorio del proyecto (propiedad del usuario de la app)
 chown -R "$APP_USER":"$APP_USER" "$FULL_PATH"
 echo -e "${C_EXITO}✅ Permisos para '$FULL_PATH' asignados al usuario '$APP_USER'.${RESET}"
 
-echo -e "\n"
 sleep 2
 
 # ----------------------------------------------------------------------
 # 4. CLONACIÓN DEL REPOSITORIO 
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}====================================================="
 echo -e "${C_CAPITULO}--- 4. CLONACIÓN DEL REPOSITORIO DE LA APLICACIÓN ---"
 echo -e "${C_CAPITULO}=====================================================${RESET}"
@@ -283,7 +283,6 @@ echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 4.1 Clonando Repositorio como usuario '$APP_USER' ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------------------${RESET}"
-echo -e "\n"
 
 REPO_URL="https://github.com/rafatecno1/django-aula.git"
 #REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
@@ -314,7 +313,6 @@ CONFIG_FILE="$SETUP_DIR/config_vars.sh"
 
 echo -e "${C_SUBTITULO}--- 4.2 Creación del archivo${RESET} ${CIANO}config_vars.sh${RESET} ${C_SUBTITULO}en el directorio${RESET} ${CIANO}$SETUP_DIR${RESET} ${C_SUBTITULO} ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------------------------------------${RESET}"
-echo -e "\n"
 
 cat << EOF > "$CONFIG_FILE"
 
@@ -332,12 +330,11 @@ chown -R "$APP_USER":"$APP_USER" "$CONFIG_FILE"
 # 5. DELEGACIÓN AL SCRIPT DE CONFIGURACIÓN DE DJANGO
 # ----------------------------------------------------------------------
 
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_CAPITULO}==============================================================="
 echo -e "${C_CAPITULO}--- 5. INICIO DE LA CONFIGURACIÓN ESPECÍFICA DE DJANGO-AULA ---"
 echo -e "${C_CAPITULO}===============================================================${RESET}"
 echo -e "\n"
-
 
 echo -e "--- A partir de ahora el usuario ${C_INFO}'$APP_USER'${RESET} ejecutarà autmáticamente el script ${C_INFO}setup_djau.sh${RESET}."
 echo -e "    Este script se encuentra en ${C_INFO}'$SETUP_DIR'${RESET}."
@@ -366,23 +363,7 @@ if [ $? -ne 0 ]; then
 fi
 
 
-# ----------------------------------------------------------------------
-# LIMPIEZA
-# ----------------------------------------------------------------------
-echo -e "\n"
-echo -e "${C_INFO}ℹ️ Eliminando archivo temporal de funciones: ${FUNCTIONS_FILE}${RESET}"
-rm "$FUNCTIONS_FILE"
-
-if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ADVERTENCIA: No se pudo eliminar el archivo de funciones '$FUNCTIONS_FILE'. Puede que necesite hacerlo manualmente.${RESET}"
-fi
-
-echo -e "${C_EXITO}✅ Limpieza finalizada.${RESET}"
-
-
-
-
-echo -e "\n"
+echo -e "\n\n"
 echo -e "${C_PRINCIPAL}==========================================================="
 echo -e "${C_PRINCIPAL}--- FASE 1 COMPLETADA (install_djau.sh i setup_djau.sh) ---"
 echo -e "${C_PRINCIPAL}===========================================================${RESET}"
