@@ -261,14 +261,17 @@ if [ ! -f /etc/fail2ban/jail.local ]; then
     cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 fi
 
+echo -e "${C_INFO}ℹ️ Esperando 5 segundos para que Fail2Ban inicie completamente el socket...${RESET}"
+sleep 5
+
 # Reiniciar para asegurar que la configuración está activa
-systemctl restart fail2ban
+sudo systemctl restart fail2ban
 
 echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
 echo -e "${C_INFO}ℹ️ Puede verificar el estado con: ${C_SUBTITULO}$ sudo systemctl status fail2ban, $ sudo fail2ban-client status, $ sudo fail2ban-client status sshd, $ sudo tail -f /var/log/fail2ban.log${RESET}"
 echo -e "\n"
 echo -e "${C_INFO}systemctl status fail2ban${RESET}"
-sudo systemctl status fail2ban
+sudo systemctl status fail2ban | grep Active
 echo -e "\n"
 echo -e "${C_INFO}fail2ban-client status sshd${RESET}"
 sudo fail2ban-client status sshd
