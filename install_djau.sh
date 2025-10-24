@@ -273,8 +273,31 @@ echo -e "${C_SUBTITULO}----------------------------------------------${RESET}"
 # Permisos para el directorio del proyecto (propiedad del usuario de la app)
 chown -R "$APP_USER":"$APP_USER" "$FULL_PATH"
 echo -e "${C_EXITO}✅ Permisos para '$FULL_PATH' asignados al usuario '$APP_USER'.${RESET}"
+echo -e "\n"
 
 sleep 2
+
+echo -e "${C_SUBTITULO}--- 3.4 Generando y configurando el Locale (ca_ES.utf8) ---${RESET}"
+echo -e "${C_SUBTITULO}-----------------------------------------------------------${RESET}"
+
+# 1. Generar el locale
+echo -e "${C_INFO}ℹ️ Asegurando la generación del locale 'ca_ES.utf8'...${RESET}"
+/usr/sbin/locale-gen ca_ES.utf8
+
+echo -e "\n"
+if [ $? -ne 0 ]; then
+    echo -e "${C_ERROR}❌ ERROR: Fallo al generar el locale 'ca_ES.utf8'. Revise su configuración de sistema.${RESET}"
+    # No es un error crítico para detener la instalación, pero se debe advertir.
+fi
+
+# 2. Forzar la configuración del sistema (opcional, pero recomendable para el entorno Bash)
+echo -e "${C_INFO}ℹ️ Configurando el locale del sistema a 'ca_ES.utf8'...${RESET}"
+update-locale LANG=ca_ES.UTF-8
+
+echo -e "${C_EXITO}✅ Locale 'ca_ES.utf8' asegurado y configurado.${RESET}"
+
+sleep 2
+
 
 # ----------------------------------------------------------------------
 # 4. CLONACIÓN DEL REPOSITORIO 
