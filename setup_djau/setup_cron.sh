@@ -161,7 +161,7 @@ cat <<- CRONEOF_APP > "$CRONTAB_FILE_APP_USER"
 
 CRONEOF_APP
 
-echo -e "${C_EXITO}☑️ Archivo temporal para backup${RESET} ${C_INFO}${RESET}$CRONTAB_FILE_APP_USER ${C_EXITO}generado.${RESET}"
+echo -e "${C_EXITO}☑️ Archivo temporal para backup${RESET} ${C_INFO}$CRONTAB_FILE_APP_USER${RESET} ${C_EXITO}generado.${RESET}"
 echo -e "\n"
 sleep 2
 
