@@ -237,7 +237,7 @@ echo -e "\n"
 # NOTA: btop no está siempre en los repositorios por defecto de Debian/Ubuntu. 
 # Si falla, se puede quitar o el usuario lo instalará por su cuenta.
 
-apt-get install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql cron nano htop btop ncdu fail2ban
+apt-get install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql cron nano htop btop ncdu fail2ban locales
 
 if [ $? -ne 0 ]; then
     echo -e "\n"
@@ -316,7 +316,7 @@ echo -e "${C_INFO}ℹ️ Asegurando la generación del locale 'ca_ES.utf8'...${R
 
 echo -e "\n"
 if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ERROR: Fallo al generar el locale 'ca_ES.utf8'. Revise su configuración de sistema.${RESET}"
+    echo -e "${C_ERROR}❌ ERROR: Fallo al generar el locale 'ca_ES.utf8'. Revise la instalación del paquete 'locales'.${RESET}"
     # No es un error crítico para detener la instalación, pero se debe advertir.
 fi
 
