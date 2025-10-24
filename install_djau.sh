@@ -267,11 +267,11 @@ systemctl restart fail2ban
 echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
 echo -e "${C_INFO}ℹ️ Puede verificar el estado con: ${C_SUBTITULO}$ sudo systemctl status fail2ban, $ sudo fail2ban-client status, $ sudo fail2ban-client status sshd, $ sudo tail -f /var/log/fail2ban.log${RESET}"
 echo -e "\n"
-echo -e "${C_INFO}fail2ban-client status${RESET}"
-sudo fail2ban-client status
+echo -e "${C_INFO}systemctl status fail2ban${RESET}"
+sudo systemctl status fail2ban
 echo -e "\n"
-echo -e "${C_INFO}fail2ban-client status sshd${RESET}"
-sudo fail2ban-client status sshd
+echo -e "${C_INFO}systemctl status sshd${RESET}"
+sudo systemctl status sshd
 echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 3.3 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
@@ -310,21 +310,30 @@ sleep 2
 echo -e "${C_SUBTITULO}--- 3.5 Generando y configurando el Locale (ca_ES.utf8) ---${RESET}"
 echo -e "${C_SUBTITULO}-----------------------------------------------------------${RESET}"
 
-# 1. Generar el locale
-echo -e "${C_INFO}ℹ️ Asegurando la generación del locale 'ca_ES.utf8'...${RESET}"
-/usr/sbin/locale-gen ca_ES.utf8
+# 1. Asegurar que el locale ca_ES.utf8 esté descomentado en /etc/locale.gen
+echo -e "${C_INFO}ℹ️ Descomentando 'ca_ES.utf8' en /etc/locale.gen...${RESET}"
+# Usa sed para quitar el '#' al inicio de la línea, si existe.
+# NOTA: Usamos 'UTF-8' con guion para coincidir con el formato del archivo.
+sudo sed -i '/^# *ca_ES.UTF-8 UTF-8/s/^# *//' /etc/locale.gen
 
-echo -e "\n"
+# 2. Generar todos los locales activos
+echo -e "${C_INFO}ℹ️ Ejecutando locale-gen (Generará todos los locales activos)...${RESET}"
+sudo locale-gen
+
 if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ERROR: Fallo al generar el locale 'ca_ES.utf8'. Revise la instalación del paquete 'locales'.${RESET}"
-    # No es un error crítico para detener la instalación, pero se debe advertir.
+    echo -e "${C_ERROR}❌ ERROR: Fallo al generar los locales. Esto puede ser un error crítico para Django.${RESET}"
 fi
 
-# 2. Forzar la configuración del sistema (opcional, pero recomendable para el entorno Bash)
-echo -e "${C_INFO}ℹ️ Configurando el locale del sistema a 'ca_ES.utf8'...${RESET}"
-update-locale LANG=ca_ES.UTF-8
+# 3. Forzar la configuración del sistema
+echo -e "${C_INFO}ℹ️ Configurando el locale del sistema a 'ca_ES.UTF-8'...${RESET}"
+sudo update-locale LANG=ca_ES.UTF-8
 
-echo -e "${C_EXITO}✅ Locale 'ca_ES.utf8' asegurado y configurado.${RESET}"
+# 4. Verificación de éxito
+if locale -a | grep -q "ca_es.utf8"; then
+    echo -e "${C_EXITO}✅ Locale 'ca_ES.utf8' asegurado y configurado correctamente.${RESET}"
+else
+    echo -e "${C_ERROR}❌ ADVERTENCIA CRÍTICA: El locale 'ca_ES.utf8' no se pudo generar. Revise manualmente /etc/locale.gen.${RESET}"
+fi
 
 sleep 2
 
