@@ -4,17 +4,22 @@
 # Se encarga de la configuración del sistema, usuarios y permisos.
 # DEBE EJECUTARSE con privilegios de root (p. ej., sudo bash install_djau.sh).
 
+clear
 
 # ----------------------------------------------------------------------
 # CARGA DE LIBRERÍA DE FUNCIONES Y VARIABLES DE COLOR
 # ----------------------------------------------------------------------
+
+echo "--------------------------------------------------------------------------------------------"
+echo "--- Proceso de descarga de la librería temporal necesaria en el inicio de la instalación ---"
+echo "--------------------------------------------------------------------------------------------"
 
 # 1. Definir la URL remota de la librería de funciones
 FUNCTIONS_URL="https://raw.githubusercontent.com/rafatecno1/django-aula/refs/heads/master/setup_djau/functions.sh"
 FUNCTIONS_FILE="./functions.sh"
 
 echo -e "\n"
-echo "ℹ️ Descargando librería temporal de funciones compartidas ($FUNCTIONS_FILE)..."
+echo "ℹ️ Descargando la librería temporal de funciones compartidas ($FUNCTIONS_FILE)..."
 
 # 2. Descargar la librería de funciones usando wget
 # La opción '-O' (mayúscula) fuerza la salida al archivo local especificado.
@@ -22,6 +27,7 @@ echo "ℹ️ Descargando librería temporal de funciones compartidas ($FUNCTIONS
 wget -q -O "$FUNCTIONS_FILE" "$FUNCTIONS_URL"
 
 if [ $? -ne 0 ]; then
+    echo -e "\n"
     echo "❌ ERROR: Fallo al descargar el archivo temporal de funciones desde $FUNCTIONS_URL. Saliendo."
     # No podemos usar las variables de color aquí porque aún no se han cargado.
     exit 1
@@ -30,8 +36,6 @@ fi
 # 3. CAMBIAR PROPIEDAD: Asignar el archivo al usuario original que ejecutó 'sudo'
 if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
     chown "$SUDO_USER":"$SUDO_USER" "$FUNCTIONS_FILE"
-    # Añadimos un mensaje informativo
-    echo "✅ Propiedad cambiada a: $SUDO_USER:$SUDO_USER"
 fi
 
 # 4. Cargar la librería de funciones
@@ -39,19 +43,20 @@ source "$FUNCTIONS_FILE"
 
 # Ahora las variables de color ($C_EXITO, $C_ERROR, etc.) y la función read_prompt están disponibles.
 echo -e "\n"
-echo -e "${C_EXITO}✅ Librería de funciones temporal cargada con éxito.${RESET}"C_INFO
+echo -e "${C_EXITO}✅ Librería de funciones temporal cargada con éxito.${RESET}"
 echo -e "\n"
 
-echo -e "${C_INFO}ℹ️ Se procede a eliminar el archivo temporal de funciones${RESET} ${C_SUBTITULO}${FUNCTIONS_FILE}${RESET} ${C_INFO}puesto que el funcional está permanentemente en el repositorio.${RESET}"
+echo -e "${C_INFO}ℹ️ Eliminación del archivo temporal de funciones${RESET} ${C_SUBTITULO}${FUNCTIONS_FILE}${RESET} ${C_INFO}dado que el archivo permanente estará ubicado en la carpeta de instalación de DJANGO-AULA.${RESET}"
 rm "$FUNCTIONS_FILE"
 
 if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ADVERTENCIA: No se pudo eliminar el archivo de funciones '$FUNCTIONS_FILE'. Puede que necesite hacerlo manualmente.${RESET}"
+    echo -e "${C_ERROR}❌ ADVERTENCIA: No se pudo eliminar el archivo de funciones${RESET} ${C_INFO} '$FUNCTIONS_FILE'${RESET} ${${C_ERROR}}. Puede que necesite hacerlo manualmente.${RESET}"
 fi
 
 echo -e "${C_EXITO}✅ Limpieza finalizada.${RESET}"
+echo -e "\n\n"
 
-sleep 3
+read -p "Presione una tecla para dar paso a la información sobre el proceso de la instalación de DJANGO-AULA" -n1 -s
 
 clear
 
