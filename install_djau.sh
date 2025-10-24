@@ -2,7 +2,7 @@
 # install_djau.sh
 # Script Maestro de Instalación de la Aplicación Django-Aula.
 # Se encarga de la configuración del sistema, usuarios y permisos.
-# DEBE EJECUTARSE con privilegios de root (p. ej., sudo bash install_app.sh).
+# DEBE EJECUTARSE con privilegios de root (p. ej., sudo bash install_djau.sh).
 
 
 # ----------------------------------------------------------------------
@@ -27,7 +27,14 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 3. Cargar la librería de funciones
+# 3. CAMBIAR PROPIEDAD: Asignar el archivo al usuario original que ejecutó 'sudo'
+if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
+    chown "$SUDO_USER":"$SUDO_USER" "$FUNCTIONS_FILE"
+    # Añadimos un mensaje informativo
+    echo "✅ Propiedad cambiada a: $SUDO_USER:$SUDO_USER"
+fi
+
+# 4. Cargar la librería de funciones
 source "$FUNCTIONS_FILE"
 
 # Ahora las variables de color ($C_EXITO, $C_ERROR, etc.) y la función read_prompt están disponibles.
@@ -289,7 +296,7 @@ echo -e "\n"
 sudo -u "$APP_USER" git clone "$REPO_URL" "$FULL_PATH"
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al clonar el repositorio '$REPO_URL'.${RESET}"
-    echo "Comprueba que la URL sea correcta, que haiga conexión a internet, o que el usuario '$APP_USER' tenga permisos de red."
+    echo "Comprueba que la URL sea correcta, que haya conexión a internet, o que el usuario '$APP_USER' tenga permisos de red."
 	echo -e "\n"
     exit 1
 fi
