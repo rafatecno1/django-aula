@@ -4,41 +4,38 @@
 # Se encarga de la configuración del sistema, usuarios y permisos.
 # DEBE EJECUTARSE con privilegios de root (p. ej., sudo bash install_app.sh).
 
-# Definiciones de Color ANSI (ejemplo para la visualización)
-#RESET='\e[0m'
-#VERDE='\e[32m'
-#AZUL='\e[34m'
-#NEGRITA='\e[1m'
-#C_TITULO="${NEGRITA}${AZUL}"
-#C_ACCION="${NEGRITA}${VERDE}"
-#C_INFO="${VERDE}"
 
+# ----------------------------------------------------------------------
+# CARGA DE LIBRERÍA DE FUNCIONES Y VARIABLES DE COLOR
+# ----------------------------------------------------------------------
 
+# 1. Definir la URL remota de la librería de funciones
+FUNCTIONS_URL="https://raw.githubusercontent.com/rafatecno1/django-aula/refs/heads/master/setup_djau/functions.sh"
+FUNCTIONS_FILE="./functions.sh"
 
-# --------------------------------------------------
-# VARIABLES DE COLOR Y ESTILO ANSI
-# --------------------------------------------------
+echo -e "\n"
+echo "ℹ️ Descargando librería de funciones compartidas ($FUNCTIONS_FILE)..."
 
-RESET='\e[0m'
-NEGRITA='\e[1m'
+# 2. Descargar la librería de funciones usando wget
+# La opción '-O' (mayúscula) fuerza la salida al archivo local especificado.
+# La opción '-q' (quiet) suprime la salida detallada.
+wget -q -O "$FUNCTIONS_FILE" "$FUNCTIONS_URL"
 
-# Colores básicos
-AZUL='\e[34m'
-VERDE='\e[32m'
-ROJO='\e[31m'
-CIANO='\e[36m'
-AMARILLO='\e[33m'
-MAGENTA='\e[35m'
+if [ $? -ne 0 ]; then
+    echo "❌ ERROR: Fallo al descargar el archivo de funciones desde $FUNCTIONS_URL. Saliendo."
+    # No podemos usar las variables de color aquí porque aún no se han cargado.
+    exit 1
+fi
 
-# Estilos compuestos (para uso en los scripts)
-C_EXITO="${NEGRITA}${VERDE}"       # Éxito y confirmaciones (✅)
-C_ERROR="${NEGRITA}${ROJO}"        # Errores y fallos (❌)
-C_PRINCIPAL="${NEGRITA}${AZUL}"   # Fases principales (FASE 1, FASE 2)
-C_CAPITULO="${NEGRITA}${CIANO}"     # Títulos de Capítulo (1. DEFINICIÓN...)
-C_SUBTITULO="${NEGRITA}${MAGENTA}" # Títulos de Subcapítulo (1.1, 1.2)
-C_INFO="${NEGRITA}${AMARILLO}"     # Información importante (INFO, ATENCIÓN)
+# 3. Cargar la librería de funciones
+source "$FUNCTIONS_FILE"
 
+# Ahora las variables de color ($C_EXITO, $C_ERROR, etc.) y la función read_prompt están disponibles.
+echo -e "\n"
+echo -e "${C_EXITO}✅ Librería de funciones cargada con éxito. Comenzando la instalación...${RESET}"
+echo -e "\n"
 
+sleep 2
 
 clear
 
@@ -75,54 +72,6 @@ echo -e "\n"
 read -p "Presione una tecla para continuar" -n1 -s
 
 clear
-
-# -----------------------------------------------------------------------------------
-# FUNCION DE AYUDA
-# Se encuentra tambien en el archivo functions.sh para poder reutilizarla en el resto
-# de los sripts pero ahora no está disponible hasta que no se clone el repositorio.
-# -----------------------------------------------------------------------------------
-
-read_prompt () {
-    # $1: Mensaje (prompt)
-    # $2: Nombre de la variable a asignar (sin $)
-    # $3: [Opcional] Valor por defecto (si se omite o es vacío, el campo es obligatorio)
-
-    local PROMPT_MSG="$1"
-    local VAR_NAME="$2"
-    local DEFAULT_VALUE="$3"
-    local INPUT_VALUE=""
-
-    while true; do
-        # 1. Leer la entrada del usuario
-        read -p "$PROMPT_MSG" INPUT_VALUE
-
-        # 2. Eliminar espacios en blanco alrededor (trim)
-        INPUT_VALUE=$(echo "$INPUT_VALUE" | xargs)
-
-        if [ -z "$INPUT_VALUE" ]; then
-            # A) Si no hay entrada del usuario:
-            
-            if [ -n "$DEFAULT_VALUE" ]; then
-                # A.1) Si hay valor por defecto ($3 no está vacío), usarlo y salir.
-                eval "$VAR_NAME='$DEFAULT_VALUE'"
-                echo -e "${C_EXITO}☑️ Valor por defecto usado: '$DEFAULT_VALUE'${RESET}"
-				echo -e "\n"
-                break
-            else
-                # A.2) Si NO hay valor por defecto, el campo es obligatorio.
-                echo -e "${C_ERROR}❌ ERROR: Este campo no puede dejarse en blanco.${RESET}\n"
-                # Vuelve a iterar el bucle (while true)
-            fi
-        else
-            # B) Si hay entrada del usuario, usarla y salir.
-            eval "$VAR_NAME='$INPUT_VALUE'"
-            echo -e "${C_EXITO}☑️ Valor introducido: '$INPUT_VALUE'${RESET}"
-			echo -e "\n"
-            break
-        fi
-    done
-}
-
 
 echo -e "\n"
 echo -e "${C_PRINCIPAL}==============================================================="
@@ -408,6 +357,21 @@ if [ $? -ne 0 ]; then
 	echo -e "\n"
     exit 1
 fi
+
+
+# ----------------------------------------------------------------------
+# LIMPIEZA
+# ----------------------------------------------------------------------
+echo -e "\n"
+echo -e "${C_INFO}ℹ️ Eliminando archivo temporal de funciones: ${FUNCTIONS_FILE}${RESET}"
+rm "$FUNCTIONS_FILE"
+
+if [ $? -ne 0 ]; then
+    echo -e "${C_ERROR}❌ ADVERTENCIA: No se pudo eliminar el archivo de funciones '$FUNCTIONS_FILE'. Puede que necesite hacerlo manualmente.${RESET}"
+fi
+
+echo -e "${C_EXITO}✅ Limpieza finalizada.${RESET}"
+
 
 
 
