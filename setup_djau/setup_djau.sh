@@ -446,7 +446,6 @@ if [ $? -ne 0 ]; then
 	echo -e "\n"
     exit 1
 fi
-echo -e "\n"
 echo -e "${C_EXITO}✅ Archivos estáticos recolectados.${RESET}"
 
 deactivate
