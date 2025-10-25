@@ -67,23 +67,29 @@ echo -e "\n"
 # -----------------------------------------------------------------
 # INSTALACIÓN DEL SERVIDOR APACHE Y MOD-WSGI
 # -----------------------------------------------------------------
-apt_desc="Instalación del servidor Apache y mod-wsgi"
+APT_DESC="Instalación del servidor Apache y mod-wsgi"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y apache2 libapache2-mod-wsgi-py3
-check_install "$apt_desc"
+check_install "$APT_DESC"
 
 # -----------------------------------------------------------------
 # INSTALACIÓN DEL CORTAFUEGOS UFW
 # -----------------------------------------------------------------
-apt_desc="Instalación del cortafuegos UFW"
+APT_DESC="Instalación del cortafuegos UFW"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y ufw
-check_install "$apt_desc"
+check_install "$APT_DESC"
 
 # -----------------------------------------------------------------
 # INSTALACIÓN DEL CERTBOT Y SU INTEGRACIÓN CON EL SERVIDOR APACHE
 # -----------------------------------------------------------------
-apt_desc="Instalación del Certbot y su integración con el servidor Apache"
+APT_DESC="Instalación del Certbot y su integración con el servidor Apache"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y certbot python3-certbot-apache
-check_install "$apt_desc"
+check_install "$APT_DESC"
 
 echo -e "\n"
 echo -e "${C_EXITO}✅ El servidor Apache y sus complementos se han instalado correctamente.${RESET}"
@@ -92,12 +98,22 @@ sleep 3
 
 
 echo -e "${C_SUBTITULO}--- 1.2 Suprimiendo advertencia AH00558 (ServerName global) ---${RESET}"
+APACHE_CONF="/etc/apache2/apache2.conf"
 
 # La variable $DOMAIN_CLEAN ya está definida en el script.
 # Se añade la directiva ServerName al archivo de configuración principal de Apache.
-echo "ServerName $DOMAIN_CLEAN" | sudo tee -a /etc/apache2/apache2.conf > /dev/null
+APACHE_CONF="/etc/apache2/apache2.conf"
 
-echo -e "${C_EXITO}✅ Directiva 'ServerName $DOMAIN_CLEAN' añadida a /etc/apache2/apache2.conf.${RESET}"
+# Verifica si la directiva ServerName ya existe en el archivo apache2.conf
+if ! grep -q "^ServerName $DOMAIN_CLEAN" "$APACHE_CONF"; then
+    
+    # Se añade solo si NO existe.
+    echo "ServerName $DOMAIN_CLEAN" | sudo tee -a "$APACHE_CONF" > /dev/null
+    
+    echo -e "${C_EXITO}✅ Directiva 'ServerName $DOMAIN_CLEAN' añadida a $APACHE_CONF.${RESET}"
+else
+    echo -e "${C_INFO}ℹ️ La directiva 'ServerName $DOMAIN_CLEAN' ya existe en $APACHE_CONF. No se realizaron cambios.${RESET}"
+fi
 echo -e "\n"
 sleep 3
 
