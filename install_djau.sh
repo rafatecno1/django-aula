@@ -234,7 +234,6 @@ echo -e "\n"
 # -----------------------------------------------------------------
 APT_DESC="Núcleo Django y Python"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y \
 	python3 \
     python3-venv \
@@ -254,7 +253,6 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------	
 APT_DESC="Gestión de Código (git)"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y git
 check_install "$APT_DESC"
 
@@ -263,7 +261,6 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 APT_DESC="Gestor de Base de Datos (PostgreSQL)"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y postgresql
 check_install "$APT_DESC"
 
@@ -272,7 +269,6 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 APT_DESC="Utilidades de administración"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y \
     nano \
     htop \
@@ -286,7 +282,6 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 APT_DESC="Seguridad, Cron y Locale (fail2ban, locales, haveged)"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y \
     cron \
     fail2ban \
