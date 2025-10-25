@@ -138,7 +138,7 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 
 
 # 3. Usuario de la Aplicación
-read_prompt "Introduce el nombre del USUARIO de la aplicación (debe existir y tener sudo) (por defecto: djau): " APP_USER "djau"
+read_prompt "Introduce el nombre del USUARIO DE LINUX que instalará la aplicación (debe existir y tener sudo) (por defecto: djau): " APP_USER "djau"
 
 # Verifica si el usuario existe antes de continuar (Verificación crucial)
 if id -u "$APP_USER" >/dev/null 2>&1; then
@@ -229,39 +229,45 @@ echo -e "\n"
 echo -e "${C_INFO}ℹ️ Instalando dependencias del sistema. Esto puede tardar unos minutos...${RESET}"
 echo -e "\n"
 
+# -----------------------------------------------------------------
+# NÚCLEO DE LA APLICACIÓN DJANGO Y HERRAMIENTAS DE PYTHON
+# -----------------------------------------------------------------
 apt-get install -y \
-    # -----------------------------------------------------------------
-    # NÚCLEO DE LA APLICACIÓN DJANGO Y HERRAMIENTAS DE PYTHON
-    # -----------------------------------------------------------------
-    python3 \
+	python3 \
     python3-venv \
     python3-dev \
     lib32z1-dev \
-    # Dependencias para paquetes binarios de Python (lxml, psycopg2, etc.)
     libxml2-dev \
     libxslt-dev \
     python3-lxml \
     python3-libxml2 \
-    # Gestión de código
-    git \
-    # Dependencias de librerías gráficas (A veces necesarias para entornos virtuales)
     libgl1 \
-    libglib2.0-0t64 \
-    \
-    # -----------------------------------------------------------------
-    # SERVICIOS CENTRALES Y UTILIDADES DE ADMINISTRACIÓN
-    # -----------------------------------------------------------------
-    postgresql \
-    cron \
-    # Utilidades de administración (HTOP, BTOP, NCDU, NANO)
+    libglib2.0-0t64
+	
+# -----------------------------------------------------------------
+# GESTIÓN DE CÓDIGO
+# -----------------------------------------------------------------	
+apt-get install -y git
+
+# -----------------------------------------------------------------
+# GESTOR DE BASE DE DATOS Y UTILIDADES DE ADMINISTRACIÓN
+# -----------------------------------------------------------------
+apt-get install -y postgresql
+
+# -----------------------------------------------------------------
+# UTILIDADES DE ADMINISTRACIÓN
+# -----------------------------------------------------------------
+apt-get install -y \
     nano \
     htop \
     btop \
-    ncdu \
-    \
-    # -----------------------------------------------------------------
-    # SEGURIDAD Y CONFIGURACIÓN DEL SISTEMA
-    # -----------------------------------------------------------------
+    ncdu
+
+# -----------------------------------------------------------------
+# SEGURIDAD Y CONFIGURACIÓN DEL SISTEMA
+# -----------------------------------------------------------------
+apt-get install -y \
+    cron \
     fail2ban \
     locales \
     haveged # Generador de Entropía (crucial para openssl en VPS)
