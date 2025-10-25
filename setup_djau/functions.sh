@@ -99,4 +99,5 @@ check_install() {
         echo -e "${C_EXITO}✅ Instalación de '${DESC_MSG}' completada con éxito.${RESET}"
     fi
     echo -e "\n"
+	sleep 2
 }
