@@ -226,18 +226,48 @@ echo -e "\n"
 
 # 3. Instalar las dependencias necesarias (Solo se ejecuta si el usuario continuó o no hubo errores)
 
-
-echo -e "${C_INFO}ℹ️ Instalando dependencias del sistema y utilidades de administración: python3, python3-pip, postgresql, libpq-dev, python3-dev, cron...${RESET}"
+echo -e "${C_INFO}ℹ️ Instalando dependencias del sistema. Esto puede tardar unos minutos...${RESET}"
 echo -e "\n"
 
-# Paquetes de la aplicación: python3, python3-pip, postgresql, libpq-dev, python3-dev, cron
-# Utilidades: nano, htop, btop (si está en repositorios), ncdu
-# Seguridad: fail2ban
+apt-get install -y \
+    # -----------------------------------------------------------------
+    # NÚCLEO DE LA APLICACIÓN DJANGO Y HERRAMIENTAS DE PYTHON
+    # -----------------------------------------------------------------
+    python3 \
+    python3-venv \
+    python3-dev \
+    lib32z1-dev \
+    # Dependencias para paquetes binarios de Python (lxml, psycopg2, etc.)
+    libxml2-dev \
+    libxslt-dev \
+    python3-lxml \
+    python3-libxml2 \
+    # Gestión de código
+    git \
+    # Dependencias de librerías gráficas (A veces necesarias para entornos virtuales)
+    libgl1 \
+    libglib2.0-0t64 \
+    \
+    # -----------------------------------------------------------------
+    # SERVICIOS CENTRALES Y UTILIDADES DE ADMINISTRACIÓN
+    # -----------------------------------------------------------------
+    postgresql \
+    cron \
+    # Utilidades de administración (HTOP, BTOP, NCDU, NANO)
+    nano \
+    htop \
+    btop \
+    ncdu \
+    \
+    # -----------------------------------------------------------------
+    # SEGURIDAD Y CONFIGURACIÓN DEL SISTEMA
+    # -----------------------------------------------------------------
+    fail2ban \
+    locales \
+    haveged # Generador de Entropía (crucial para openssl en VPS)
 
 # NOTA: btop no está siempre en los repositorios por defecto de Debian/Ubuntu. 
 # Si falla, se puede quitar o el usuario lo instalará por su cuenta.
-
-apt-get install -y python3 python3-venv libxml2-dev libxslt-dev python3-lxml python3-libxml2 python3-dev lib32z1-dev git libgl1 libglib2.0-0t64 postgresql cron nano htop btop ncdu fail2ban locales
 
 if [ $? -ne 0 ]; then
     echo -e "\n"
