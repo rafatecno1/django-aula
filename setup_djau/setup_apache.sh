@@ -69,7 +69,6 @@ echo -e "\n"
 # -----------------------------------------------------------------
 APT_DESC="Instalación del servidor Apache y mod-wsgi"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y apache2 libapache2-mod-wsgi-py3
 check_install "$APT_DESC"
 
@@ -78,7 +77,6 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 APT_DESC="Instalación del cortafuegos UFW"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y ufw
 check_install "$APT_DESC"
 
@@ -87,7 +85,6 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 APT_DESC="Instalación del Certbot y su integración con el servidor Apache"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-echo -e "\n"
 apt-get install -y certbot python3-certbot-apache
 check_install "$APT_DESC"
 
@@ -97,29 +94,9 @@ echo -e "\n"
 sleep 3
 
 
-echo -e "${C_SUBTITULO}--- 1.2 Suprimiendo advertencia AH00558 (ServerName global) ---${RESET}"
-APACHE_CONF="/etc/apache2/apache2.conf"
-
-# La variable $DOMAIN_CLEAN ya está definida en el script.
-# Se añade la directiva ServerName al archivo de configuración principal de Apache.
-APACHE_CONF="/etc/apache2/apache2.conf"
-
-# Verifica si la directiva ServerName ya existe en el archivo apache2.conf
-if ! grep -q "^ServerName $DOMAIN_CLEAN" "$APACHE_CONF"; then
-    
-    # Se añade solo si NO existe.
-    echo "ServerName $DOMAIN_CLEAN" | sudo tee -a "$APACHE_CONF" > /dev/null
-    
-    echo -e "${C_EXITO}✅ Directiva 'ServerName $DOMAIN_CLEAN' añadida a $APACHE_CONF.${RESET}"
-else
-    echo -e "${C_INFO}ℹ️ La directiva 'ServerName $DOMAIN_CLEAN' ya existe en $APACHE_CONF. No se realizaron cambios.${RESET}"
-fi
-echo -e "\n"
-sleep 3
-
 # 1.2 Configuración del Firewall UFW
 
-echo -e "${C_SUBTITULO}--- 1.3 Configurando Firewall (UFW) ---${RESET}"
+echo -e "${C_SUBTITULO}--- 1.2 Configurando Firewall (UFW) ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------${RESET}"
 
 # Permitir OpenSSH (para no perder el acceso)
@@ -194,11 +171,34 @@ echo -e "${C_EXITO}✅ Parámetros de seguridad definidos.${RESET}"
 echo -e "\n"
 sleep 3
 
+
+echo -e "${C_SUBTITULO}--- 2.3 Suprimiendo advertencia AH00558 (ServerName global) ---${RESET}"
+APACHE_CONF="/etc/apache2/apache2.conf"
+
+# La variable $DOMAIN_CLEAN ya está definida en el script.
+# Se añade la directiva ServerName al archivo de configuración principal de Apache.
+APACHE_CONF="/etc/apache2/apache2.conf"
+
+# Verifica si la directiva ServerName ya existe en el archivo apache2.conf
+if ! grep -q "^ServerName $DOMAIN_CLEAN" "$APACHE_CONF"; then
+    
+    # Se añade solo si NO existe.
+    echo "ServerName $DOMAIN_CLEAN" | sudo tee -a "$APACHE_CONF" > /dev/null
+    
+    echo -e "${C_EXITO}✅ Directiva 'ServerName $DOMAIN_CLEAN' añadida a $APACHE_CONF.${RESET}"
+else
+    echo -e "${C_INFO}ℹ️ La directiva 'ServerName $DOMAIN_CLEAN' ya existe en $APACHE_CONF. No se realizaron cambios.${RESET}"
+fi
+echo -e "\n"
+sleep 3
+
+
+
 # ----------------------------------------------------------------------
-# 2.3 ELECCIÓN Y GENERACIÓN DE CERTIFICADOS
+# 2.4 ELECCIÓN Y GENERACIÓN DE CERTIFICADOS
 # ----------------------------------------------------------------------
 
-echo -e "${C_SUBTITULO}--- 2.3 Generación y Elección de Certificados SSL/TLS ---${RESET}"
+echo -e "${C_SUBTITULO}--- 2.4 Generación y Elección de Certificados SSL/TLS ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------${RESET}"
 
 # Variables de ruta de certificados
