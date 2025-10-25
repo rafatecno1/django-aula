@@ -232,7 +232,9 @@ echo -e "\n"
 # -----------------------------------------------------------------
 # NÚCLEO DE LA APLICACIÓN DJANGO Y HERRAMIENTAS DE PYTHON
 # -----------------------------------------------------------------
-apt_desc="Núcleo Django y Python"
+APT_DESC="Núcleo Django y Python"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y \
 	python3 \
     python3-venv \
@@ -245,45 +247,53 @@ apt-get install -y \
     libgl1 \
     libglib2.0-0t64
 
-check_install "$apt_desc"
+check_install "$APT_DESC"
 	
 # -----------------------------------------------------------------
 # GESTIÓN DE CÓDIGO
 # -----------------------------------------------------------------	
-apt_desc="Gestión de Código (git)"
+APT_DESC="Gestión de Código (git)"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y git
-check_install "$apt_desc"
+check_install "$APT_DESC"
 
 # -----------------------------------------------------------------
 # GESTOR DE BASE DE DATOS Y UTILIDADES DE ADMINISTRACIÓN
 # -----------------------------------------------------------------
-apt_desc="Gestor de Base de Datos (PostgreSQL)"
+APT_DESC="Gestor de Base de Datos (PostgreSQL)"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y postgresql
-check_install "$apt_desc"
+check_install "$APT_DESC"
 
 # -----------------------------------------------------------------
 # UTILIDADES DE ADMINISTRACIÓN
 # -----------------------------------------------------------------
-apt_desc="Utilidades de administración"
+APT_DESC="Utilidades de administración"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y \
     nano \
     htop \
     btop \
     ncdu
 
-check_install "$apt_desc"
+check_install "$APT_DESC"
 
 # -----------------------------------------------------------------
 # SEGURIDAD Y CONFIGURACIÓN DEL SISTEMA
 # -----------------------------------------------------------------
-apt_desc="Seguridad, Cron y Locale (fail2ban, locales, haveged)"
+APT_DESC="Seguridad, Cron y Locale (fail2ban, locales, haveged)"
+echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+echo -e "\n"
 apt-get install -y \
     cron \
     fail2ban \
     locales \
     haveged # Generador de Entropía (crucial para openssl en VPS)
 
-check_install "$apt_desc"
+check_install "$APT_DESC"
 
 # NOTA: btop no está siempre en los repositorios por defecto de Debian/Ubuntu. 
 # Si falla, se puede quitar o el usuario lo instalará por su cuenta.
