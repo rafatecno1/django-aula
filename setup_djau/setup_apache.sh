@@ -62,23 +62,48 @@ apt-get update > /dev/null
 
 # Instalar el servidor Apache, módulo WSGI y herramientas de seguridad/certificados
 echo -e "${C_INFO}ℹ️ Instalando dependencias: Apache, WSGI, UFW, Certbot...${RESET}"
-apt-get install -y apache2 libapache2-mod-wsgi-py3 ufw certbot python3-certbot-apache
+echo -e "\n"
 
-if [ $? -ne 0 ]; then
-    echo -e "\n"
-    echo -e "${C_ERROR}❌ ERROR: Fallo CRÍTICO en la instalación de dependencias de Apache/Certbot. Saliendo.${RESET}"
-	echo -e "\n"
-    exit 1
-fi
+# -----------------------------------------------------------------
+# INSTALACIÓN DEL SERVIDOR APACHE Y MOD-WSGI
+# -----------------------------------------------------------------
+apt_desc="Instalación del servidor Apache y mod-wsgi"
+apt-get install -y apache2 libapache2-mod-wsgi-py3
+check_install "$apt_desc"
+
+# -----------------------------------------------------------------
+# INSTALACIÓN DEL CORTAFUEGOS UFW
+# -----------------------------------------------------------------
+apt_desc="Instalación del cortafuegos UFW"
+apt-get install -y ufw
+check_install "$apt_desc"
+
+# -----------------------------------------------------------------
+# INSTALACIÓN DEL CERTBOT Y SU INTEGRACIÓN CON EL SERVIDOR APACHE
+# -----------------------------------------------------------------
+apt_desc="Instalación del Certbot y su integración con el servidor Apache"
+apt-get install -y certbot python3-certbot-apache
+check_install "$apt_desc"
 
 echo -e "\n"
-echo -e "${C_EXITO}✅ Servidor Apache, WSGI, UFW y Certbot instalados correctamente.${RESET}"
+echo -e "${C_EXITO}✅ El servidor Apache y sus complementos se han instalado correctamente.${RESET}"
+echo -e "\n"
+sleep 3
+
+
+echo -e "${C_SUBTITULO}--- 1.2 Suprimiendo advertencia AH00558 (ServerName global) ---${RESET}"
+
+# La variable $DOMAIN_CLEAN ya está definida en el script.
+# Se añade la directiva ServerName al archivo de configuración principal de Apache.
+echo "ServerName $DOMAIN_CLEAN" | sudo tee -a /etc/apache2/apache2.conf > /dev/null
+
+echo -e "${C_EXITO}✅ Directiva 'ServerName $DOMAIN_CLEAN' añadida a /etc/apache2/apache2.conf.${RESET}"
 echo -e "\n"
 sleep 3
 
 # 1.2 Configuración del Firewall UFW
 
-echo -e "${C_SUBTITULO}--- 1.2 Configurando Firewall (UFW) ---${RESET}"
+echo -e "${C_SUBTITULO}--- 1.3 Configurando Firewall (UFW) ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------${RESET}"
 
 # Permitir OpenSSH (para no perder el acceso)
@@ -186,6 +211,7 @@ sleep 3
 # ----------------------------------------------------------------------
 # Mensaje informativo sobre la elección del certificado
 # ----------------------------------------------------------------------
+echo -e "\n"
 echo -e "${C_INFO}--- Tipos de Certificados SSL/TLS ---${RESET}"
 echo -e "La aplicación necesita un certificado para habilitar la conexión segura (HTTPS/SSL) del navegador, en caso contrario mostrará un error de confianza."
 echo -e "\n"
@@ -398,7 +424,8 @@ if [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 		
         # Ejecutar Certbot de forma interactiva
         certbot --apache --redirect
-        
+		
+        echo -e "\n"
         if [ $? -ne 0 ]; then
             echo -e "${C_ERROR}❌ ERROR: Fallo en la obtención del certificado Let's Encrypt. La instalación continuará con el certificado Self-Signed original  (si existía).${RESET}"
         else
@@ -429,7 +456,8 @@ if [[ "$CERT_TYPE_LOWER" == "le" ]]; then
             if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
                 echo -e "${C_INFO}-> Ejecutando: sudo certbot renew --dry-run${RESET}"
                 certbot renew --dry-run
-                
+				
+                echo -e "\n"
                 if [ $? -eq 0 ]; then
                     echo -e "${C_EXITO}✅ Simulación de renovación completada con éxito. El proceso automático funcionará.${RESET}"
                 else

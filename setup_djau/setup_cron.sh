@@ -140,8 +140,8 @@ sleep 3
 # CREACIÓN DE ARCHIVOS TEMPORALES SEPARADOS PARA CRONTAB
 # =====================================================================
 
-CRONTAB_FILE_APP_USER="/tmp/crontab_${PROJECT_FOLDER}_app.tmp"
-CRONTAB_FILE_WWW_DATA="/tmp/crontab_${PROJECT_FOLDER}_www.tmp"
+CRONTAB_FILE_APP_USER="/tmp/crontab_${PROJECT_FOLDER}_$APP_USER.tmp"
+CRONTAB_FILE_WWW_DATA="/tmp/crontab_${PROJECT_FOLDER}_www-data.tmp"
 
 # --- 2.2 Archivo Temporal para el usuario de la aplicación ($APP_USER) ---
 echo -e "${C_SUBTITULO}--- 2.2 Generando archivo temporal para el usuario '$APP_USER' ---${RESET}"

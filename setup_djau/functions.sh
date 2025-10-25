@@ -25,6 +25,14 @@ C_CAPITULO="${NEGRITA}${CIANO}"     # Títulos de Capítulo (1. DEFINICIÓN...)
 C_SUBTITULO="${NEGRITA}${MAGENTA}" # Títulos de Subcapítulo (1.1, 1.2)
 C_INFO="${NEGRITA}${AMARILLO}"     # Información importante (INFO, ATENCIÓN)
 
+
+# --------------------------------------------------
+# PREGUNTA AL USUARIO Y COMPRUEBA QUE NO DEJA LA 
+# RESPUESTA EN BLANCO Y SI HAY UNA RESPUESTA POR DEFECTO
+# --------------------------------------------------
+
+# Ejemplo: read_prompt "De qué color tienes el pelo?" COLOR_PELO "Azul" 
+
 read_prompt () {
     # $1: Mensaje (prompt)
     # $2: Nombre de la variable a asignar (sin $)
@@ -64,4 +72,30 @@ read_prompt () {
             break
         fi
     done
+}
+
+# --------------------------------------------------
+# COMPRUEBA LA INSTALACIÓN DE PAQUEGES E INFORMA SI HA
+# HABIDO UN ERROR O SI LOS PAQUETES SE HAN INSTALADO CORRECTAMENTE
+# --------------------------------------------------
+
+# Ejemplo: check_install "Núcleo Django y Python"
+
+check_install() {
+    # $1: Descripción de los paquetes a instalar
+	
+    local DESC_MSG="$1" # Guarda el primer argumento (la descripción)
+    local EXIT_CODE=$? # Almacena el código de salida del comando anterior
+
+    if [ "$EXIT_CODE" -ne 0 ]; then
+        echo -e "\n"
+        echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo en la instalación de: ${DESC_MSG}${RESET}"
+        echo -e "${C_INFO}ℹ️ El último comando devolvió el código de error $EXIT_CODE.${RESET}"
+        echo -e "${C_INFO}ℹ️ No es posible continuar. Revise la conexión, el log y ejecute el script de nuevo.${RESET}"
+        echo -e "\n"
+        exit 1
+    else
+        echo -e "${C_EXITO}✅ Instalación de '${DESC_MSG}' completada con éxito.${RESET}"
+    fi
+    echo -e "\n"
 }
