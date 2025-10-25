@@ -173,9 +173,7 @@ sleep 3
 
 
 echo -e "${C_SUBTITULO}--- 2.3 Suprimiendo advertencia AH00558 (ServerName global) ---${RESET}"
-APACHE_CONF="/etc/apache2/apache2.conf"
 
-# La variable $DOMAIN_CLEAN ya está definida en el script.
 # Se añade la directiva ServerName al archivo de configuración principal de Apache.
 APACHE_CONF="/etc/apache2/apache2.conf"
 
@@ -191,7 +189,6 @@ else
 fi
 echo -e "\n"
 sleep 3
-
 
 
 # ----------------------------------------------------------------------
@@ -425,7 +422,10 @@ if [[ "$CERT_TYPE_LOWER" == "le" ]]; then
     echo -e "${C_SUBTITULO}-------------------------------------------------${RESET}"
     
     # Prueba de configuración (Paso 2 de tu lista)
+	echo -e "\n"
+	echo -e "${C_INFO}ℹ️ Verificando la sintaxis de los archivos de configuración de Apache (apache2ctl configtest)${RESET}"
     apache2ctl configtest
+	echo -e "\n"
 	
     if [ $? -ne 0 ]; then
         echo -e "${C_ERROR}❌ ERROR: Fallo en la prueba de configuración de Apache (apache2ctl configtest). No se puede ejecutar Certbot. Continuará con el certificado Self-Signed (si existía).${RESET}"
@@ -464,13 +464,14 @@ if [[ "$CERT_TYPE_LOWER" == "le" ]]; then
                 echo -e "${C_INFO}-> Estado de certbot.timer:${RESET}"
                 systemctl status certbot.timer
             fi
-            
+            echo -e "\n" 
             read_prompt "¿Desea ejecutar una simulación de renovación de certificados (dry-run)? Esto no modificará el sistema, sólo és una simulación. (sí/NO - Enter para NO): " DRY_RUN_TEST "no"
 
             RESPONSE_LOWER=$(echo "$DRY_RUN_TEST" | tr '[:upper:]' '[:lower:]')
 
             if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
                 echo -e "${C_INFO}-> Ejecutando: sudo certbot renew --dry-run${RESET}"
+				echo -e "\n" 
                 certbot renew --dry-run
 				
                 echo -e "\n"
