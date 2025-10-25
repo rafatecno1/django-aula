@@ -157,12 +157,31 @@ sleep 3
 # 2.3 ELECCIÓN Y GENERACIÓN DE CERTIFICADOS
 # ----------------------------------------------------------------------
 
-echo -e "${C_SUBTITULO}--- 2.3 Elección y Generación de Certificados SSL/TLS ---${RESET}"
+echo -e "${C_SUBTITULO}--- 2.3 Generación y Elección de Certificados SSL/TLS ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------${RESET}"
 
 # Variables de ruta de certificados
 CERT_KEY="/etc/ssl/private/$PROJECT_FOLDER-selfsigned.key"
 CERT_CRT="/etc/ssl/certs/$PROJECT_FOLDER-selfsigned.crt"
+
+# ----------------------------------------------------------------------
+# (NUEVO BLOQUE) GENERACIÓN UNCONDICIONAL DEL CERTIFICADO TEMPORAL
+# ----------------------------------------------------------------------
+echo -e "${C_INFO}-> Generando certificado Self-Signed TEMPORAL para $DOMAIN_CLEAN${RESET}"
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout "$CERT_KEY" \
+    -out "$CERT_CRT" \
+    -subj "/C=ES/ST=Catalonia/L=$LOCALITAT_CLEAN/O=$PROJECT_FOLDER/CN=$DOMAIN_CLEAN" > /dev/null 2>&1
+
+# Verificar la generación (la comprobación es CRÍTICA)
+if [ $? -ne 0 ] || [ ! -s "$CERT_CRT" ]; then
+    echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo al generar el certificado SSL temporal. Se necesita el paquete 'haveged' o revisar 'openssl'.${RESET}"
+    echo -e "\n"
+    exit 1
+fi
+echo -e "${C_EXITO}✅ Certificado Self-Signed TEMPORAL generado y listo como marcador de posición.${RESET}"
+sleep 3
 
 # ----------------------------------------------------------------------
 # Mensaje informativo sobre la elección del certificado
@@ -189,41 +208,19 @@ CERT_TYPE_LOWER=$(echo "$CERT_TYPE" | tr '[:upper:]' '[:lower:]')
 if [[ "$CERT_TYPE_LOWER" == "le" ]] || [[ "$CERT_TYPE_LOWER" == "letsencrypt" ]]; then
 
     # ------------------------------------------------------------------
-    # LÓGICA CERTBOT (Let's Encrypt) - Necesita VHost en el siguiente paso
+    # LÓGICA CERTBOT (Let's Encrypt)
     # ------------------------------------------------------------------
     echo -e "${C_INFO}ℹ️ Ha seleccionado Let's Encrypt. La ejecución interactiva se realizará después de crear el archivo de configuración VHost del servidor Apache.${RESET}"
+    echo -e "${C_INFO}   El certificado autofirmado TEMPORAL será reemplazado por el de Let's Encrypt.${RESET}"
 
-else
+    else
     # ------------------------------------------------------------------
     # LÓGICA CERTIFICADO AUTOFIRMADO (Self-Signed)
     # ------------------------------------------------------------------
-    echo -e "${C_INFO}-> Generando certificado Self-Signed para $DOMAIN_CLEAN${RESET}"
-
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout "$CERT_KEY" \
-        -out "$CERT_CRT" \
-        -subj "/C=ES/ST=Catalonia/L=$LOCALITAT_CLEAN/O=$PROJECT_FOLDER/CN=$DOMAIN_CLEAN" > /dev/null 2>&1
-
-	# USAMOS [ ! -s "$CERT_CRT" ] para verificar que el archivo NO existe O está vacío (tamaño cero)
-	if [ $? -ne 0 ] || [ ! -s "$CERT_CRT" ]; then
-		echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo al generar el certificado SSL autofirmado.${RESET}"
-		echo -e "${C_INFO}ℹ️ El archivo esperado '$CERT_CRT' está ausente o vacío. Revise la instalación de 'openssl' o la entropía del servidor.${RESET}"
-		echo -e "\n"
-		exit 1
-	fi
-	echo -e "${C_EXITO}✅ Certificado Self-Signed (para Desarrollo) generado en $CERT_CRT.${RESET}"
-	sleep 3
-    echo -e "${C_INFO}⚠️ Advertencia: Los navegadores web mostrarán un mensaje que dirá que el certificado no será de confianza porque no lo habrá emitido una entidad certificadora reconocida, sinó que se ha generado en su servidor.${RESET}"
+    echo -e "${C_INFO}-> Convirtiendo el certificado Self-Signed creado temportalmente en permanente para $DOMAIN_CLEAN${RESET}"
+    echo -e "${C_INFO}⚠️ Advertencia: Los navegadores web mostrarán un mensaje de no confianza...${RESET}"
     sleep 3
 fi
-
-
-# CAAAAAAAAL fer un export
-
-# Se guarda la variable de elección para usarla en el paso 5.3
-export FINAL_CERT_TYPE="$CERT_TYPE_LOWER"
-
-
 
 # ----------------------------------------------------------------------
 # 3. CREACIÓN DE ARCHIVOS VIRTUAL HOST
@@ -381,7 +378,7 @@ echo -e "\n"
 sleep 1
 
 # 5.3 Ejecución de Certbot si se eligió Let's Encrypt (Paso 4 de tu lista)
-if [[ "$FINAL_CERT_TYPE" == "le" ]]; then
+if [[ "$CERT_TYPE_LOWER" == "le" ]]; then
     echo -e "${C_SUBTITULO}--- 5.3 Ejecutando Certbot para Let's Encrypt ---${RESET}"
     echo -e "${C_SUBTITULO}-------------------------------------------------${RESET}"
     
