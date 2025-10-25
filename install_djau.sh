@@ -232,6 +232,7 @@ echo -e "\n"
 # -----------------------------------------------------------------
 # NÚCLEO DE LA APLICACIÓN DJANGO Y HERRAMIENTAS DE PYTHON
 # -----------------------------------------------------------------
+apt_desc="Núcleo Django y Python"
 apt-get install -y \
 	python3 \
     python3-venv \
@@ -243,48 +244,52 @@ apt-get install -y \
     python3-libxml2 \
     libgl1 \
     libglib2.0-0t64
+
+check_install "$apt_desc"
 	
 # -----------------------------------------------------------------
 # GESTIÓN DE CÓDIGO
 # -----------------------------------------------------------------	
+apt_desc="Gestión de Código (git)"
 apt-get install -y git
+check_install "$apt_desc"
 
 # -----------------------------------------------------------------
 # GESTOR DE BASE DE DATOS Y UTILIDADES DE ADMINISTRACIÓN
 # -----------------------------------------------------------------
+apt_desc="Gestor de Base de Datos (PostgreSQL)"
 apt-get install -y postgresql
+check_install "$apt_desc"
 
 # -----------------------------------------------------------------
 # UTILIDADES DE ADMINISTRACIÓN
 # -----------------------------------------------------------------
+apt_desc="Utilidades de administración"
 apt-get install -y \
     nano \
     htop \
     btop \
     ncdu
 
+check_install "$apt_desc"
+
 # -----------------------------------------------------------------
 # SEGURIDAD Y CONFIGURACIÓN DEL SISTEMA
 # -----------------------------------------------------------------
+apt_desc="Seguridad, Cron y Locale (fail2ban, locales, haveged)"
 apt-get install -y \
     cron \
     fail2ban \
     locales \
     haveged # Generador de Entropía (crucial para openssl en VPS)
 
+check_install "$apt_desc"
+
 # NOTA: btop no está siempre en los repositorios por defecto de Debian/Ubuntu. 
 # Si falla, se puede quitar o el usuario lo instalará por su cuenta.
 
-if [ $? -ne 0 ]; then
-    echo -e "\n"
-    echo -e "${C_ERROR}❌ ERROR: Fallo CRÍTICO en la instalación de dependencias del sistema (apt-get install).${RESET}"
-    echo -e "${C_INFO}ℹ️ No es posible continuar sin estos paquetes. Revise la conexión, el log y ejecute el script de nuevo.${RESET}"
-	echo -e "\n"
-    exit 1
-fi
-
 echo -e "\n"
-echo -e "${C_EXITO}✅ Dependencias del sistema instaladas y sistema actualizado correctamente.${RESET}"
+echo -e "${C_EXITO}✅ Todas las dependencias del sistema instaladas y sistema actualizado correctamente.${RESET}"
 echo -e "\n"
 sleep 2
 
