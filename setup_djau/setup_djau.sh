@@ -101,20 +101,9 @@ read_prompt "Introduzca el NOMBRE de la BASE DE DATOS en PostgreSQL (por defecto
 read_prompt "Introduzca el USUARIO de la BASE DE DATOS en PostgreSQL (por defecto: djau): " DB_USER "djau"
 
 # Validación de contraseñas
-while true; do
-    read -sp "Introduzca la CONTRASEÑA para el usuario $DB_USER de la BD en PostgreSQL: " DB_PASS
-    echo
-    read -sp "Repita la CONTRASEÑA: " DB_PASS2
-    echo 
 
-    if [ -z "$DB_PASS" ] || [ -z "$DB_PASS2" ]; then
-        echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
-    elif [ "$DB_PASS" != "$DB_PASS2" ]; then
-        echo -e "${C_ERROR}❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.${RESET}\n"
-    else
-        break
-    fi
-done
+read_password_confirm "Introduzca la CONTRASEÑA para el usuario $DB_USER de la BD en PostgreSQL: " DB_PASS
+
 echo -e "\n"
 echo -e "${C_EXITO}☑️ Los parámetros de la Base de Datos en PostgreSQL han sido definidos.${RESET}"
 echo -e "\n"
@@ -243,20 +232,7 @@ echo -e "    La información se puede encontrar aquí: ${C_SUBTITULO}'https://su
 
 read_prompt "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
 
-while true; do
-    read -sp "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
-    echo
-    read -sp "Repita la CONTRASEÑA: " EMAIL_HOST_PASS2
-    echo -e "\n" 
-
-    if [ -z "$EMAIL_HOST_PASS" ] || [ -z "$EMAIL_HOST_PASS2" ]; then
-        echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
-    elif [ "$EMAIL_HOST_PASS" != "$EMAIL_HOST_PASS2" ]; then
-        echo -e "${C_ERROR}❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.${RESET}\n"
-    else
-        break
-    fi
-done
+read_password_confirm "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
 
 read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
 
@@ -268,74 +244,26 @@ echo -e "\n"
 echo -e "${C_SUBTITULO}--- 3.3 Generando Clave Secreta de Django ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
 
-# 1. Ejecutamos el comando y capturamos TODA la salida (stdout y stderr)
-FULL_OUTPUT=$(python manage.py generate_secret_key 2>&1)
+# Genera 50 bytes aleatorios, los codifica en base64, y toma los primeros 50 caracteres.
+SECRET_KEYPASS_RAW=$(openssl rand -base64 50 | head -c 50)
 
-# 2. AISLAMIENTO CRÍTICO: Buscar y aislar la línea que SÓLO contiene la clave secreta.
-#    Asumimos que la clave es una cadena larga de al menos 32 caracteres que NO contiene espacios.
-SECRET_KEYPASS=$(echo "$FULL_OUTPUT" | grep -o '[a-zA-Z0-9!@#$%^&*()_+-=,./?]{32,}' | tail -n 1 | tr -d '\n\r')
+# 4. FILTRADO: Eliminar caracteres que rompen SED/Python (es necesario).
+# Caracteres a eliminar: '|', '#', '/', '&', '\', '$', y las comillas simples o dobles.
+# Sintaxis corregida para Bash:
+FILTER_CHARS='|#/&\\'\''"$'
 
-#SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
+SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS_RAW" | tr -d "$FILTER_CHARS")
 
-# 3. Verificación de la longitud de la clave
-if [ ${#SECRET_KEYPASS} -lt 32 ]; then
-    echo -e "${C_ERROR}❌ ERROR: No se pudo generar una clave secreta válida. Salida completa:\n$FULL_OUTPUT${RESET}"
+# 5. Verificación de la longitud de la clave.
+if [ ${#SECRET_KEYPASS_FILTERED} -lt 40 ]; then
+    echo -e "${C_ERROR}❌ ERROR: No se pudo generar una clave secreta válida con OpenSSL. Saliendo.${RESET}"
+    # Si la clave es demasiado corta, salimos.
     deactivate
-	echo -e "\n"
+    echo -e "\n"
     exit 1
 fi
 
-# 4. FILTRADO: Eliminamos caracteres que rompen SED/Python (ya que la clave se pone entre comillas simples)
-# Caracteres a eliminar: '|', '#', '/', '&', '\', '$', y las comillas simples o dobles
-# que podrían aparecer si el SED no estuviera bien configurado.
-# Caracteres críticos: '|', '#', '/', '&', '\', '$', y las comillas simples "'"
-# Definimos la mayoría de los caracteres problemáticos dentro de comillas simples:
-# Definimos los caracteres comunes que no requieren escape especial en Bash:
-FILTER_CHARS='|#/&\\'
-
-# Concatenamos la comilla simple escapada ('\''):
-# Esto rompe la primera cadena, inserta la comilla, y reinicia la cadena de comillas simples.
-FILTER_CHARS=${FILTER_CHARS}'\'
-
-# Concatenamos la comilla doble escapada ('\"'):
-# Necesario para el caso de que la clave contenga comillas dobles.
-FILTER_CHARS=${FILTER_CHARS}'\"'
-
-# Concatenamos el signo de dólar ('$'):
-FILTER_CHARS=${FILTER_CHARS}'$'
-
-# El valor final de $FILTER_CHARS es: | # / & \ ' " $
-echo "$FILTER_CHARS"
-
-# Usamos -d para eliminar los caracteres problemáticos.
-SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d "$FILTER_CHARS")
-
-# 5. Si había warnings (más de 1 línea de output), los mostramos, pero NO los usamos.
-if [ "$(echo "$FULL_OUTPUT" | wc -l)" -gt 1 ]; then
-    echo -e "${C_INFO}ℹ️ Aviso: El generador de claves de Django emitió los siguientes mensajes (descartados):\n${CIANO}$(echo "$FULL_OUTPUT" | head -n -1)${RESET}"
-fi
-
-echo -e "${C_EXITO}✅ Clave secreta generada y filtrada automáticamente.${RESET}"
-
-
-# FILTRADO ROBUSTO DE LA SECRET_KEYPASS:
-# 1. Eliminamos retornos de carro/saltos de línea.
-# 2. Usamos 'printf' para construir una cadena con la clave y la pasamos a 'tr'.
-#    El comando 'tr' filtra TODOS los caracteres conflictivos de Bash/Sed/Python:
-#    | (delimitador), #, /, &, \, ', $
-#FILTER_CHARS='|#/&\\'$
-#REPLACEMENT_CHARS='-------' # Aseguramos tener suficientes reemplazos
-
-# Ejecutamos el filtro:
-# Usamos -d (delete) para simplemente eliminarlos, que es más seguro que el reemplazo
-# a menos que el reemplazo sea absolutamente necesario para mantener la longitud.
-# Si quieres mantener la longitud, usa -s (squeeze) con el reemplazo:
-# SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr -s "$FILTER_CHARS" "-")
-
-# Opción más segura y simple: Eliminar los caracteres problemáticos
-#SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr -d "$FILTER_CHARS")
-
-#echo -e "${C_EXITO}✅ Clave secreta generada automáticamente.${RESET}"
+echo -e "${C_EXITO}✅ Clave secreta generada y filtrada automáticamente con OpenSSL.${RESET}"
 echo -e "\n"
 sleep 3
 
@@ -451,21 +379,7 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 read_prompt "Introduce el CORREO ELECTRÓNICO para el superusuario 'admin' de la aplicación DJANGO: " ADMIN_EMAIL
 
 # 2. SOLICITAR Y VALIDAR LA CONTRASEÑA
-
-while true; do
-    read -sp "Introduzca la CONTRASEÑA para el superusuario 'admin': " ADMIN_PASS
-    echo
-    read -sp "Repita la CONTRASEÑA: " ADMIN_PASS2
-    echo -e "\n" 
-
-    if [ -z "$ADMIN_PASS" ] || [ -z "$ADMIN_PASS2" ]; then
-        echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
-    elif [ "$ADMIN_PASS" != "$ADMIN_PASS2" ]; then
-        echo -e "${C_ERROR}❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.${RESET}\n"
-    else
-        break
-    fi
-done
+read_password_confirm "Introduzca la CONTRASEÑA para el superusuario 'admin': " ADMIN_PASS
 
 echo -e "${C_INFO}--- Creando Superusuario 'admin' automáticamente ---${RESET}\n"
 

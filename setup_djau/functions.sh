@@ -74,8 +74,48 @@ read_prompt () {
     done
 }
 
+# ======================================================================
+# Función: read_password_confirm
+# Pregunta una contraseña y la repetición, validando que coincidan y no estén vacías.
+#
+# Uso: read_password_confirm "Mensaje de la primera solicitud: " VAR_NAME
+# La contraseña validada se guarda en la variable de Bash con nombre $VAR_NAME.
+# ======================================================================
+
+read_password_confirm() {
+    local PROMPT_MSG="$1"
+    local OUTPUT_VAR_NAME="$2"
+    local PASSWD=""
+    local PASSWD2=""
+    local C_ERROR=$(tput setaf 1) # Rojo, asumiendo que ya tienes C_ERROR definido
+    local RESET=$(tput sgr0)      # Reset, asumiendo que ya tienes RESET definido
+
+    while true; do
+        # Solicitud de la primera contraseña
+        read -sp "$PROMPT_MSG" PASSWD
+        echo
+
+        # Solicitud de la repetición de contraseña
+        read -sp "Repita la CONTRASEÑA: " PASSWD2
+        echo -e "\n"
+
+        if [ -z "$PASSWD" ] || [ -z "$PASSWD2" ]; then
+            echo -e "${C_ERROR}❌ ERROR: La contraseña no puede dejarse en blanco. Inténtelo de nuevo.${RESET}\n"
+        elif [ "$PASSWD" != "$PASSWD2" ]; then
+            echo -e "${C_ERROR}❌ ERROR: Las contraseñas no coinciden. Inténtelo de nuevo.${RESET}\n"
+        else
+            # Asignar el valor final de la contraseña a la variable de salida
+            # 'eval' es necesario para asignar dinámicamente el valor a una variable cuyo nombre es una cadena.
+            # Se usa 'printf %q' para sanitizar el valor y evitar inyección de shell con 'eval'.
+            eval "$OUTPUT_VAR_NAME=$(printf %q "$PASSWD")"
+            break
+        fi
+    done
+}
+
+
 # --------------------------------------------------
-# COMPRUEBA LA INSTALACIÓN DE PAQUEGES E INFORMA SI HA
+# COMPRUEBA LA INSTALACIÓN DE PAQUETES E INFORMA SI HA
 # HABIDO UN ERROR O SI LOS PAQUETES SE HAN INSTALADO CORRECTAMENTE
 # --------------------------------------------------
 
