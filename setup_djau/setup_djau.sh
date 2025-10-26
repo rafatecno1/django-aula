@@ -271,9 +271,9 @@ echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
 # 1. Ejecutamos el comando y capturamos TODA la salida (stdout y stderr)
 FULL_OUTPUT=$(python manage.py generate_secret_key 2>&1)
 
-# 2. Extraemos solo la primera línea (que debe ser la clave)
-#    y eliminamos cualquier retorno de carro o línea vacía.
-SECRET_KEYPASS=$(echo "$FULL_OUTPUT" | head -n 1 | tr -d '\n\r')
+# 2. AISLAMIENTO CRÍTICO: Buscar y aislar la línea que SÓLO contiene la clave secreta.
+#    Asumimos que la clave es una cadena larga de al menos 32 caracteres que NO contiene espacios.
+SECRET_KEYPASS=$(echo "$FULL_OUTPUT" | grep -o '[a-zA-Z0-9!@#$%^&*()_+-=,./?]{32,}' | tail -n 1 | tr -d '\n\r')
 
 #SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
 
@@ -286,8 +286,26 @@ if [ ${#SECRET_KEYPASS} -lt 32 ]; then
 fi
 
 # 4. FILTRADO: Eliminamos caracteres que rompen SED/Python (ya que la clave se pone entre comillas simples)
+# Caracteres a eliminar: '|', '#', '/', '&', '\', '$', y las comillas simples o dobles
+# que podrían aparecer si el SED no estuviera bien configurado.
 # Caracteres críticos: '|', '#', '/', '&', '\', '$', y las comillas simples "'"
-FILTER_CHARS='|#/&\\'$"\'"
+# Definimos la mayoría de los caracteres problemáticos dentro de comillas simples:
+# Definimos los caracteres comunes que no requieren escape especial en Bash:
+FILTER_CHARS='|#/&\\'
+
+# Concatenamos la comilla simple escapada ('\''):
+# Esto rompe la primera cadena, inserta la comilla, y reinicia la cadena de comillas simples.
+FILTER_CHARS=${FILTER_CHARS}'\'
+
+# Concatenamos la comilla doble escapada ('\"'):
+# Necesario para el caso de que la clave contenga comillas dobles.
+FILTER_CHARS=${FILTER_CHARS}'\"'
+
+# Concatenamos el signo de dólar ('$'):
+FILTER_CHARS=${FILTER_CHARS}'$'
+
+# El valor final de $FILTER_CHARS es: | # / & \ ' " $
+echo "$FILTER_CHARS"
 
 # Usamos -d para eliminar los caracteres problemáticos.
 SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d "$FILTER_CHARS")
