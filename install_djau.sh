@@ -195,13 +195,11 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 
 # 1. Actualizar la lista de paquetes
 echo -e "${C_INFO}ℹ️ Actualizando la lista de paquetes (apt-get update)...${RESET}"
-echo -e "\n"
 apt-get update
 echo -e "\n"
 
 # 2. Actualizar los paquetes existentes
 echo -e "${C_INFO}ℹ️ Actualizando el sistema (apt-get upgrade -y)...${RESET}"
-echo -e "\n"
 apt-get upgrade -y
 
 if [ $? -ne 0 ]; then
@@ -309,23 +307,29 @@ fi
 
 echo -e "${C_INFO}ℹ️ Esperando 5 segundos para que Fail2Ban inicie completamente el socket...${RESET}"
 sleep 5
+echo -e "\n"
 
 # Reiniciar para asegurar que la configuración está activa
 sudo systemctl restart fail2ban
 
 echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
-echo -e "${C_INFO}ℹ️ Puede verificar el estado con: ${C_SUBTITULO}$ sudo systemctl status fail2ban, $ sudo fail2ban-client status, $ sudo fail2ban-client status sshd, $ sudo tail -f /var/log/fail2ban.log${RESET}"
 echo -e "\n"
-echo -e "${C_INFO}systemctl status fail2ban${RESET}"
+echo -e "${C_INFO}ℹ️ Puede verificar el estado del sistema en cualquier momento con:${RESET}"
+echo -e "\n"
+echo -e "${C_INFO}sudo systemctl status fail2ban${RESET}"
 sudo systemctl status fail2ban | grep Active
 echo -e "\n"
 sleep 2
-echo -e "${C_INFO}fail2ban-client status${RESET}"
+echo -e "${C_INFO}sudo fail2ban-client status${RESET}"
 sudo fail2ban-client status
 echo -e "\n"
 sleep 2
-echo -e "${C_INFO}fail2ban-client status sshd${RESET}"
+echo -e "${C_INFO}sudo fail2ban-client status sshd${RESET}"
 sudo fail2ban-client status sshd
+echo -e "\n"
+sleep 2
+echo -e "${C_INFO}sudo tail -f /var/log/fail2ban.log${RESET}"
+sudo tail -f /var/log/fail2ban.log
 echo -e "\n"
 sleep 2
 
@@ -380,6 +384,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # 3. Forzar la configuración del sistema
+echo -e "\n"
 echo -e "${C_INFO}ℹ️ Configurando el locale del sistema a 'ca_ES.UTF-8'...${RESET}"
 sudo update-locale LANG=ca_ES.UTF-8
 
