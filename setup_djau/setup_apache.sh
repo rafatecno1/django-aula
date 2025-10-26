@@ -72,7 +72,7 @@ echo -e "\n"
 # -----------------------------------------------------------------
 # INSTALACIÓN DEL SERVIDOR APACHE Y MOD-WSGI
 # -----------------------------------------------------------------
-APT_DESC="Instalación del servidor Apache y mod-wsgi"
+APT_DESC="Servidor Apache y mod-wsgi"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
 apt-get install -y apache2 libapache2-mod-wsgi-py3
 check_install "$APT_DESC"
@@ -80,7 +80,7 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 # INSTALACIÓN DEL CORTAFUEGOS UFW
 # -----------------------------------------------------------------
-APT_DESC="Instalación del cortafuegos UFW"
+APT_DESC="Cortafuegos UFW"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
 apt-get install -y ufw
 check_install "$APT_DESC"
@@ -88,7 +88,7 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 # INSTALACIÓN DEL CERTBOT Y SU INTEGRACIÓN CON EL SERVIDOR APACHE
 # -----------------------------------------------------------------
-APT_DESC="Instalación del Certbot y su integración con el servidor Apache"
+APT_DESC="Certbot y su integración con el servidor Apache"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
 apt-get install -y certbot python3-certbot-apache
 check_install "$APT_DESC"
@@ -586,7 +586,7 @@ echo -e "${C_PRINCIPAL}--- FASE 2. CONFIGURACIÓN DE APACHE FINALIZADA${RESET} $
 echo -e "${C_PRINCIPAL}====================================================================${RESET}"
 echo -e "\n"
 
-echo -e "${C_INFO}La aplicación debería estar disponible en: ${RESET}${C_SUBTITULO}$DOMAIN_NAME${RESET}"
+echo -e "${C_INFO}La aplicación debería estar disponible en: ${RESET}${C_SUBTITULO}$DOMAIN_CLEAN${RESET}"
 echo -e "\n"
 
 echo -e "${C_INFO}--- SIGUIENTE FASE: FASE 3 - TAREAS PROGRAMADAS Y MANTENIMIENTO ---${RESET}"

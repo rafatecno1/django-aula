@@ -96,7 +96,7 @@ check_install() {
         exit 1
     else
 	    echo -e "\n"
-        echo -e "${C_EXITO}✅ Instalación de '${DESC_MSG}' completada con éxito.${RESET}"
+        echo -e "${C_EXITO}✅ Instalación: '${DESC_MSG}' completada con éxito.${RESET}"
     fi
     echo -e "\n"
 	sleep 2

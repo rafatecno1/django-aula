@@ -181,7 +181,12 @@ read_prompt "Introduzca el CÓDIGO del centro (por defecto: 00000000): " CODI_CE
 read_prompt "Introduzca el nombre de dominio o subdominio para la aplicación (ej: djau.elteudomini.cat): " DOMAIN_NAME_CLEAN "djau.elteudomini.cat"
 
 # 2. Definir cómo será el entorno donde la aplicación esté funcionando (Interno vs. Público)
-read_prompt "¿Cuando la aplicación esté en producción, lo hará en una RED INTERNA (HTTP sin certificados de seguridad SSL) o lo hará con acceso desde internet de forma PÚBLICA (HTTPS con certificados Let's Encrypt)? (INT/PUB - Enter para PUB): " INSTALL_TYPE "PUB"
+echo -e "${C_INFO}Cuando la aplicación esté en producción puede ser servida de dos maneras:${RESET}"
+echo -e "${C_INFO}   - o en una RED INTERNA (Servidor local dentro de un edificio) por HTTP sin certificados de seguridad SSL.${RESET}"
+echo -e "${C_INFO}   - o desde internet, de forma PÚBLICA por HTTPS con certificados autofirmados sin confianza pública o con certificados gratuitos Let's Encrypt de confianza.${RESET}"
+echo -e "\n"
+
+read_prompt "¿Cómo quiere servir la aplicación, desde una RED INTERNA (HTTP sin certificados de seguridad SSL) o desde internet de forma PÚBLICA (HTTPS con certificados)? (INT/PUB - Enter para PUB): " INSTALL_TYPE "PUB"
 INSTALL_TYPE_LOWER=$(echo "$INSTALL_TYPE" | tr '[:upper:]' '[:lower:]')
 
 # 3. Limpiar el dominio introducido por el usuario y Definir la URL de Acceso según su protocolo de acceso (PROTOCOL_URL y DOMAIN_CLEAN)
@@ -215,16 +220,16 @@ fi
 
 echo -e "${C_INFO}ℹ️ Lista de ALLOWED_HOSTS generada: ${CIANO}$ALLOWED_HOSTS_LIST${RESET}"
 echo -e "${C_INFO}ℹ️ URL de Acceso generada: ${CIANO}$PROTOCOL_URL${RESET}"
+echo -e "\n"
 
 # 5. Definir el correo del administrador del dominio
 read_prompt "Introduzca la dirección de CORREO del administrador (por defecto: ui@mega.cracs.cat): " ADMIN_EMAIL "ui@mega.cracs.cat"
 
 
-
 #read_prompt "Introduzca la URL base de la aplicación (por defecto: https://djau.elteudomini.cat): " DOMAIN_NAME "https://djau.elteudomini.cat"
 #read_prompt "Introduzca los HOSTS permitidos separados por comas. (por defecto: djau.elteudomini.cat,127.0.0.1): " ALLOWED_HOSTS_LIST "djau.elteudomini.cat,127.0.0.1"
 
-echo -e "\n"
+
 echo -e "${C_EXITO}☑️ Variables y parámetros generales definidos.${RESET}"
 echo -e "\n"
 
@@ -284,7 +289,7 @@ REPLACEMENT_CHARS='------'
 SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr "$FILTER_CHARS" "$REPLACEMENT_CHARS")
 
 echo -e "${C_EXITO}✅ Clave secreta generada automáticamente.${RESET}"
-
+echo -e "\n"
 sleep 3
 
 # 3.4 Copiar y Aplicar Sustituciones
