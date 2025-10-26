@@ -201,7 +201,7 @@ else
 fi
 
 # 4.2. Construir la lista final de ALLOWED_HOSTS
-ALLOWED_HOSTS_LIST="$DOMAIN_CLEAN,127.0.0.1"
+ALLOWED_HOSTS_LIST="127.0.0.1,$DOMAIN_CLEAN"
 
 if [ -n "$WWW_DOMAIN" ]; then
     ALLOWED_HOSTS_LIST="$ALLOWED_HOSTS_LIST,$WWW_DOMAIN"
@@ -231,9 +231,7 @@ echo -e "${C_INFO}ℹ️ Para el envío de correos se requiere una contraseña d
 echo -e "    La información se puede encontrar aquí: ${C_SUBTITULO}'https://support.google.com/mail/answer/185833?hl=ca'${RESET}\n"
 
 read_prompt "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
-
 read_password_confirm "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
-
 read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
 
 echo -e "${C_EXITO}☑️ Parámetros SMTP definidos.${RESET}\n"
@@ -263,7 +261,7 @@ if [ ${#SECRET_KEYPASS_FILTERED} -lt 40 ]; then
     exit 1
 fi
 
-echo -e "${C_EXITO}✅ Clave secreta generada y filtrada automáticamente con OpenSSL.${RESET}"
+echo -e "${C_EXITO}✅ Clave secreta generada automáticamente.${RESET}"
 echo -e "\n"
 sleep 3
 
@@ -510,7 +508,6 @@ echo "export ALLOWED_HOSTS_LIST='$ALLOWED_HOSTS_LIST'" >> "$SETUP_DIR/config_var
 echo "export ALLOWED_HOSTS_PYTHON_LIST='$ALLOWED_HOSTS_PYTHON_LIST'" >> "$SETUP_DIR/config_vars.sh" # Lista con formato Python para inyectar en settings.py (separada por comas y entre comillas simples)
 echo "export INSTALL_TYPE_LOWER='$INSTALL_TYPE_LOWER'" >> "$SETUP_DIR/config_vars.sh"               # Para la lógica condicional en un servidor web como Apache (setup_apache.sh)
 
-
 # Reasignar permisos de forma preventiva
 chmod 600 "$SETUP_DIR/config_vars.sh"
 chown "$APP_USER":"$APP_USER" "$SETUP_DIR/config_vars.sh"
@@ -519,28 +516,29 @@ echo -e "${C_EXITO}✅ Credenciales de BD añadidas a${RESET} ${CIANO}config_var
 echo -e "\n"
 
 echo -e "\n"
-echo -e "${C_CAPITULO}====================================================================="
+echo -e "${C_CAPITULO}============================================${RESET}"
 echo -e "${C_CAPITULO}--- 7. VERIFICACIÓN DE CORREO (Opcional) ---${RESET}"
-echo -e "${C_CAPITULO}=====================================================================${RESET}"
+echo -e "${C_CAPITULO}============================================${RESET}"
 echo -e "\n"
 
 # 1. Dar permisos de ejecución al nuevo script
+cd "$SETUP_DIR"
 chmod +x ./test_email.sh
 
 read_prompt "¿Desea ejecutar el script de prueba de correo (./test_email.sh) ahora? (sí/NO - Enter para NO): " TEST_EMAIL_NOW "no"
 
-RESPONSE_LOWER=$(echo "$TEST_EMAIL_NOW" | tr '[:upper:]' '[:lower:]')
+TEST_EMAIL_NOW_LOWER=$(echo "$TEST_EMAIL_NOW" | tr '[:upper:]' '[:lower:]')
 
-if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
-    echo -e "${C_INFO}ℹ️ Iniciando prueba de correo...${RESET}"
-    ./test_email.sh
+if [[ "$TEST_EMAIL_NOW_LOWER" == "sí" ]] || [[ "$TEST_EMAIL_NOW_LOWER" == "si" ]]; then
+    echo -e "${C_INFO}ℹ️ Iniciando una prueba del sistema de correo configurado para $EMAIL_HOST_USER...${RESET}"
+    bash test_email.sh
 else
-    echo -e "${C_INFO}ℹ️ Omitiendo la prueba inicial de correo.${RESET}"
+    echo -e "${C_INFO}ℹ️ Omitiendo la prueba inicial del sistema de correo configurado para $EMAIL_HOST_USER.${RESET}"
 fi
 
-# 2. Informar al usuario sobre el uso futuro.
+# 2. Informar al usuario sobre el posible uso futuro del archivo de test de correo.
 echo -e "\n"
-echo -e "${C_INFO}Puede ejecutar el script de prueba de correo en cualquier momento desde el terminal de linux con: ${NEGRITA}./test_email.sh${RESET}"
+echo -e "${C_INFO}Siempre puede ejecutar el script de prueba de correo en cualquier momento desde el terminal de Linux con:${RESET} ${C_SUBTITULO}cd $SETUP_DIR${RESET} ${C_INFO}y${RESET} ${C_SUBTITULO}bash test_email.sh${RESET}"
 echo -e "\n"
 
 echo -e "\n"

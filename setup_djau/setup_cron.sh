@@ -12,10 +12,9 @@ clear
 
 echo -e "\n"
 echo -e "Ejecutando script setup_cron.sh."
-echo -e "Cargando archivo functions.sh y config_vars.sh."
 echo -e "\n"
 
-# 1. CARGAR LIBRERÍA DE FUNCIONES (Contiene variables de color y read_prompt)
+# 1. CARGAR LIBRERÍA DE FUNCIONES (Contiene tambien las variables de color)
 source "./functions.sh"
 
 # 2. CARGAR VARIABLES DE CONFIGURACIÓN
