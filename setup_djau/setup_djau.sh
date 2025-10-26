@@ -519,6 +519,31 @@ echo -e "${C_EXITO}✅ Credenciales de BD añadidas a${RESET} ${CIANO}config_var
 echo -e "\n"
 
 echo -e "\n"
+echo -e "${C_CAPITULO}====================================================================="
+echo -e "${C_CAPITULO}--- 7. VERIFICACIÓN DE CORREO (Opcional) ---${RESET}"
+echo -e "${C_CAPITULO}=====================================================================${RESET}"
+echo -e "\n"
+
+# 1. Dar permisos de ejecución al nuevo script
+chmod +x ./test_email.sh
+
+read_prompt "¿Desea ejecutar el script de prueba de correo (./test_email.sh) ahora? (sí/NO - Enter para NO): " TEST_EMAIL_NOW "no"
+
+RESPONSE_LOWER=$(echo "$TEST_EMAIL_NOW" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
+    echo -e "${C_INFO}ℹ️ Iniciando prueba de correo...${RESET}"
+    ./test_email.sh
+else
+    echo -e "${C_INFO}ℹ️ Omitiendo la prueba inicial de correo.${RESET}"
+fi
+
+# 2. Informar al usuario sobre el uso futuro.
+echo -e "\n"
+echo -e "${C_INFO}Puede ejecutar el script de prueba de correo en cualquier momento desde el terminal de linux con: ${NEGRITA}./test_email.sh${RESET}"
+echo -e "\n"
+
+echo -e "\n"
 echo -e "${C_PRINCIPAL}======================================================================================"
 echo -e "${C_PRINCIPAL}--- COMPLETADA LA CONFIGURACIÓN BÁSICA GESTIONADA PARA DJANGO-AULA${RESET} ${CIANO}(setup_djau.sh)${RESET} ${C_PRINCIPAL}---"
 echo -e "${C_PRINCIPAL}Devolviendo el control al script${RESET} ${CIANO}(install_djau.sh)${RESET}"
