@@ -268,27 +268,56 @@ echo -e "\n"
 echo -e "${C_SUBTITULO}--- 3.3 Generando Clave Secreta de Django ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------${RESET}"
 
-SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
+# 1. Ejecutamos el comando y capturamos TODA la salida (stdout y stderr)
+FULL_OUTPUT=$(python manage.py generate_secret_key 2>&1)
 
+# 2. Extraemos solo la primera línea (que debe ser la clave)
+#    y eliminamos cualquier retorno de carro o línea vacía.
+SECRET_KEYPASS=$(echo "$FULL_OUTPUT" | head -n 1 | tr -d '\n\r')
+
+#SECRET_KEYPASS=$(python manage.py generate_secret_key 2>&1)
+
+# 3. Verificación de la longitud de la clave
 if [ ${#SECRET_KEYPASS} -lt 32 ]; then
-    echo -e "${C_ERROR}❌ ERROR: No se pudo generar una clave secreta válida. Saliendo.${RESET}"
+    echo -e "${C_ERROR}❌ ERROR: No se pudo generar una clave secreta válida. Salida completa:\n$FULL_OUTPUT${RESET}"
     deactivate
 	echo -e "\n"
     exit 1
 fi
 
+# 4. FILTRADO: Eliminamos caracteres que rompen SED/Python (ya que la clave se pone entre comillas simples)
+# Caracteres críticos: '|', '#', '/', '&', '\', '$', y las comillas simples "'"
+FILTER_CHARS='|#/&\\'$"\'"
+
+# Usamos -d para eliminar los caracteres problemáticos.
+SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d "$FILTER_CHARS")
+
+# 5. Si había warnings (más de 1 línea de output), los mostramos, pero NO los usamos.
+if [ "$(echo "$FULL_OUTPUT" | wc -l)" -gt 1 ]; then
+    echo -e "${C_INFO}ℹ️ Aviso: El generador de claves de Django emitió los siguientes mensajes (descartados):\n${CIANO}$(echo "$FULL_OUTPUT" | head -n -1)${RESET}"
+fi
+
+echo -e "${C_EXITO}✅ Clave secreta generada y filtrada automáticamente.${RESET}"
+
+
 # FILTRADO ROBUSTO DE LA SECRET_KEYPASS:
 # 1. Eliminamos retornos de carro/saltos de línea.
 # 2. Usamos 'printf' para construir una cadena con la clave y la pasamos a 'tr'.
 #    El comando 'tr' filtra TODOS los caracteres conflictivos de Bash/Sed/Python:
-#    | (delimitador), #, /, &, \, '
-FILTER_CHARS='|#/&\\'\'
-REPLACEMENT_CHARS='------'
+#    | (delimitador), #, /, &, \, ', $
+#FILTER_CHARS='|#/&\\'$
+#REPLACEMENT_CHARS='-------' # Aseguramos tener suficientes reemplazos
 
 # Ejecutamos el filtro:
-SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr "$FILTER_CHARS" "$REPLACEMENT_CHARS")
+# Usamos -d (delete) para simplemente eliminarlos, que es más seguro que el reemplazo
+# a menos que el reemplazo sea absolutamente necesario para mantener la longitud.
+# Si quieres mantener la longitud, usa -s (squeeze) con el reemplazo:
+# SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr -s "$FILTER_CHARS" "-")
 
-echo -e "${C_EXITO}✅ Clave secreta generada automáticamente.${RESET}"
+# Opción más segura y simple: Eliminar los caracteres problemáticos
+#SECRET_KEYPASS_FILTERED=$(printf "%s" "$SECRET_KEYPASS" | tr -d '\n\r' | tr -d "$FILTER_CHARS")
+
+#echo -e "${C_EXITO}✅ Clave secreta generada automáticamente.${RESET}"
 echo -e "\n"
 sleep 3
 
@@ -335,7 +364,7 @@ sed -i "s#('admin', 'ui@mega.cracs.cat'),#('admin', '$ADMIN_EMAIL'),#" "$SETTING
 sed -i "s#^EMAIL_HOST_USER='el-meu-centre@el-meu-centre.net'#EMAIL_HOST_USER='$EMAIL_HOST_USER'#" "$SETTINGS_LOCAL_FINAL_FILE"
 sed -i "s#^EMAIL_HOST_PASSWORD='xxxx xxxx xxxx xxxx'#EMAIL_HOST_PASSWORD='$EMAIL_HOST_PASS'#" "$SETTINGS_LOCAL_FINAL_FILE"
 sed -i "s#^SERVER_EMAIL='el-meu-centre@el-meu-centre.net'#SERVER_EMAIL='$SERVER_MAIL'#" "$SETTINGS_LOCAL_FINAL_FILE"
-sed -i "s#^DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'#DEFAULT_FROM_EMAIL = '$NOM_CENTRE (Si responde no será leida) <$SERVER_MAIL>'#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'#DEFAULT_FROM_EMAIL = '$NOM_CENTRE (no-reply) <$SERVER_MAIL>'#" "$SETTINGS_LOCAL_FINAL_FILE"
 sed -i "s/EMAIL_SUBJECT_PREFIX = .*/EMAIL_SUBJECT_PREFIX = '[Comunicació $NOM_CENTRE]'/" "$SETTINGS_LOCAL_FINAL_FILE"
 
 # Lógica para SSL en Django Settings (SESSION/CSRF_COOKIE_SECURE)
