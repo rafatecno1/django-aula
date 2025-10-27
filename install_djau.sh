@@ -422,11 +422,16 @@ echo -e "\n"
 # 1. COMPROBAR SI EL DIRECTORIO YA EXISTE
 if [ -d "$FULL_PATH" ] && [ "$(ls -A "$FULL_PATH")" ]; then
     
-    # Directorio existe y no está vacío -> Proceder a actualizar (pull)
-    echo -e "${C_INFO}ℹ️ El directorio '$FULL_PATH' ya existe. Intentando actualizar el repositorio...${RESET}"
-    
-    # Navegar al directorio y ejecutar 'git pull' como el usuario de la aplicación
-    sudo -u "$APP_USER" git -C "$FULL_PATH" pull "$REPO_URL"
+	# Directorio existe y no está vacío -> Proceder a actualizar (pull)
+	echo -e "${C_INFO}ℹ️ El directorio '$FULL_PATH' ya existe. Intentando actualizar el repositorio...${RESET}"
+
+	# 1. Descartar todos los cambios locales para evitar el error de fusión
+	echo -e "${C_INFO}⚠️ ADVERTENCIA: Este directorio es para la ejecución automatizada de DJANGO-AULA para producción. Se descartarán los cambios locales no confirmados (git reset --hard) para asegurar la actualización.${RESET}"
+	sudo -u "$APP_USER" git -C "$FULL_PATH" reset --hard 
+	# Nota: La rama local debe coincidir con la remota. Asumimos 'main' o 'master'.
+
+	# 2. Realizar la descarga y actualización forzada
+	sudo -u "$APP_USER" git -C "$FULL_PATH" pull "$REPO_URL"
     
     if [ $? -ne 0 ]; then
         echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar el repositorio en '$FULL_PATH'.${RESET}"
