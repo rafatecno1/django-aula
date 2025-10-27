@@ -230,9 +230,9 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 echo -e "${C_INFO}ℹ️ Para el envío de correos se requiere una contraseña de aplicación de Google.${RESET}"
 echo -e "    La información se puede encontrar aquí: ${C_SUBTITULO}'https://support.google.com/mail/answer/185833?hl=ca'${RESET}\n"
 
-read_prompt "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
+read_email_confirm "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
 read_password_confirm "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
-read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: djau@elteudomini.cat): " SERVER_MAIL "djau@elteudomini.cat"
+read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: $EMAIL_HOST_USER): " SERVER_MAIL "$EMAIL_HOST_USER"
 
 echo -e "${C_EXITO}☑️ Parámetros SMTP definidos.${RESET}\n"
 echo -e "\n"
@@ -308,7 +308,7 @@ sed -i "s#('admin', 'ui@mega.cracs.cat'),#('admin', '$ADMIN_EMAIL'),#" "$SETTING
 sed -i "s#^EMAIL_HOST_USER='el-meu-centre@el-meu-centre.net'#EMAIL_HOST_USER='$EMAIL_HOST_USER'#" "$SETTINGS_LOCAL_FINAL_FILE"
 sed -i "s#^EMAIL_HOST_PASSWORD='xxxx xxxx xxxx xxxx'#EMAIL_HOST_PASSWORD='$EMAIL_HOST_PASS'#" "$SETTINGS_LOCAL_FINAL_FILE"
 sed -i "s#^SERVER_EMAIL='el-meu-centre@el-meu-centre.net'#SERVER_EMAIL='$SERVER_MAIL'#" "$SETTINGS_LOCAL_FINAL_FILE"
-sed -i "s#^DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'#DEFAULT_FROM_EMAIL = '$NOM_CENTRE (no-reply) <$SERVER_MAIL>'#" "$SETTINGS_LOCAL_FINAL_FILE"
+sed -i "s#^DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'#DEFAULT_FROM_EMAIL = '$NOM_CENTRE - NO RESPONDER - <$SERVER_MAIL>'#" "$SETTINGS_LOCAL_FINAL_FILE"
 sed -i "s/EMAIL_SUBJECT_PREFIX = .*/EMAIL_SUBJECT_PREFIX = '[Comunicació $NOM_CENTRE]'/" "$SETTINGS_LOCAL_FINAL_FILE"
 
 # Lógica para SSL en Django Settings (SESSION/CSRF_COOKIE_SECURE)
@@ -537,9 +537,9 @@ else
 fi
 
 # 2. Informar al usuario sobre el posible uso futuro del archivo de test de correo.
-echo -e "\n"
 echo -e "${C_INFO}Siempre puede ejecutar el script de prueba de correo en cualquier momento desde el terminal de Linux con:${RESET} ${C_SUBTITULO}cd $SETUP_DIR${RESET} ${C_INFO}y${RESET} ${C_SUBTITULO}bash test_email.sh${RESET}"
 echo -e "\n"
+sleep 2
 
 echo -e "\n"
 echo -e "${C_PRINCIPAL}======================================================================================"

@@ -74,6 +74,61 @@ read_prompt () {
     done
 }
 
+
+
+# ======================================================================
+# Función: read_email_confirm
+# Pide una dirección de correo, valida su formato con una regex simple.
+#
+# Uso: read_email_confirm "Mensaje de la solicitud: " VAR_NAME "valor_por_defecto"
+# El correo validado se guarda en la variable de Bash con nombre $VAR_NAME.
+# ======================================================================
+read_email_confirm() {
+    local PROMPT_MSG="$1"
+    local OUTPUT_VAR_NAME="$2"
+    local DEFAULT_VALUE="$3"
+    local EMAIL_REGEX="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    local INPUT_VALUE=""
+    local C_ERROR=$(tput setaf 1) # Rojo
+    local C_INFO=$(tput setaf 6)  # Cian
+    local RESET=$(tput sgr0)      # Reset
+    local EMAIL_VALID=0 # 0=Inválido, 1=Válido
+
+    while [ $EMAIL_VALID -eq 0 ]; do
+        # Construir el mensaje del prompt (incluyendo el valor por defecto si existe)
+        local CURRENT_PROMPT="$PROMPT_MSG"
+        if [ -n "$DEFAULT_VALUE" ]; then
+            CURRENT_PROMPT="$PROMPT_MSG (por defecto: $DEFAULT_VALUE): "
+        fi
+        
+        # Leer la entrada del usuario
+        read -r -p "$CURRENT_PROMPT" INPUT_VALUE
+
+        # Si el usuario presiona Enter y hay valor por defecto, usarlo.
+        if [ -z "$INPUT_VALUE" ] && [ -n "$DEFAULT_VALUE" ]; then
+            INPUT_VALUE="$DEFAULT_VALUE"
+        fi
+
+        # 1. Comprobar si está vacío (no permitido en este caso)
+        if [ -z "$INPUT_VALUE" ]; then
+            echo -e "${C_ERROR}❌ ERROR: El correo electrónico no puede estar vacío. Inténtelo de nuevo.${RESET}"
+            continue
+        fi
+
+        # 2. Comprobar el formato con la regex (se usa =~ en Bash)
+        if [[ "$INPUT_VALUE" =~ $EMAIL_REGEX ]]; then
+            EMAIL_VALID=1
+        else
+            echo -e "${C_ERROR}❌ ERROR: El formato del correo ('$INPUT_VALUE') no parece válido. Debe ser: usuario@dominio.ext. Inténtelo de nuevo.${RESET}"
+        fi
+    done
+
+    # Asignar el valor validado a la variable de salida
+    eval "$OUTPUT_VAR_NAME=$(printf %q "$INPUT_VALUE")"
+}
+
+
+
 # ======================================================================
 # Función: read_password_confirm
 # Pregunta una contraseña y la repetición, validando que coincidan y no estén vacías.

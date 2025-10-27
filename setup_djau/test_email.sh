@@ -76,13 +76,24 @@ import sys
 
 # La dirección del remitente ya está cargada desde settings.
 remitente = settings.DEFAULT_FROM_EMAIL
+email_host = settings.EMAIL_HOST
+email_port = settings.EMAIL_PORT
+email_backend = settings.EMAIL_BACKEND
 # Capturamos la variable de shell DESTINO_EMAIL con f-string (seguro en Heredoc)
 destinatario = ['${DESTINO_EMAIL}']
 
 try:
+    mensaje_texto = (
+        'Este es un correo de prueba enviado por el sistema DjAu (Django-Aula).\n\n'
+        f'Se ha enviado con éxito usando el backend: {email_backend}.\n\n'
+        'La configuración SMTP utilizada fue:\n'
+        f'   - Servidor: {email_host}\n'
+        f'   - Puerto: {email_port}\n\n'
+        'Si ha recibido este correo, la configuración SMTP es correcta.'
+    )
     enviado = send_mail(
         'Prueba de Correo DjAu - Instalación Automatizada',
-        'Este es un correo de prueba. Si lo recibe, la configuración SMTP es correcta.',
+        mensaje_texto,
         remitente,
         destinatario,
         fail_silently=False, # Crucial para capturar excepciones
@@ -96,11 +107,19 @@ try:
         print('❌ ERROR: El envío devolvió 0. El servidor SMTP pudo haber rechazado la conexión silenciosamente.')
         sys.exit(1)
 except Exception as e:
-    # Captura errores de conexión, autenticación, etc.
-    print('❌ ERROR CRÍTICO DURANTE EL ENVÍO:')
-    print(f'Tipo de error: {type(e).__name__}')
+    print('\n❌ ERROR CRÍTICO DURANTE EL ENVÍO:')
     print(f'Mensaje: {e}')
-    print('Revise la configuración de EMAIL_HOST y EMAIL_HOST_PASSWORD en settings_local.py.')
+    print('\n')
+    print('--- PASOS PARA EL DIAGNÓSTICO ---')
+    
+    # *** ESTE AVISO SE MUESTRA EN LA CONSOLA ***
+    if 'Connection' in str(e) or 'Authentication' in str(e):
+        print('1. Revise la configuración de EMAIL_HOST, EMAIL_PORT y EMAIL_HOST_PASSWORD en settings_local.py.')
+        print('2. Si el error es de conexión, compruebe las REGLAS DEL FIREWALL (ej., UFW) de su servidor VPS.')
+        print('   El tráfico SALIENTE (Outbound) al puerto SMTP (ej., 587 o 465) debe estar permitido.')
+        print('3. Si usa un proveedor de correo externo (p. ej., Gmail), asegúrese de usar una contraseña de aplicación, no su contraseña principal.')
+    
+    print('\n')
     sys.exit(1)
 
 EOF_PYTHON
