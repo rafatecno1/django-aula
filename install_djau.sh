@@ -423,10 +423,13 @@ echo -e "\n"
 if [ -d "$FULL_PATH" ] && [ "$(ls -A "$FULL_PATH")" ]; then
     
 	# Directorio existe y no está vacío -> Proceder a actualizar (pull)
-	echo -e "${C_INFO}ℹ️ El directorio '$FULL_PATH' ya existe. Intentando actualizar el repositorio...${RESET}"
+	echo -e "${C_INFO}ℹ️ El directorio '$FULL_PATH' ya existe y se usará para la instalación automatizada de DJANGO-AULA para producción.${RESET}"
 
 	# 1. Descartar todos los cambios locales para evitar el error de fusión
-	echo -e "${C_INFO}⚠️ ADVERTENCIA: Este directorio es para la ejecución automatizada de DJANGO-AULA para producción. Se descartarán los cambios locales no confirmados (git reset --hard) para asegurar la actualización.${RESET}"
+	echo -e "${C_INFO}⚠️ ADVERTENCIA: Intentando actualizar el repositorio y se descartarán los cambios locales no confirmados (git reset --hard) para asegurar la actualización.${RESET}"
+	echo -e "${C_INFO}⚠️ No se debe actualizar de esta forma una instalación ya existente en un entorno para desarrolladores, que debería encontrarse en otro directorio diferente.${RESET}"
+
+	echo -e "\n"
 	sudo -u "$APP_USER" git -C "$FULL_PATH" reset --hard 
 	# Nota: La rama local debe coincidir con la remota. Asumimos 'main' o 'master'.
 
