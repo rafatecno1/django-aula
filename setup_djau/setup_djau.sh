@@ -230,7 +230,7 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 echo -e "${C_INFO}ℹ️ Para el envío de correos se requiere una contraseña de aplicación de Google.${RESET}"
 echo -e "    La información se puede encontrar aquí: ${C_SUBTITULO}'https://support.google.com/mail/answer/185833?hl=ca'${RESET}\n"
 
-read_email_confirm "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER) (por defecto: djau@elteudomini.cat): " EMAIL_HOST_USER "djau@elteudomini.cat"
+read_email_confirm "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER): " EMAIL_HOST_USER "djau@elteudomini.cat"
 read_password_confirm "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
 read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: $EMAIL_HOST_USER): " SERVER_MAIL "$EMAIL_HOST_USER"
 
