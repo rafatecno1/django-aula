@@ -241,7 +241,7 @@ if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
 	echo -e "   - ${C_EXITO}Requisito:${RESET} Solo se pueden obtener si el servidor tiene un ${NEGRITA}nombre de dominio o subdominio real${RESET} que apunta correctamente a su IP pública."
 	echo -e "\n"
 
-	echo -e "${C_INFO}⚠️ PRE-REQUISITO: Para Let's Encrypt, el dominio '$DOMAIN_NAME' (y www.) debe apuntar a la IP pública del servidor.${RESET}"
+	echo -e "${C_INFO}⚠️ PRE-REQUISITO: Para Let's Encrypt, el dominio '$DOMAIN_CLEAN' (y www.) debe apuntar a la IP pública del servidor.${RESET}"
 
 	read_prompt "¿Desea instalar un certificado Let's Encrypt (LE) o un certificado Autofirmado (AUTO)? (LE/AUTO - Enter para AUTO): " CERT_TYPE "AUTO"
 	CERT_TYPE_LOWER=$(echo "$CERT_TYPE" | tr '[:upper:]' '[:lower:]')
