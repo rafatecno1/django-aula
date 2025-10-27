@@ -285,7 +285,8 @@ HTTP_INTERNAL_CONF="$VHOST_DIR/$PROJECT_FOLDER-int.conf"	# Nombre para el VHost 
 if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
     
     echo -e "${C_INFO}-> Configurando Vhosts para entorno PÚBLICO (HTTP a HTTPS)${RESET}"
-
+	echo -e "\n"
+	
 	# 3.1 Creando archivo para acceso por HTTP (Redirección)
 	echo -e "${C_SUBTITULO}--- 3.1 Creando archivo para acceso por HTTP externo (Redirección) ---${RESET}"
 	echo -e "${C_SUBTITULO}----------------------------------------------------------------------${RESET}"

@@ -70,7 +70,7 @@ echo -e "\n"
 sleep 3
 
 echo -e "${C_SUBTITULO}--- 1.2 Creando el archivo${RESET} ${CIANO}$BACKUP_SCRIPT${RESET} ${C_SUBTITULO}---${RESET}"
-echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
+echo -e "${C_SUBTITULO}----------------------------------------------------------${RESET}"
 
 cat << EOF > "$BACKUP_SCRIPT"
 #!/bin/bash
@@ -124,7 +124,7 @@ echo -e "${C_CAPITULO}=================================================${RESET}"
 echo -e "\n"
 
 echo -e "${C_SUBTITULO}--- 2.1 Directorio de logs${RESET} ${CIANO}$LOG_DIR${RESET} ${C_SUBTITULO}creado ---${RESET}"
-echo -e "${C_SUBTITULO}-----------------------------------------------------${RESET}"
+echo -e "${C_SUBTITULO}---------------------------------------------------${RESET}"
 
 # Crear el directorio de logs si no existe, y darle permisos a www-data y djau
 mkdir -p "$LOG_DIR"
@@ -144,7 +144,7 @@ CRONTAB_FILE_WWW_DATA="/tmp/crontab_${PROJECT_FOLDER}_www-data.tmp"
 
 # --- 2.2 Archivo Temporal para el usuario de la aplicación ($APP_USER) ---
 echo -e "${C_SUBTITULO}--- 2.2 Generando archivo temporal para el usuario '$APP_USER' ---${RESET}"
-echo -e "${C_SUBTITULO}------------------------------------------------------------------${RESET}"
+echo -e "${C_SUBTITULO}-------------------------------------------------------------${RESET}"
 
 cat <<- CRONEOF_APP > "$CRONTAB_FILE_APP_USER"
 # =================================================================
