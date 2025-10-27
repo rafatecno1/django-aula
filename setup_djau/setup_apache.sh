@@ -483,85 +483,101 @@ fi
 echo -e "\n"
 sleep 1
 
-# 5.3 Ejecución de Certbot (Ahora condicional al tipo de instalación y si se eligió Let's Encrypt)
 
-if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
+# 5.3 Comprobació de la sintaxis de los Virtual Hosts para el servidor Apache
+echo -e "${C_SUBTITULO}--- 5.3 Comprobació de la sintaxis de los Virtual Hosts para el servidor Apache ---${RESET}"
+echo -e "${C_SUBTITULO}-----------------------------------------------------------------------------------${RESET}"
 
-    # La lógica de Certbot SOLO se ejecuta si es PÚBLICO y si se seleccionó 'le'.
-    if [[ "$CERT_TYPE_LOWER" == "le" ]]; then
-		echo -e "${C_SUBTITULO}--- 5.3 Ejecutando Certbot para Let's Encrypt ---${RESET}"
-		echo -e "${C_SUBTITULO}-------------------------------------------------${RESET}"
-
-		# Prueba de configuración (Paso 2 de tu lista)
-		echo -e "\n"
-		echo -e "${C_INFO}ℹ️ Verificando la sintaxis de los archivos de configuración de Apache (apache2ctl configtest)${RESET}"
-		apache2ctl configtest
-		echo -e "\n"
-		
-		if [ $? -ne 0 ]; then
-			echo -e "${C_ERROR}❌ ERROR: Fallo en la prueba de configuración de Apache (apache2ctl configtest). No se puede ejecutar Certbot. Continuará con el certificado Self-Signed (si existía).${RESET}"
-		else
-			echo -e "${C_INFO}ℹ️ Certbot ejecutará una herramienta de comprobación interactiva y le hará preguntas sobre la configuración.${RESET}"
-			echo -e "\n"
-			echo -e "${C_INFO}Hay parámetros importantes que definir como:${RESET}"
-			echo -e "${NEGRITA}  - Ingresar un correo válido.${RESET}"
-			echo -e "${NEGRITA}  - Seleccionar 'Enter' para habilitar HTTPS en ambos dominios (con y sin www).${RESET}"
-			echo -e "${NEGRITA}  - Seleccionar '2' cuando le pregunte si desea no redirigir (opción 1) o redirigir (opción 2) el tráfico generado cuando se haya usado HTTP en vez de HTPPS.${RESET}"
-			echo -e "\n"
-			
-			# Ejecutar Certbot de forma interactiva
-			certbot --apache --redirect
-			
-			echo -e "\n"
-			if [ $? -ne 0 ]; then
-				echo -e "${C_ERROR}❌ ERROR: Fallo en la obtención del certificado Let's Encrypt. La instalación continuará con el certificado Self-Signed original  (si existía).${RESET}"
-			else
-				echo -e "${C_EXITO}✅ Certificados Let's Encrypt obtenidos e instalados con éxito. Apache2 modificado.${RESET}"
-				echo -e "${C_INFO}ℹ️ La renovación automática está configurada por Certbot (certbot.timer).${RESET}"
-				
-				# ----------------------------------------------
-				# VERIFICACIÓN Y PRUEBA DE RENOVACIÓN DE CERTBOT
-				# ----------------------------------------------
-				
-				echo -e "\n"
-				echo -e "${C_SUBTITULO}--- Verificación de la Renovación de Certificados ---${RESET}"
-				echo -e "${C_SUBTITULO}-----------------------------------------------------${RESET}"
-				
-				read_prompt "¿Desea verificar el estado del servicio de renovación automática (certbot.timer)? (sí/NO - Enter para NO): " CHECK_TIMER "no"
-
-				RESPONSE_LOWER=$(echo "$CHECK_TIMER" | tr '[:upper:]' '[:lower:]')
-
-				if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
-					echo -e "${C_INFO}-> Estado de certbot.timer:${RESET}"
-					systemctl status certbot.timer
-				fi
-				echo -e "\n" 
-				read_prompt "¿Desea ejecutar una simulación de renovación de certificados (dry-run)? Esto no modificará el sistema, sólo és una simulación. (sí/NO - Enter para NO): " DRY_RUN_TEST "no"
-
-				RESPONSE_LOWER=$(echo "$DRY_RUN_TEST" | tr '[:upper:]' '[:lower:]')
-
-				if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
-					echo -e "${C_INFO}-> Ejecutando: sudo certbot renew --dry-run${RESET}"
-					echo -e "\n" 
-					certbot renew --dry-run
-					
-					echo -e "\n"
-					if [ $? -eq 0 ]; then
-						echo -e "${C_EXITO}✅ Simulación de renovación completada con éxito. El proceso automático funcionará.${RESET}"
-					else
-						echo -e "${C_ERROR}❌ ADVERTENCIA: La simulación de renovación falló. Revise los logs de Certbot para determinar la causa.${RESET}"
-					fi
-				fi
-			fi
-		fi
-		echo -e "\n"
-    fi
-fi
+echo -e "\n"
+echo -e "${C_INFO}ℹ️ Verificando la sintaxis de los archivos de configuración de Apache (apache2ctl configtest)${RESET}"
+apache2ctl configtest
 echo -e "\n"
 
-# 5.4 Recargando la configuración del servidor Apache para aplicar los cambios
+if [ $? -ne 0 ]; then
+	echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo en la prueba de configuración de Apache. Revise los archivos de configuración creados. La instalación se detiene.${RESET}"
+    exit 1 # Detener la instalación si el Vhost SSL es inválido
+fi
 
-echo -e "${C_SUBTITULO}--- 5.4 Recargando la configuración del servidor Apache para aplicar los cambios ---${RESET}"
+# 5.4 Informació del certificado autofirmado o instal·lació del certificado Let's Encrypt
+
+# Mostrar este paso si se ha elegido 'auto', asumiendo que el certificado autofirmado 'self-signed' es el que se está utilizando.
+if [[ "$CERT_TYPE_LOWER" == "auto" ]]; then
+
+	echo -e "${C_SUBTITULO}--- 5.4 Certificado SSL Autofirmado generado e instalado ---${RESET}"
+	echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
+	echo -e "\n"
+    echo -e "${C_EXITO}✅ Certificado SSL Autofirmado generado e instalado en el Vhost temporal.${RESET}"
+    echo -e "${C_INFO}ℹ️ La conexión HTTPS funcionará, pero el navegador mostrará una advertencia de seguridad.${RESET}"
+
+
+# Mostrar este paso si se ha elegido 'le' con el fin de ejecutar Certbot e instalar los certificados Let's Encrypt.
+elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
+
+	echo -e "${C_SUBTITULO}--- 5.4 Ejecutando Certbot para generar e instalar los certificados de Let's Encrypt ---${RESET}"
+	echo -e "${C_SUBTITULO}----------------------------------------------------------------------------------------${RESET}"
+	echo -e "\n"
+	
+	echo -e "${C_INFO}ℹ️ Certbot ejecutará una herramienta de comprobación interactiva y le hará preguntas sobre la configuración.${RESET}"
+	echo -e "\n"
+	
+	echo -e "${C_INFO}Hay parámetros importantes que definir como:${RESET}"
+	echo -e "${NEGRITA}  - Ingresar un correo válido.${RESET}"
+	echo -e "${NEGRITA}  - Seleccionar 'Enter' para habilitar HTTPS en ambos dominios (con y sin www).${RESET}"
+	echo -e "${NEGRITA}  - Seleccionar '2' cuando le pregunte si desea no redirigir (opción 1) o redirigir (opción 2) el tráfico generado cuando se haya usado HTTP en vez de HTPPS.${RESET}"
+	echo -e "\n"
+
+	# Ejecutar Certbot de forma interactiva
+	certbot --apache --redirect
+	
+	echo -e "\n"
+	if [ $? -ne 0 ]; then
+		echo -e "${C_ERROR}❌ ERROR: Fallo en la obtención del certificado Let's Encrypt. La instalación continuará con el certificado Self-Signed original, si se pudo generar anteriormente como paso previo y necesario.${RESET}"
+	else
+		echo -e "${C_EXITO}✅ Certificados Let's Encrypt obtenidos e instalados con éxito. Apache2 modificado.${RESET}"
+		echo -e "${C_INFO}ℹ️ La renovación automática está configurada por Certbot (certbot.timer).${RESET}"
+		
+		# ----------------------------------------------
+		# VERIFICACIÓN Y PRUEBA DE RENOVACIÓN DE CERTBOT
+		# ----------------------------------------------
+		
+		echo -e "\n"
+		echo -e "${C_SUBTITULO}--- Verificación de la Renovación de Certificados ---${RESET}"
+		echo -e "${C_SUBTITULO}-----------------------------------------------------${RESET}"
+
+		echo -e "\n"		
+		read_prompt "¿Desea verificar el estado del servicio de renovación automática (certbot.timer)? (sí/NO - Enter para NO): " CHECK_TIMER "no"
+
+		RESPONSE_LOWER=$(echo "$CHECK_TIMER" | tr '[:upper:]' '[:lower:]')
+
+		if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
+			echo -e "${C_INFO}-> Estado de certbot.timer:${RESET}"
+			systemctl status certbot.timer
+		fi
+		echo -e "\n" 
+		read_prompt "¿Desea ejecutar una simulación de renovación de certificados (dry-run)? Esto no modificará el sistema, sólo és una simulación. (sí/NO - Enter para NO): " DRY_RUN_TEST "no"
+
+		RESPONSE_LOWER=$(echo "$DRY_RUN_TEST" | tr '[:upper:]' '[:lower:]')
+
+		if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
+			echo -e "${C_INFO}-> Ejecutando: sudo certbot renew --dry-run${RESET}"
+			echo -e "\n" 
+			certbot renew --dry-run
+			
+			echo -e "\n"
+			if [ $? -eq 0 ]; then
+				echo -e "${C_EXITO}✅ Simulación de renovación completada con éxito. El proceso automático funcionará.${RESET}"
+			else
+				echo -e "${C_ERROR}❌ ADVERTENCIA: La simulación de renovación falló. Revise los logs de Certbot para determinar la causa.${RESET}"
+			fi
+		fi
+	fi
+fi
+
+echo -e "\n"
+
+# 5.5 Recargando la configuración del servidor Apache para aplicar los cambios
+
+echo -e "${C_SUBTITULO}--- 5.5 Recargando la configuración del servidor Apache para aplicar los cambios ---${RESET}"
 echo -e "${C_SUBTITULO}------------------------------------------------------------------------------------${RESET}"
 
 systemctl reload apache2
