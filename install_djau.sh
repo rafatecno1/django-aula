@@ -328,9 +328,10 @@ echo -e "${C_INFO}sudo fail2ban-client status sshd${RESET}"
 sudo fail2ban-client status sshd
 echo -e "\n"
 sleep 2
-echo -e "${C_INFO}sudo tail -f /var/log/fail2ban.log${RESET}"
-sudo tail -f /var/log/fail2ban.log
-echo -e "\n"
+#Tarda mucho tiempo en acabar. Parece que el proceso ha fallado y se ha quedado bloqueado.
+#echo -e "${C_INFO}sudo tail -f /var/log/fail2ban.log${RESET}"
+#sudo tail -f /var/log/fail2ban.log
+#echo -e "\n"
 sleep 2
 
 echo -e "${C_SUBTITULO}--- 3.3 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
@@ -414,21 +415,46 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 REPO_URL="https://github.com/rafatecno1/django-aula.git"
 #REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
 
-# Usamos sudo -u para clonar como el usuario de la aplicación
+# Usamos sudo -u como el usuario de la aplicación para clonar o actualizar
 
-echo -e "${C_INFO}Clonando $REPO_URL en $FULL_PATH. Esto puede tardar un rato...${RESET}"
 echo -e "\n"
 
-sudo -u "$APP_USER" git clone "$REPO_URL" "$FULL_PATH"
-if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ERROR: Fallo al clonar el repositorio '$REPO_URL'.${RESET}"
-    echo "Comprueba que la URL sea correcta, que haya conexión a internet, o que el usuario '$APP_USER' tenga permisos de red."
-	echo -e "\n"
-    exit 1
+# 1. COMPROBAR SI EL DIRECTORIO YA EXISTE
+if [ -d "$FULL_PATH" ] && [ "$(ls -A "$FULL_PATH")" ]; then
+    
+    # Directorio existe y no está vacío -> Proceder a actualizar (pull)
+    echo -e "${C_INFO}ℹ️ El directorio '$FULL_PATH' ya existe. Intentando actualizar el repositorio...${RESET}"
+    
+    # Navegar al directorio y ejecutar 'git pull' como el usuario de la aplicación
+    sudo -u "$APP_USER" git -C "$FULL_PATH" pull "$REPO_URL"
+    
+    if [ $? -ne 0 ]; then
+        echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar el repositorio en '$FULL_PATH'.${RESET}"
+        echo "Asegúrese de que no hay conflictos locales no resueltos."
+        echo -e "\n"
+        exit 1
+    fi
+    echo -e "${C_EXITO}✅ Repositorio actualizado con éxito en '$FULL_PATH'.${RESET}"
+    
+else
+    
+    # Directorio NO existe o está vacío -> Proceder a clonar
+    echo -e "${C_INFO}Clonando $REPO_URL en $FULL_PATH. Esto puede tardar un rato...${RESET}"
+    
+    # Clonar el repositorio como el usuario de la aplicación
+    sudo -u "$APP_USER" git clone "$REPO_URL" "$FULL_PATH"
+    
+    if [ $? -ne 0 ]; then
+        echo -e "${C_ERROR}❌ ERROR: Fallo al clonar el repositorio '$REPO_URL'.${RESET}"
+        echo "Compruebe la URL, conexión a internet o permisos del usuario '$APP_USER'."
+        echo -e "\n"
+        exit 1
+    fi
+    echo -e "${C_EXITO}✅ Repositorio clonado en '$FULL_PATH'.${RESET}"
 fi
+
 echo -e "\n"
-echo -e "${C_EXITO}✅ Repositorio clonado en '$FULL_PATH'.${RESET}"
-echo -e "\n"
+
 sleep 3
 
 # -------------------------------------------------------------------------------------------------
