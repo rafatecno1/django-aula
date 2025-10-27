@@ -488,10 +488,10 @@ sleep 1
 echo -e "${C_SUBTITULO}--- 5.3 Comprobació de la sintaxis de los Virtual Hosts para el servidor Apache ---${RESET}"
 echo -e "${C_SUBTITULO}-----------------------------------------------------------------------------------${RESET}"
 
-echo -e "\n"
 echo -e "${C_INFO}ℹ️ Verificando la sintaxis de los archivos de configuración de Apache (apache2ctl configtest)${RESET}"
-apache2ctl configtest
 echo -e "\n"
+apache2ctl configtest
+
 
 if [ $? -ne 0 ]; then
 	echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo en la prueba de configuración de Apache. Revise los archivos de configuración creados. La instalación se detiene.${RESET}"
@@ -505,7 +505,6 @@ if [[ "$CERT_TYPE_LOWER" == "auto" ]]; then
 
 	echo -e "${C_SUBTITULO}--- 5.4 Certificado SSL Autofirmado generado e instalado ---${RESET}"
 	echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
-	echo -e "\n"
     echo -e "${C_EXITO}✅ Certificado SSL Autofirmado generado e instalado en el Vhost temporal.${RESET}"
     echo -e "${C_INFO}ℹ️ La conexión HTTPS funcionará, pero el navegador mostrará una advertencia de seguridad.${RESET}"
 
@@ -515,7 +514,6 @@ elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 
 	echo -e "${C_SUBTITULO}--- 5.4 Ejecutando Certbot para generar e instalar los certificados de Let's Encrypt ---${RESET}"
 	echo -e "${C_SUBTITULO}----------------------------------------------------------------------------------------${RESET}"
-	echo -e "\n"
 	
 	echo -e "${C_INFO}ℹ️ Certbot ejecutará una herramienta de comprobación interactiva y le hará preguntas sobre la configuración.${RESET}"
 	echo -e "\n"
@@ -544,7 +542,6 @@ elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 		echo -e "${C_SUBTITULO}--- Verificación de la Renovación de Certificados ---${RESET}"
 		echo -e "${C_SUBTITULO}-----------------------------------------------------${RESET}"
 
-		echo -e "\n"		
 		read_prompt "¿Desea verificar el estado del servicio de renovación automática (certbot.timer)? (sí/NO - Enter para NO): " CHECK_TIMER "no"
 
 		RESPONSE_LOWER=$(echo "$CHECK_TIMER" | tr '[:upper:]' '[:lower:]')
