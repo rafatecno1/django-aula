@@ -214,11 +214,6 @@ echo -e "\n"
 # 5. Definir el correo del administrador del dominio
 read_prompt "Introduzca la dirección de CORREO del administrador (por defecto: ui@mega.cracs.cat): " ADMIN_EMAIL "ui@mega.cracs.cat"
 
-
-#read_prompt "Introduzca la URL base de la aplicación (por defecto: https://djau.elteudomini.cat): " DOMAIN_NAME "https://djau.elteudomini.cat"
-#read_prompt "Introduzca los HOSTS permitidos separados por comas. (por defecto: djau.elteudomini.cat,127.0.0.1): " ALLOWED_HOSTS_LIST "djau.elteudomini.cat,127.0.0.1"
-
-
 echo -e "${C_EXITO}☑️ Variables y parámetros generales definidos.${RESET}"
 echo -e "\n"
 
@@ -230,7 +225,7 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 echo -e "${C_INFO}ℹ️ Para el envío de correos se requiere una contraseña de aplicación de Google.${RESET}"
 echo -e "    La información se puede encontrar aquí: ${C_SUBTITULO}'https://support.google.com/mail/answer/185833?hl=ca'${RESET}\n"
 
-read_email_confirm "Introduzca el CORREO para envío SMTP (EMAIL_HOST_USER): " EMAIL_HOST_USER "djau@elteudomini.cat"
+read_email_confirm "Introduzca el 	 (EMAIL_HOST_USER): " EMAIL_HOST_USER "djau@elteudomini.cat"
 read_password_confirm "Introduzca la CONTRASEÑA de aplicación SMTP (EMAIL_HOST_PASSWORD): " EMAIL_HOST_PASS
 read_prompt "Introduzca el CORREO del servidor (SERVER_EMAIL/DEFAULT_FROM_EMAIL) (por defecto: $EMAIL_HOST_USER): " SERVER_MAIL "$EMAIL_HOST_USER"
 
