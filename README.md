@@ -1,69 +1,69 @@
-django-aula
-===========
+# django-aula: Gestió Escolar - Software de Gestión de Centros Educatius
 
 Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies.
 
-School Attendance Software
-
 ![Imgur](http://i.imgur.com/YlCRTap.png)
 
-**[Llicència i Crèdits](LICENSE)** **EL PROGRAMA NO TÉ CAP GARANTIA, UTILITZEU-LO SOTA LA VOSTRA RESPONSABILITAT.**
+**[Llicència i Crèdits](LICENSE)** | **EL PROGRAMA NO TÉ CAP GARANTIA, UTILITZEU-LO SOTA LA VOSTRA RESPONSABILITAT.**
 
-Using Docker
-============
+---
 
-```
-cp env.example .env
-make build
-make start
+## 1. Característiques Principals i Valor Afegit
 
-# If you want to import demo data
-make load_demo_data
+Django-Aula és un sistema integral dissenyat per alleugerir la càrrega de treball del personal i millorar la gestió acadèmica i de convivència.
 
-# If you want to clean the DB
-make down
-make start
-```
+➡️ **[Llegir totes les CARACTERÍSTIQUES (perfil de gestió)](docs/USER_MANUAL/caracteristicas.md)**
 
-Quick demo
-=========
+### ✅ Funcionalitats Destacades
 
-On Ubuntu Server 24.04 LTS:
+El programa cobreix tots els aspectes clau de la gestió diària del centre: **Presència**, **Incidències**, **Actuacions**, **Sortides** i **Portal de Famílies**.
 
-```bash
-sudo apt-get update
-sudo apt-get install python3 python3-venv python3-dev git
-sudo apt-get install python3-lxml python3-libxml2 libxml2-dev libxslt-dev lib32z1-dev
-sudo apt-get install libgl1 libglib2.0-0t64
-mkdir djau
-cd djau
-git clone --single-branch --branch master https://github.com/ctrl-alt-d/django-aula.git django-aula
-cd django-aula
-python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
-./scripts/create_demo_data.sh
-python manage.py runserver
+➡️ **[Llegir totes les FUNCIONALITATS (detall tècnic i pantalles)](docs/USER_MANUAL/funcionalidades.md)**
 
-```
+---
 
-Open browser at http://127.0.0.1:8000 ( User M1, M2, ..., T1, T2, .. .All passwd 'dAju' )
+## 2. Instal·lació i Desplegament
 
-Deployment Docs
-=============
+### 🚀 Instal·lació Ràpida i Automatitzada (Mètode Recomanat)
 
-[Documentació pas a pas per a fer el desplegament.](docs/Wiki/README.md)
+Hem automatitzat el procés complet de desplegament en servidors VPS (Ubuntu/Debian) per garantir una instal·lació neta i funcional en pocs minuts.
 
-Vols col·laborar-hi com a #DEV?
-=============
+➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/INSTALL.md)**
 
-Aquestes són les [issues prioritàries](https://github.com/ctrl-alt-d/django-aula/issues?q=is%3Aissue%20state%3Aopen%20label%3APrioritari)
+### ⚙️ Desplegament Manual (Mètode Legat)
 
-Hi estàs interessat?
+Per a instal·lacions personalitzades, guies pas a pas, o per adaptar la instal·lació a distribucions de Linux diferents de les basades en Debian (com Ubuntu), podeu consultar el procediment manual que ha estat la base del procediment d'instal·lació automatitzat.
 
-[FAQs](https://github.com/ctrl-alt-d/django-aula/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3AFAQ+)
+[Instruccions de Desplegament Manual](docs/MANUAL_LEGACY/instalacion.md)
 
-Necessites ajuda?
-============
+## 3. Altres mètodes d'instal·lació o desplegament
 
-[Issues/Formularis d'ajuda](https://github.com/ctrl-alt-d/django-aula/issues/new/choose)
+### 💻 Demo Ràpida (Entorn de Prova Pública)
+
+Existeix la possibilitat de crear una Demo de l'aplicatiu Django-Aula de forma ràpida, tant en una màquina virtual que tingui escriptori gràfic, com en un servidor públic.
+➡️ **[Instruccions per a crear -ne una Demo Ràpida](docs/QUICK_DEMO.md)** (Assumint que crearem aquest nou arxiu).
+
+### 🐳 Desplegament amb Docker (Entorn de Desenvolupament)
+
+Si bé **Docker** no és el mètode de desplegament recomanat per a producció, és una eina excel·lent per a entorns de desenvolupament o proves ràpides.
+
+➡  **[Instruccions per fer-ne el desplegament amb Docker](docs/DOCKER.md)** (Assumint que crearem aquest nou arxiu).
+
+
+## 4. Manual de l'Administrador i Manteniment
+
+Tota l'extensa documentació sobre la posada en marxa, la càrrega inicial de dades (SAGA, Horaris), l'actualització i la gestió de final de curs es troba aquí:
+
+➡️ **[MANUAL DE L'ADMINISTRADOR (Càrrega de dades i Manteniment)](docs/USER_MANUAL/README.md)**
+
+
+## 5. Contribució i Suport
+
+### Vols col·laborar-hi com a #DEV?
+
+* Aquestes són les [issues prioritàries](https://github.com/ctrl-alt-d/django-aula/issues?q=is%3Aissue%20state%3Aopen%20label%3APrioritari).
+* [FAQs (Preguntes Freqüents)](https://github.com/ctrl-alt-d/django-aula/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3AFAQ+)
+
+### Necessites ajuda o vols reportar un error?
+
+* Utilitza el [Formulari d'ajuda/Issues](https://github.com/ctrl-alt-d/django-aula/issues/new/choose).
