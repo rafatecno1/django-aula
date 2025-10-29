@@ -243,7 +243,7 @@ echo -e "${C_PRINCIPAL}--- FASE 3: CONFIGURACIÓN DE CRON FINALIZADA${RESET} ${C
 echo -e "${C_PRINCIPAL}================================================================${RESET}"
 echo -e "\n"
 echo "   Para comprobar si las tareas han quedado instaladas teclee:"
-echo -e "      $ ${C_SUBTITULO}sudo crontab -u djau -l${RESET}"
+echo -e "      $ ${C_SUBTITULO}sudo crontab -u $APP_USER -l${RESET}"
 echo -e "      $ ${C_SUBTITULO}sudo crontab -u www-data -l${RESET}"
 echo -e "\n"
 
