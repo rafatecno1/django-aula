@@ -26,15 +26,15 @@ Cal crear un registre **A** que defineixi el subdomini de l'aplicació i l'apunt
 | **Nom/Subdomini** | `djau` |
 | **Destinació/IP** | L'adreça IP del vostre VPS |
 
-(assets/dns/crear_registre_A_subdomini.jpg)
+![Creció del registre A del subdomini](assets/dns/crear_registre_A_subdomini.jpg)
 
 Un cop creat, el registre apareixerà al llistat del panell de control de DNS:
 
-(assets/dns/registre_A_subdomini.jpg)
+![Entrada en el llistat de registres del registre A creat pel subdomini](assets/dns/registre_A_subdomini.jpg)
 
 En visualitzar els detalls del registre creat, es veurà la correspondència entre el subdomini complet i la IP:
 
-(assets/dns/editant_registre_A_subdomini.jpg)
+![Edició Registre A del subdomini](assets/dns/editant_registre_A_subdomini.jpg)
 
 ### 2.2 Registre del Subdomini `www.` (Opcional)
 
@@ -64,12 +64,12 @@ Cal crear un registre CAA pel subdomini principal i un altre per si s'ha optat p
 
 En visualitzar els detalls d'un dels registres creats, es veurà la correspondència entre el subdomini complet i l'entitat certificadora CA Let's Encrypt:
 
-(assets/dns/editant_Registre_CAA_LetsEncrypt.jpg)
+![Edició Registre CAA Let's Encrypt](assets/dns/editant_Registre_CAA_LetsEncrypt.jpg)
 
 Un cop creat, els registres haurien d'aparèixer al panell de control de DNS:
 
-(assets/dns/registre_CAA_LetsEncrypt.jpg)
+![Entrada en el llistat de registres del registre del registre CAA Let's Encrypt pel subdomini](assets/dns/registre_CAA_LetsEncrypt.jpg)
 
-(assets/dns/registre2_CAA_LetsEncrypt.jpg)
+![Entrada en el llistat de registres del registre del registre CAA Let's Encrypt pel subdomini que comença per www](assets/dns/registre2_CAA_LetsEncrypt.jpg)
 
 **Nota:** Després de crear o modificar qualsevol registre DNS, pot trigar unes hores (temps de propagació) fins que els canvis siguin efectius arreu del món.

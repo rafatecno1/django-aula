@@ -20,7 +20,7 @@ Un cop el compte estigui creat i tingui la verificació en dos passos activada, 
 2.  Feu clic a la vostra icona de perfil i accediu a **Gestiona el teu Compte de Google**.
 3.  Al menú lateral esquerre, feu clic a **Seguretat**.
 
-(assets/correu/configuració_compte.jpg)
+![Ubicació en el panell de control de Gmail de l'entrad Seguretat i de la Verificació en dues passes](assets/correu/configuració_compte.jpg)
 
 #### Pas B: Habilitar i Administrar Contrasenyes d'Aplicació
 
@@ -32,7 +32,7 @@ Un cop el compte estigui creat i tingui la verificació en dos passos activada, 
 
 1.  Se us demanarà que introduïu un **Nom** per identificar l'aplicació que utilitzarà la contrasenya (p. ex., "Django-Aula_VPS"). Això és útil per gestionar-les posteriorment.
 
-(assets/correu/contrasenya_aplicacio.jpg)
+![Procés d'assignació d'un nom a la contrasenya d'aplicació que s'està creant](assets/correu/contrasenya_aplicacio.jpg)
 
 2.  Després de donar-li un nom, Google generarà una **Contrasenya d'Aplicació de 16 caràcters**. Aquesta contrasenya només es mostrarà una vegada.
 

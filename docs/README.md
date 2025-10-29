@@ -1,10 +1,10 @@
 # Guia d'Instal·lació Automatitzada de Django-Aula (Mètode Preferent)
 
-Aquest document detalla el procés d'instal·lació automatitzada de **Django-Aula**, dissenyat per a desplegaments ràpids, nets i robustos en entorns de servidor.
+Aquesta guia detalla el procés d'instal·lació automatitzada de **Django-Aula** que consisteix en **tres fases consecutives** automatitzades dissenyades per a desplegaments ràpids, nets i robustos en entorns de servidor..
 
-L’instal·lador automatitzat consta de **tres fases consecutives**, cadascuna executada mitjançant un script específic. És imprescindible seguir-les en l’ordre indicat:
+Cada fase consecutiva s'executa mitjançant un script específic i és imprescindible seguir-les en l’ordre correcte.
 
-El document només pretén explicar què fa cada fase i què s'anira trobant l'usuari instal·lador, però la instal·lació és autònoma. Només cal complir els requisitis previs i descarregar el primer script tal i com s'indica a la Fase 1. 
+**Per començar el procés d'instal·lació, l'usuari instal·lador només caldrà complir els requisitis previs i que es descarregui i executi el primer script**, tal i com s'explica a la Fase 1. 
 
 | Fase | Descripció | Script |
 |------|-------------|--------|
@@ -20,9 +20,9 @@ El document només pretén explicar què fa cada fase i què s'anira trobant l'u
    1.1 - [Requisits de Servidor](#11-requisits-de-servidor)  
    1.2 - [Configuració de Correu i DNS](#12-configuració-de-correu-i-dns)  
 2. [Fases d’Instal·lació Automatitzada](#2-fases-dinstal·lació-automatitzada)  
-   2.1 - [Fase 1: Instal·lació i Configuració de Django-Aula](#fase-1-instal·lació-i-configuració-de-django-aula)  
-   2.2 - [Fase 2: Instal·lació del Servidor Web Apache](#fase-2-instal·lació-del-servidor-web-apache)  
-   2.3 - [Fase 3: Automatització de Tasques (CRON)](#fase-3-automatització-de-tasques-cron)
+   2.1 - [Fase 1: Instal·lació i Configuració de Django-Aula](###21-fase-1-instal·lació-i-configuració-de-django-aula)  
+   2.2 - [Fase 2: Instal·lació del Servidor Web Apache](###22-fase-2-instal·lació-del-servidor-web-apache)  
+   2.3 - [Fase 3: Automatització de Tasques (CRON)](###23-fase-3-automatització-de-tasques-cron)
 
 ---
 
@@ -34,7 +34,7 @@ Abans d'iniciar la instal·lació, és imprescindible preparar l'entorn amb la i
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 12 (mínim).  
 * **Accés:** SSH amb privilegis `root` o un usuari amb accés a `sudo`.  
-  👉 **[Documentació per crear un nou usuari amb permisos de `sudo`](../USUARI_SUDO.md)**  
+  👉 **[Documentació per crear un nou usuari amb permisos de `sudo`](USUARI_SUDO.md)**  
 
 És altament recomanable:  
 👉 **[Configurar el servidor per garantir un mínim de seguretat (Usuaris, Root sense SSH, Claus d’accés, Fail2Ban)](../SEGURIDAD_SSH.md)**
@@ -44,13 +44,13 @@ Abans d'iniciar la instal·lació, és imprescindible preparar l'entorn amb la i
 L'aplicació necessita una adreça de correu per a l'enviament de notificacions i la gestió de sessions.
 
 * **Compte de Correu:** Cal crear un compte dedicat i obtenir una **contrasenya d’aplicació** (*App Password*) si s’utilitza un servei com Google o Microsoft.  
-  👉 **[Guia per a la creació de Compte de Correu i Contrasenya d'Aplicació](../CONFIG_CORREO.md)**
+  👉 **[Guia per a la creació de Compte de Correu i Contrasenya d'Aplicació](CONFIG_CORREO.md)**
 
 * **Dominis i DNS:** La configuració dels registres DNS dependrà del tipus de servidor:
   * **Servidor intern privat, sense accés a Internet:** Accés per IP interna o nom de la màquina dins la xarxa.  
   * **Servidor extern públic (típicament un VPS):** El domini principal (`$DOMAIN_NAME`) i el `www.` han d'apuntar a l'IP pública del servidor.  
 
-  👉 **[Guia per a la creació dels registres DNS per redirigir les visites al servidor públic i per a la instal·lació de certificats Let's Encrypt](../REGISTRES_DNS.md)**
+  👉 **[Guia per a la creació dels registres DNS per redirigir les visites al servidor públic i per a la instal·lació de certificats Let's Encrypt](REGISTRES_DNS.md)**
 
 ---
 
@@ -60,10 +60,11 @@ L’aplicació s’instal·la i es configura mitjançant l’execució seqüenci
 
 ---
 
-### Fase 1: Instal·lació i Configuració de Django-Aula (`install_djau.sh` + `setup_djau.sh`)
+### 2.1 Fase 1: Instal·lació i Configuració de Django-Aula (`install_djau.sh` + `setup_djau.sh`)
 
 El primer script, `install_djau.sh`, realitza la preparació inicial del sistema: instal·la totes les dependències necessàries (`Python`, `PostgreSQL`, etc.), crea els directoris i ajusta els permisos de l’usuari amb el qual es fa la instal·lació (per defecte, usuari `djau`).  
-També clona el repositori de Django-Aula i instal·la altres eines administratives, especialment **Fail2Ban**, para protegir l'accés per força bruta al servidor mitjançant el servei SSH o d'altres.
+
+També clona el repositori de Django-Aula i instal·la altres eines administratives, especialment **Fail2Ban**, per a protegir l'accés per força bruta al servidor fent servir el servei SSH o d'altres.
 
 **Començament de la instal·lació:**
 
@@ -81,15 +82,15 @@ Durant l'execució, es demanarà:
 * Nom del **directori** per desar-hi les **dades privades** de l’alumnat.  
 * Nom de l’**usuari de Linux que instal·larà** (usuari amb permisos `sudo`) **Django-Aula**.  
 
-Un cop finalitzat l'execució del script, s’executarà de forma automàtica i sense intervenció de l'usuari instal·lador, el segon script: `setup_djau.sh`.
+Un cop finalitzat l'execució del primer script, s’executarà el segon, anomenat `setup_djau.sh`, de forma automàtica.
 
 #### Execució automàtica de `setup_djau.sh`
 
 Aquest script configura l’entorn de Python, instal·la els requeriments específics, personalitza Django-Aula per al centre educatiu i prepara la base de dades `PostgreSQL`.
 
-La tasca principal d'aquest script es personalitzar, de forma automàtica, mitjançant preguntes a l'usuari, un arxiu molt important anomenat `settings_local.py`, dins el direcori `aula`. Dit això, un cop creat i personalitzat, sempre es pot editar manualment a posteriori.
+La tasca principal d'aquest script automatitzar la personalització, mitjançant preguntes a l'usuari, d'un arxiu molt important anomenat `settings_local.py`, que es troba dins el directori `aula`. Dit això, un cop creat i personalitzat, sempre es pot editar manualment a posteriori.
 
-Es demanaran dades com:
+Durant aquest procés es demanaran dades com:
 
 * **Base de dades:** nom i usuari administrador.  
 * **Dades del centre:** nom, localitat i codi.  
@@ -101,7 +102,7 @@ Un cop finalitzada l'execució d'aquest script es dona l'opció d'executar el sc
 
 ---
 
-### Fase 2: Instal·lació del Servidor Web Apache (`setup_apache.sh`)
+### 2.2 Fase 2: Instal·lació del Servidor Web Apache (`setup_apache.sh`)
 
 Django-Aula fa servir el servidor web **Apache**, per tant, aquest script instal·la i configura el servidor web, activa el tallafocs **UFW** i gestiona la creació de certificats, autofirmats o amb **Let's Encrypt** (si es tracta d’una instal·lació pública).
 
@@ -139,7 +140,7 @@ Un cop generats els certificats per Let's Encrypt sense errades, el script `setu
 
 ---
 
-### Fase 3: Automatització de Tasques (CRON) (`setup_cron.sh`)
+### 2.3 Fase 3: Automatització de Tasques (CRON) (`setup_cron.sh`)
 
 Django-Aula requereix dur a terme tasques periòdiques automatitzades.  
 Aquest script modifica el fitxer de sistema `crontab` per programar-les, inclosa la còpia de seguretat automàtica de la base de dades `PostgreSQL`.
@@ -156,8 +157,8 @@ sudo ./setup_cron.sh
 En finalitzar, el script informa de les tasques programades i dels horaris d’execució.  
 
 Un cop completada la **Fase 3**, el servidor estarà totalment operatiu.  
-Podeu accedir a l’aplicació mitjançant el domini configurat:
+Podeu accedir a l’aplicació mitjançant el domini que s'hagi configurat, típicament quelcom com:
 
 ```
-https://[EL-VOSTRE-DOMINI]
+https://djau.elteudomini.cat]
 ```
