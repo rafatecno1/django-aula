@@ -46,26 +46,30 @@ for i in "${!FILES_TO_DOWNLOAD[@]}"; do
     fi
 	echo -e "\n"
 done
+sleep 2
 
 # --- 3. Passos Post-Instal·lació ---
 
 echo "✅ Fitxers de configuració de la Demo Docker descarregats correctament:"
 echo -e "\n"
+sleep 1
+
 ls -lah docker-compose.yml Makefile .env
+sleep 2
 
 echo -e "\n"
-echo "ℹ️ Indicacions importants per prosseguir:"
+echo "ℹ️ Recomanacions importants per prosseguir:"
 echo "1. Les credencials del fitxer **.env** per aquesta instal·lació no s'han de modificar."
 echo "2. Es recomana reiniciar la màquina si no s'ha fet des de la la instal·lació de Docker i la creació de l'usuari amb permisos de 'sudo'."
 echo -e "\n"
 echo "ℹ️ Instruccions per posar en marxa la Demo"
 echo "1. Executeu **make serve** i la Demo es posarà en funcionament, que serà servida per 0.0.0.0:8000."
-echo -e "\n"
-echo "   Si aquesta ordre falla per un problema de permisos, executeu:"
 echo "   -> ATENCIÓ: Si **make serve** falla per un problema de permisos cal executar manualment:"
+echo -e "\n"
 echo "   \$ newgrp docker"
 echo -e "\n"
 echo "2. Executeu **make logs**, per comprovar els logs de funcionament dels contenidors."
 echo "3. Si us cal detenir els contenidors de la Demo, executeu **make stop**."
+echo -e "\n"
 
 exit 0
