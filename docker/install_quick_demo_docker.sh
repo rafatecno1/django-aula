@@ -9,7 +9,8 @@ REPO="rafatecno1/django-aula"
 BRANCA="master"
 URL_BASE="https://raw.githubusercontent.com/${REPO}/refs/heads/${BRANCA}/docker"
 
-echo "⚙️ Iniciant instal·lació ràpida de Docker Demo..."
+clear
+echo -e "⚙️ Iniciant instal·lació ràpida de la Demo en Docker ...\n"
 
 # --- 1. Definició dels Fitxers ---
 
@@ -17,7 +18,7 @@ echo "⚙️ Iniciant instal·lació ràpida de Docker Demo..."
 FILES_TO_DOWNLOAD=(
     "docker-compose.demo.automatica.yml"
     "Makefile.demo.automatica"
-    "env.demo.automatica"
+    ".env.demo.automatica"
 )
 
 # Fitxers de destinació (a l'arrel del projecte)
@@ -38,21 +39,25 @@ for i in "${!FILES_TO_DOWNLOAD[@]}"; do
     
     # Ús de wget: -q (mode silenciós), -O (guardar a l'arxiu especificat)
     if wget -q -O "${DEST_FILE}" "${FULL_URL}"; then
-        echo "     [OK] Fitxer ${ORIGIN_FILE} descarregat correctament i reanomenat com ${DEST_FILE}."
+        echo "     [OK] -> Fitxer ${ORIGIN_FILE} descarregat correctament. Reanomenat com ${DEST_FILE}."
     else
-        echo "     [ERROR] No s'ha pogut descarregar ${ORIGIN_FILE}."
+        echo "     [ERROR] -> No s'ha pogut descarregar ${ORIGIN_FILE}."
         exit 1
     fi
+	echo -e "\n"
 done
 
 # --- 3. Passos Post-Instal·lació ---
 
 echo "✅ Fitxers de configuració de la Demo Docker descarregats correctament:"
-ls -l docker-compose.yml Makefile .env
+echo -e "\n"
+ls -lah docker-compose.yml Makefile .env
 
-echo "ℹ️ Propers passos:"
-echo "1. Les credencials del fitxer **.env** per aquesta instal·lació no s'han de modificar."
-echo "2. Executeu **make serve** (requereix Docker i Docker Compose instal·lats)."
+echo -e "\n"
+echo "ℹ️ Indicacions importants per prosseguir:"
+echo "1. Important. Les credencials del fitxer **.env** per aquesta instal·lació no s'han de modificar."
+echo "2. Executeu **make serve** per posar en marxa la Demo. Aquesta se servirà per 0.0.0.0:8000"
 echo "3. Executeu **make logs**, per comprovar els logs de funcionament dels contenidors."
+echo "4. Si us cal detenir els contenidors de la Demo, executeu **make stop**."
 
 exit 0
