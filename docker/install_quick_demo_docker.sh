@@ -18,7 +18,7 @@ echo -e "⚙️ Iniciant instal·lació ràpida de la Demo en Docker ...\n"
 FILES_TO_DOWNLOAD=(
     "docker-compose.demo.automatica.yml"
     "Makefile.demo.automatica"
-    ".env.demo.automatica"
+    "env.demo.automatica"
 )
 
 # Fitxers de destinació (a l'arrel del projecte)
