@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: django_aula:dev
+    image: django-aula:dev
     container_name: dev_web
     restart: unless-stopped
     depends_on:

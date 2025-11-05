@@ -17,7 +17,7 @@ services:
     restart: always
 
   web:
-    image: django_aula:demo
+    image: django-aula:demo
     container_name: demo_web
 #    build:
 #      context: .
