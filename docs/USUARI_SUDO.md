@@ -30,7 +30,18 @@ uid=1001(djau) gid=1001(djau) grups=1001(djau),27(sudo)
 La presència del grup sudo (id 27 en aquest exemple) confirma que l'usuari djau pot executar comandes elevades.
 
 #### Ús del Nou Usuari
-Ara podeu sortir de la sessió de root i iniciar sessió directament amb el nou usuari (djau), que serà l'usuari amb el que fareu la instal·lació de l'aplicatiu Django-Aula.
+Ara podeu sortir de la sessió de root i iniciar sessió directament amb el nou usuari (djau), que serà l'usuari amb el que fareu la instal·lació de l'aplicatiu Django-Aula. Per fer-ho basta amb escriure `su djau`.
+
+**Atenció** Havent fet `su djau` podria ser que a l'esquerra hagués desaparegut el nom de l'usuari i el de la màquina, el clàssic `usuari@hostname:`. Aixo significa que no s'està fent servir un terminal basat en bash, sinó un en dash, molt més antic. Per recuperar l'estil clàssic de visualització cal fer, des de *root*:
+
+```bash
+cp /etc/skel/.bashrc /home/djau/
+cp /etc/skel/.profile /home/djau/
+chown djau:djau /home/djau/.bashrc
+chown djau:djau /home/djau/.profile
+chsh -s /bin/bash djau
+``` 
+Ara sí, ja tenim un terminal basat en Bash, tal i com estem més habituats.
 
 Podeu provar d'executar una comanda amb privilegis administratius, simplement prefixeu-la amb sudo:
 

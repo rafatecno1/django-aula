@@ -1,0 +1,352 @@
+# ?? Instal¡¤laci¨® manual de la Demo de Django-Aula
+
+Aquesta guia ofereix les **instruccions per instal¡¤lar manualment una inst¨¤ncia d'un entornt de prova (Demo) de Django-Aula** amb un conjunt de dades fict¨ªcies (usuaris, professors i horaris) per tal de provar-ne les funcionalitats.  
+Aquest m¨¨tode est¨¤ dissenyat per a entorns de prova, no de producci¨®.
+
+---
+
+# ¨ªndex
+  - [1. Requisits de Servidor](#1-Requisits-de-Servidor)
+  - [2. Usuaris que es crean en la Demo i les seves credencials](#2-Usuaris-que-es-crean-en-la-Demo-i-les-seves-credencials)
+  - [3. Instruccions d'Instal¡¤laci¨®](#3-Instruccions-dInstal¡¤laci¨®)
+    - [3.1 Preparaci¨® de l'Entorn](#31-Preparaci¨®-de-lEntorn)
+    - [3.2 Clonaci¨® del repositorio i Instal¡¤laci¨® de l'Aplicaci¨®](#32-Clonaci¨®-del-repositorio-i-Instal¡¤laci¨®-de-lAplicaci¨®)
+    - [3.3 Creaci¨® de Dades i Execuci¨®](#33-Creaci¨®-de-Dades-i-Execuci¨®)
+    - [3.4. Acc¨¦s a la Demo amb Entorn Gr¨¤fic (M¨¤quina Local)](#34-Acc¨¦s-a-la-Demo-amb-Entorn-Gr¨¤fic-M¨¤quina-Local)
+  - [4. Accedir des d'un altre ordinador a la m¨¤quina on s'ha instal¡¤lat la Demo](#4-Accedir-des-dun-altre-ordinador-a-la-m¨¤quina-on-sha-instal¡¤lat-la-Demo)
+    - [4.1 M¨¤quina virtual creada amb VirtualBox i configurada amb xarxa NAT](#41-M¨¤quina-virtual-creada-amb-VirtualBox-i-configurada-amb-xarxa-NAT)
+    - [4.2 M¨¤quina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)](#42-M¨¤quina-virtual-creada-amb-VirtualBox-i-configurada-amb-xarxa-BRIDGE-pont)
+    - [4.3 Instal¡¤laci¨® de la Demo en un servidor p¨²blic amb acc¨¦s extern (VPS)](#43-Instal¡¤laci¨®-de-la-Demo-en-un-servidor-p¨²blic-amb-acc¨¦s-extern-VPS)
+    - [4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *common.py*](#44-Resum-de-les-modificacions-de-la-llista-ALLOWED_HOSTS-de-larxiu-commonpy)
+  - [5 Mantenir l'execuc¨ª¨® indefinida en el temps del servidor de Demostraci¨®](#5-Mantenir-lexecuc¨ª¨®-indefinida-en-el-temps-del-servidor-de-Demostraci¨®)
+
+---
+
+## 1. Requisits de Servidor
+
+* **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.
+* **Acc¨¦s:** Es requereix un usuari amb acc¨¦s a `sudo`.  
+  ?? **[Documentaci¨® per crear un nou usuari amb permisos de `sudo`](USUARI_SUDO.md)** 
+
+
+## 2. Usuaris que es crean en la Demo i les seves credencials
+
+Els usuaris de prova creats en el proc¨¦s d'instal¡¤laci¨® tenen les seg¨¹ents credencials:
+
+| Rol | Usuaris |
+| :--- | :--- |
+| **Professors** | `M0 ,M5 ,T0 ,T1 ,T3` |
+| **Tutors** | `M2 ,M3 ,M4 ,M7 ,T2 ,T4 ,T5` |
+| **Direcci¨®** | `M1 ,M6, T1` |
+| **Alumnat rang** | `almn1 - almn229` |
+
+**Notes Importants sobre la Demo**
+
+- **Contrasenya ¨²nica**: Tots els usuaris de prova (Professors, Tutors, Direcci¨®) utilitzen la contrasenya: **djAu**.
+- Actualitzaci¨® de Dades: La base de dades de la Demo es ref¨¤ autom¨¤ticament a cada hora amb dades generades de manera aleat¨°ria.
+- Cookies: Aquest programari utilitza cookies estrictament per al manteniment de la sessi¨®.
+
+
+---
+
+## 3. Instruccions d'Instal¡¤laci¨®
+
+Aquestes comandes es poden executar en un entorn Linux, preferiblement Debian 13 o Ubuntu Server 24.04 LTS o superior.
+
+### 3.1 Preparaci¨® de l'Entorn
+
+Instal¡¤leu les depend¨¨ncies b¨¤siques necess¨¤ries del sistema:
+
+```bash
+sudo apt-get update
+sudo apt-get install python3 python3-venv python3-dev git
+
+# Depend¨¨ncies per a lxml (necessari per a l'an¨¤lisi d'XML i HTML)
+sudo apt-get install python3-lxml python3-libxml2 libxml2-dev libxslt-dev lib32z1-dev
+
+# Llibreries gr¨¤fiques (necess¨¤ries en alguns entorns de desenvolupament)
+sudo apt-get install libgl1 libglib2.0-0t64
+```
+
+### 3.2 Clonaci¨® del repositorio i Instal¡¤laci¨® de l'Aplicaci¨®
+
+```bash
+# Crear un directori de treball i clonar el projecte
+mkdir djau
+cd djau
+git clone --single-branch --branch master [https://github.com/ctrl-alt-d/django-aula.git](https://github.com/ctrl-alt-d/django-aula.git) django-aula
+cd django-aula
+
+# Crear i activar l'entorn virtual
+python3 -m venv venv
+source venv/bin/activate
+
+# Instal¡¤lar les depend¨¨ncies de Python
+pip3 install -r requirements.txt
+```
+
+### 3.3 Creaci¨® de Dades i Execuci¨®
+
+Un cop instal¡¤lat, executeu l'script que crea les dades de demostraci¨® (professors, alumnes, horaris) i inicia el servidor de desenvolupament incorporat:
+
+```bash
+# Crea un conjunt de dades fict¨ªcies per a la Demo
+./scripts/create_demo_data.sh
+
+# Inicia el servidor local de Django (mode desenvolupament)
+python manage.py runserver
+```
+Un cop executat `python manage.py runserver` dins l'entorn virtual (venv) veur¨ªem quelcom similar a:
+
+```text
+(venv) djau@djau:~/djau/django-aula$ python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+d¡¯octubre 30, 2025 - 02:27:21
+Django version 5.1.13, using settings 'aula.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+```
+
+### 3.4. Acc¨¦s a la Demo amb Entorn Gr¨¤fic (M¨¤quina Local)
+
+COm hem vist amb la secci¨® anterior, quan s'executa la comanda `python manage.py runserver` l'aplicaci¨® es posa en marxa a l'adre?a local del servidor: `http://127.0.0.1:8000`.
+
+Si la Demo s'ha instal¡¤lat en un ordinador, o a una m¨¤quina virtua, que disposa d'un **escriptori gr¨¤fic i un navegador web** podreu accedir-hi directament obrint el navegador i anant a:
+
+?? **http://127.0.0.1:8000**
+
+![P¨¤gina principal servida en 127.0.0.1:8000](assets/demo/pagina_principal_demo.jpg)
+
+
+## 4. Accedir des d'un altre ordinador a la m¨¤quina on s'ha instal¡¤lat la Demo
+
+Si intenteu accedir a la Demo des d'una m¨¤quina on no s'hagi instal¡¤lat la Demo no podreu accedir amb la IP `127.0.0.1` 
+
+La primera acci¨® ¨¦s **canviar la forma d'executar el servior local** de desenvolupament
+
+```bash
+# Execuci¨® del servidor amb acc¨¦s extern
+python manage.py runserver 0.0.0.0:8000
+```
+La sortida que veurem ser¨¤ similar a la vista anteriorment:
+
+```text
+(venv) djau@djau:~/djau/django-aula$ python manage.py runserver 0.0.0.0:8000
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+d¡¯octubre 30, 2025 - 02:27:21
+Django version 5.1.13, using settings 'aula.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+```
+
+Engegant el servidor local d'aquesta manera posibilita servir la Demo en qualsevol Ip que estigui configurada en la llista `ALLOWED_HOSTS`.
+
+Per modificar aquesta llista **caldr¨¤ accedir i editar l'arxiu `common.py`**, que es troba al directori `django-aula/aula/settings_dir`.
+
+```bash
+nano django-aula/aula/settings_dir/common.py
+```
+
+### 4.1 M¨¤quina virtual creada amb VirtualBox i configurada amb xarxa NAT
+
+Si utilitzeu una m¨¤quina virtual amb configuraci¨® de xarxa **NAT**, heu de configurar una redirecci¨® de ports als par¨¤metres de xarxa per tal que redirigeixi el tr¨¤nsit del *host* al *guest* (m¨¤quina virtual):
+
+#### 4.1.1 Configuraci¨® de Redirecci¨® de Ports de la m¨¤quina virtual (Host)
+
+| Camp | Valor |
+| :--- | :--- |
+| **Nom** | `http` |
+| **IP Host** | `127.0.0.1` |
+| **Port Host** | `8000` |
+| **IP Guest** | `10.0.2.15` (T¨ªpicament per¨° cal comprobar-ho amb `ip a`) |
+| **Port Guest** | `8000` |
+
+![Redirecci¨® de ports a la configuraci¨® de xarxa de VirtualBox de la m¨¤quina virtual (guest)](assets/demo/redicreccio_ports_vbox_nat.jpg)
+
+#### 4.1.2 Modificaci¨® de la llista ALLOWED_HOSTS de la Demo
+
+Per que la Demo respongui despr¨¦s de fer la redirecci¨® de ports als par¨¤metres de la xarxa NAT de virtualBox, cal editar el fitxer de configuraci¨® de Django i afegir l'adre?a IP des de la qual accedireu i que s'h definit en la redirecci¨® de ports:
+
+**Modifiqueu la variable `ALLOWED_HOSTS`** dins l'arxiu `common.py`. 
+
+Busqueu la l¨ªnia `ALLOWED_HOSTS = []` i afegiu l'adre?a del host `ALLOWED_HOSTS = ['127.0.0.1']`
+
+Obriu un navegador en la m¨¤quina on s'ha instal¡¤lat VirtualBox i podreu escriure:  
+?? **http://127.0.0.1:8000**
+
+
+### 4.2 M¨¤quina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)
+
+Si volem que la m¨¤quina virtual tingui la seva pr¨°pia adre?a IP, gestionada pel gestor DHCP de la xarxa interna local, podem seleccionar el par¨¤metre `bridge` en comptes de `NAT`.
+
+Si fem la comanda `IP a` obtindrem l'adre?a IP de la m¨¤quina virtual creada (guest).
+
+```bash
+djau@djau:~$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:20:10:17 brd ff:ff:ff:ff:ff:ff
+    altname enx080027201017
+    inet 192.168.18.163/24 brd 192.168.18.255 scope global dynamic noprefixroute enp0s3
+       valid_lft 3371sec preferred_lft 2921sec
+    inet6 fe80::350b:3ecd:ef4:a9b5/64 scope link dadfailed tentative
+       valid_lft forever preferred_lft forever
+``` 
+
+**Modifiqueu la variable `ALLOWED_HOSTS`** dins l'arxiu `common.py`. 
+
+Busqueu la l¨ªnia `ALLOWED_HOSTS = []` i afegiu l'adre?a del host `ALLOWED_HOSTS = ['127.0.0.1', 'IP_DEL_GUEST']`  
+En aquest cas d'exemple `ALLOWED_HOSTS = ['127.0.0.1', '192.168.18.163']`
+
+Obriu un navegador en la m¨¤quina (host) on s'ha instal¡¤lat VirtualBox i podreu escriure:  
+?? **http://192.168.18.163:8000**
+
+![Acc¨¦s a la Demo dins la m¨¤quina virtual (guest) amb IP privada gestionada dins la xarxa local interna](assets/demo/demo_vbox_bridge.jpg)
+
+#### Opcional - Aconseguir una IP Est¨¤tica
+
+**Atenci¨®: La IP de la m¨¤quina virtual pot canviar quan s'apaga** i es torna a engegar perqu¨¨ l'IP de la maquina Demo l'otorga el sistema DHCP de la xarxa interna, que entrega adre?eces IP a les m¨¤quines de forma variable, ¨¦s a dir, no sempre pot tenir la mateixa IP.
+
+**Per mantenir la IP de forma est¨¤tica** les ¨²niques instruccions amb les que he tingut ¨¨xit s¨®n les que trobareu al blog de [voidnull.es](https://voidnull.es/netplan-configura-tu-red-de-forma-sencilla-con-yaml/)  
+
+Les passes a seguir s¨®n les seg¨¹ents:
+
+1 - Instal¡¤lar netplan
+```bash
+sudo apt install netplan.io
+```
+2 - Editar el arxiu de configuraci¨® en format yaml
+```bash
+sudo nano /etc/netplan/01-netcfg.yaml
+```
+3 - Crear l'arxiu en format `yaml` amb la configuraci¨® per a la IP est¨¤tica que es vol.  
+
+A l'exemple seg¨¹ent es mostra l'adre?a IP del meu Gateway (Router) i estic definint com IP est¨¤tica aquella que en un principi el servidor DNS de la meva xarxa local ja havia assignat a la m¨¤quina Demo.
+
+```yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses: [192.168.18.163/24] # IP est¨¤tica que es vol configurar i m¨¤scara
+      routes:
+        - to: default
+          via: 192.168.18.1        # Gateway (IP del router)
+      nameservers:
+        addresses: [192.168.18.1, 8.8.8.8]  # IPs de DNS
+```
+
+4 - Aplicar els permisos corresponents a l'arxiu yaml
+
+```bash
+sudo chmod 600 /etc/netplan/01-netcfg.yaml
+```
+
+5 - Habilita i Inicia el gestor de xarxes de Netplan, el servei `systemd-networkd`, i aplica canvis. Es pot reiniciar tamb¨¦ el sistema i comprobar, amb `IP a`, que tenim l'adre?a configurada o que en tenim una de nova si hem decidit canviar-la
+
+```bash
+sudo systemctl enable systemd-networkd
+sudo systemctl start systemd-networkd
+```
+En aquest moment, si tenies una connexi¨® SSH oberta s'haur¨¤ perdut sempre i quan s'hagi canviat l'IP que tenies, de forma autom¨¤tica, per una altra est¨¤tica nova difererent de l'anterior.
+
+Aplica la configuraci¨® de Netplan
+
+```bash
+sudo netplan apply
+```
+
+Ara ja tens l'IP est¨¤tica. Pots comprovar-ho amb `ip a` i reiniciant la m¨¤quina virtual Demo.
+
+
+### 4.3 Instal¡¤laci¨® de la Demo en un servidor p¨²blic amb acc¨¦s extern (VPS)
+
+Tot servidor a internet t¨¦ una IP p¨²blica i ¨¦s convenient definir un domini o subdomini per accedir-hi. Consulteu el document [Registres DNS](REGISTRES_DNS.md) si no recordeu com fer-ho. En aquest cas, s'han creat dos subdominis que apunten a l'IP p¨²blica del servidor VPS:  
+> demo.djau.domini.cat  
+> www.demo.djau.domini.cat
+
+A m¨¦s a m¨¦s ha calgut buscar entre les opcions del panel de control del prove?dor del VPS all¨° que en diuen *Pol¨ªtiques de Firewll* per tal d'obrir el port 8000, que ¨¦s el port que obrirem amb el servidor web per a proves de Django.
+
+El proc¨¦s per instal¡¤lar la Demo ¨¦s el definit a l'apartat 1.1 i 1.2 i a l'hora d'aixecar el servidor de proves, si volem anar sobre segur, hem fet servir  :
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
+
+Ara b¨¦, hem hagut d'editar l'arxiu common.py: 
+```bash
+nano django-aula/aula/settings_dir/common.py
+```
+I modificar la llista ALLOWED_HOSTS, de tal manera que hem afegit els dos subdominis creats i, a m¨¦s a m¨¦s, l'IP p¨²blica del servidor VPS.
+
+`ALLOWED_HOSTS = ['demo.djau.domini.cat', 'www.demo.djau.domini.cat', '127.0.0.1', 'IP_P¨²BLICA_VPS',]`
+
+De fet, el servidor de proves de Django el podriem aixecar perfectament posant l'IP p¨²blica del VPS, en comptes de 0.0.0.0
+```bash
+python manage.py runserver IP_P¨²BLICA_VPS:8000
+```
+
+D'aquesta senzilla manera, sense haver d'instal¡¤lar un servidor web Apache com per la versi¨® de l'aplicatiu per producci¨®, podem servir la versi¨® Demo de l'aplicatiu a tot aquell, des de qualsevol ordinador a internet, com funciona Django-Aula, simplement:
+
+?? http://[IP_DEL_TEU_SERVIDOR]:8000  
+?? http://[subdomini]:8000
+
+![Acc¨¦s a la Demo instal¡¤lada en un VPS p¨²blic amb subdomini](assets/demo/pagina_principal_demo_vps.jpg)
+
+
+### 4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *common.py*
+
+| Entorn | Configuraci¨® de `ALLOWED_HOSTS` |
+| :--- | :--- |
+| **M¨¤quina Virtual (VirtualBox NAT)** | `ALLOWED_HOSTS = ['127.0.0.1']` |
+| **Xarxa Interna Local** | `ALLOWED_HOSTS = ['127.0.0.1', 'IP_DEL_GUEST']` |
+| **VPS (Acc¨¦s per Domini)** | `ALLOWED_HOSTS = ['127.0.0.1', 'IP_P¨²BLICA_VPS', 'demo.djau.domini.cat', 'www.demo.djau.domini.cat',]` |
+
+
+## 5 Mantenir l'execuc¨ª¨® indefinida en el temps del servidor de Demostraci¨®
+
+Normalmente accedim a la m¨¤quina on hem instal¡¤lat la Demo des d'un terminal de la nostra m¨¤quina personal, amb Linux o Windows, mitjan?ant el protocol SSH.
+
+Ara b¨¦, **quan tanquem la connexi¨® SSH el proc¨¦s** que genera el servidor (*python manage.py runserver*) **tamb¨¦ es tanca**, deixant de funcionar, i **la Demo de Django-Aula ja no ¨¦s accessible**.
+
+---
+
+**Instruccions per l'execuc¨ª¨® indefinida en el temps del servidor de Demostraci¨®**
+
+Si volem que la Demo estigui disponible el temps que necessitem, mentre no s'apagui f¨ªsicament el servidor que l'est¨¤ executant, la manera d'executar *python manage.py runserver* canvia. Ara haurem d'engegar el servidor *runserver* de la seg¨¹ent manera:
+
+```bash
+nohup python -u manage.py runserver IP_P¨²BLICA_VPS:8000 &
+```
+
+* **nohup** desconnecta el proc¨¦s de la sessi¨® ssh (encara que si fem *ctrl-c* el proc¨¦s s'aturar¨¤ igualment).
+* **-u** indica a python que s'executi en mode sense mem¨°ria interm¨¨dia per no perdre cap sortida del proc¨¦s.
+* odeu afegir **&** despr¨¦s de l'ordre per emp¨¨nyer el proc¨¦s immediatament a segon pla i recuperar el shell, mantenint l'¨²s de *ctrl-c*.
+
+Per tancar el servidor *runserver* de python tenim dues opcions:
+1. Podem reiniciar el servidor
+2. Podem buscar l'ID del proc¨¦s i detenir-lo.
+
+Explorem la segona opci¨®. Per buscar l'identificador del proc¨¦s i *matar-lo*, el proc¨¦s seria el seg¨¹ent:
+
+1 - Mostrar totes les ordres python en execuci¨®:
+```bash
+ps aux | grep python
+```
+2 - Trobar l'ID del proc¨¦s de l'ordre que es vol aturar i despr¨¦s fer:
+```bash
+kill <id>
+```
+on substitu?u <id> amb l'ID del proc¨¦s obtinguda mitjan?ant `ps aux`.
