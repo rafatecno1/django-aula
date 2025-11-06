@@ -20,7 +20,7 @@ Un cop el compte estigui creat i tingui la verificació en dos passos activada, 
 2.  Feu clic a la vostra icona de perfil i accediu a **Gestiona el teu Compte de Google**.
 3.  Al menú lateral esquerre, feu clic a **Seguretat**.
 
-![Ubicació en el panell de control de Gmail de l'entrad Seguretat i de la Verificació en dues passes](assets/correu/configuració_compte.jpg)
+![Ubicació en el panell de control de Gmail de l'entrad Seguretat i de la Verificació en dues passes](assets/correu/configuracio_compte.png)
 
 #### Pas B: Habilitar i Administrar Contrasenyes d'Aplicació
 
