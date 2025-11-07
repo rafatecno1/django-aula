@@ -4,29 +4,29 @@
 # ----------- DEMO -----------
 build:
 	${INFO} "Creating demo image..."
-	@ docker compose -f docker-compose.demo.yml build --no-cache web
+	@ docker compose -f docker-compose.demo.manual.yml build --no-cache web
 	${INFO} "Build completed"
 
 start:
 	${INFO} "Running demo services (foreground)"
-	@ docker compose -f docker-compose.demo.yml up
+	@ docker compose -f docker-compose.demo.manual.yml up
 
 serve:
 	${INFO} "Running demo services (detached)"
-	@ docker compose -f docker-compose.demo.yml up -d
+	@ docker compose -f docker-compose.demo.manual.yml up -d
 
 stop:
 	${INFO} "Stopping demo services"
-	@ docker compose -f docker-compose.demo.yml stop
+	@ docker compose -f docker-compose.demo.manual.yml stop
 
 down:
 	${INFO} "Stopping demo services and deleting DB"
-	@ docker compose -f docker-compose.demo.yml down -v
+	@ docker compose -f docker-compose.demo.manual.yml down -v
 
 load_demo_data:
 	${INFO} "Loading demo data"
-	@ docker compose -f docker-compose.demo.yml exec web python manage.py loaddata aula/apps/*/fixtures/dades.json
-	@ docker compose -f docker-compose.demo.yml exec web python manage.py loaddemodata
+	@ docker compose -f docker-compose.demo.manual.yml exec web python manage.py loaddata aula/apps/*/fixtures/dades.json
+	@ docker compose -f docker-compose.demo.manual.yml exec web python manage.py loaddemodata
 
 # ----------- DEV -----------
 dev-build:
