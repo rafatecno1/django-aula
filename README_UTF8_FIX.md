@@ -25,6 +25,24 @@ Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies
 
 ---
 
+# Índice
+  - [1. Característiques Principals i Valor Afegit](#1-Característiques-Principals-i-Valor-Afegit)
+  - [2. Instal·lació i Desplegament de Django-Aula](#2-Instal·lació-i-Desplegament-de-Django-Aula)
+    - [🚀 2.1 Instal·lació Automatitzada de Django-Aula amb Scripts (Mètode Prioritari)](#🚀-21-Instal·lació-Automatitzada-de-Django-Aula-amb-Scripts-Mètode-Prioritari)
+    - [⚙️ 2.2 Desplegament Manual (Mètode Legat)](#⚙️-22-Desplegament-Manual-Mètode-Legat)
+  - [3. Entorn de demostració o Demo de Django-Aula (Quick Demo)](#3-Entorn-de-demostració-o-Demo-de-Django-Aula-Quick-Demo)
+    - [💻 3.1 Instal·lació manual de la Demo de Django-Aula (Quick_Demo)](#💻-31-Instal·lació-manual-de-la-Demo-de-Django-Aula-Quick_Demo)
+    - [🐳 3.2 Guia d'Instal·lació de Docker i Docker Compose](#🐳-32-Guia-dInstal·lació-de-Docker-i-Docker-Compose)
+      - [🐳 3.2.1 Instal·lació ràpida de la Demo amb Docker (QUICK_DEMO)](#🐳-321-Instal·lació-ràpida-de-la-Demo-amb-Docker-QUICK_DEMO)
+      - [🐳 3.2.2 Guía per la construcció de la imatge de la Demo de Django-Aula amb Docker](#🐳-322-Guía-per-la-construcció-de-la-imatge-de-la-Demo-de-Django-Aula-amb-Docker)
+  - [4. Manual per la càrrega de dades, l'administració i el manteniment](#4-Manual-per-la-càrrega-de-dades-ladministració-i-el-manteniment)
+  - [5. Contribució i Suport](#5-Contribució-i-Suport)
+    - [Vols col·laborar-hi com a #DEV?](#Vols-col·laborar-hi-com-a-DEV)
+    - [Necessites ajuda o vols reportar un error?](#Necessites-ajuda-o-vols-reportar-un-error)
+
+
+---
+
 ## 1. Característiques Principals i Valor Afegit
 
 Django-Aula és un sistema integral dissenyat per alleugerir la càrrega de treball del personal i millorar la gestió acadèmica i de convivència.
