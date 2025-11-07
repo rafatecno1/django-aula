@@ -10,8 +10,8 @@ Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies
 
 # Índice
 - [1. Característiques Principals i Valor Afegit](#1-Característiques-Principals-i-Valor-Afegit)
-- [2. Instal·lació i Desplegament de Django-Aula](#2-instal·lació-i-desplegament-de-django-aula)
-  - [🚀 2.1 **Instal·lació Automatitzada de Django-Aula** amb Scripts (Mètode Prioritari)](#21-instal·lació-automatitzada-de-django-aula-amb-scripts-mètode-prioritari)
+- [2. Instal·lació i Desplegament de Django-Aula](#2-installacio-i-desplegament-de-django-aula)
+  - [🚀 2.1 Instal·lació Automatitzada de Django-Aula amb Scripts (Mètode Prioritari)](#21-installacio-automatitzada-de-django-aula-amb-scripts-metode-prioritari)
   - [⚙️ 2.2 Desplegament Manual (Mètode Legat)](#22-desplegament-manual-mètode-legat)
 - [3. Entorn de demostració o Demo de Django-Aula (Quick Demo)](#3-entorn-de-demostració-o-demo-de-django-aula-quick-demo)
   - [💻 3.1 Instal·lació manual de la Demo de Django-Aula (Quick_Demo)](#31-instal·lació-manual-de-la-demo-de-django-aula-quick_demo)
