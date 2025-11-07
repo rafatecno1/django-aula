@@ -1,4 +1,4 @@
-# docker-compose.demo.yml
+# docker-compose.demo.manual.yml
 services:
   db:
     image: postgres:14-alpine
