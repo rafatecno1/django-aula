@@ -6,17 +6,22 @@ Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies
 
 **[Llicència i Crèdits](LICENSE)** | **EL PROGRAMA NO TÉ CAP GARANTIA, UTILITZEU-LO SOTA LA VOSTRA RESPONSABILITAT.**
 
-### 📋 Índex de Continguts
+# 📋 Índex de Continguts
 
-* [1. Característiques Principals i Valor Afegit](#1-característiques-principals-i-valor-afegit)
-* [2. Instal·lació i Desplegament](#2-instal·lació-i-desplegament)
-    * [2.1 Instal·lació Ràpida i Automatitzada (Mètode Recomanat)](#-21-instal·lació-ràpida-i-automatitzada-mètode-recomanat)
-    * [2.2 Desplegament Manual (Mètode Legat)](#-22-desplegament-manual-mètode-legat)
-* [3. Altres mètodes d'instal·lació o desplegament](#3-altres-mètodes-dinstal·lació-o-desplegament)
-    * [3.1 Demo Ràpida (Entorn de Prova Pública)](#-31-demo-ràpida-entorn-de-prova-pública)
-    * [3.2 Desplegament amb Docker (Entorn de Desenvolupament)](#-32-desplegament-amb-docker-entorn-de-desenvolupament)
-* [4. Manual per la càrrega de dades, l'administració i el manteniment](#4-manual-per-la-càrrega-de-dades-ladministració-i-el-manteniment)
-* [5. Contribució i Suport](#5-contribució-i-suport)
+# Índice
+  - [1. Característiques Principals i Valor Afegit](#1-Característiques-Principals-i-Valor-Afegit)
+  - [2. Instal·lació i Desplegament de Django-Aula](#2-Instal·lació-i-Desplegament-de-Django-Aula)
+    - [🚀 2.1 **Instal·lació Automatitzada de Django-Aula** amb Scripts (Mètode Prioritari)](#🚀-21-Instal·lació-Automatitzada-de-Django-Aula-amb-Scripts-Mètode-Prioritari)
+    - [⚙️ 2.2 Desplegament Manual (Mètode Legat)](#⚙️-22-Desplegament-Manual-Mètode-Legat)
+  - [3. Entorn de demostració o Demo de Django-Aula (Quick Demo)](#3-Entorn-de-demostració-o-Demo-de-Django-Aula-Quick-Demo)
+    - [💻 3.1 Instal·lació manual de la Demo de Django-Aula (Quick_Demo)](#💻-31-Instal·lació-manual-de-la-Demo-de-Django-Aula-Quick_Demo)
+    - [🐳 3.2 Guia d'Instal·lació de Docker i Docker Compose](#🐳-32-Guia-dInstal·lació-de-Docker-i-Docker-Compose)
+      - [🐳 3.2.1 **Instal·lació ràpida de la Demo amb Docker** (QUICK_DEMO)](#🐳-321-Instal·lació-ràpida-de-la-Demo-amb-Docker-QUICK_DEMO)
+      - [🐳 3.2.2 Guía per la construcció de la imatge de la Demo de Django-Aula amb Docker](#🐳-322-Guía-per-la-construcció-de-la-imatge-de-la-Demo-de-Django-Aula-amb-Docker)
+  - [4. Manual per la càrrega de dades, l'administració i el manteniment](#4-Manual-per-la-càrrega-de-dades-ladministració-i-el-manteniment)
+  - [5. Contribució i Suport](#5-Contribució-i-Suport)
+    - [Vols col·laborar-hi com a #DEV?](#Vols-col·laborar-hi-com-a-DEV)
+    - [Necessites ajuda o vols reportar un error?](#Necessites-ajuda-o-vols-reportar-un-error)
 
 ---
 
@@ -30,38 +35,111 @@ El programa cobreix tots els aspectes clau de la gestió diària del centre: **P
 
 ➡️ **[Llegir totes les FUNCIONALITATS (detall tècnic i pantalles)](docs/USER_MANUAL/funcionalidades.md)**
 
+El sistema s'instal·la en un entorn Linux, preferiblement Debian 13 o Ubuntu Server 24.04 LTS o superior.
+
 ---
 
-## 2. Instal·lació i Desplegament
 
-### 🚀 2.1 Instal·lació Ràpida i Automatitzada (Mètode Recomanat)
 
-Hem automatitzat el procés complet de desplegament en servidors VPS (Ubuntu/Debian) per garantir una instal·lació neta i funcional en pocs minuts.
+## 2. Instal·lació i Desplegament de Django-Aula
 
-➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/README.md)**
+### 🚀 2.1 Instal·lació Automatitzada de Django-Aula amb Scripts (Mètode Prioritari)
+
+S'aha automatitzat el procés complet de desplegament en un servidor, ja sigui una màquina virtual com un servidor VPS, amb el sistema operatiu (Debian/Ubuntu) per garantir una instal·lació neta i funcional en pocs minuts.
+
+➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/INSTALL_AUTOMATIC_DJAU_SCRIPTS.md)**
 
 ### ⚙️ 2.2 Desplegament Manual (Mètode Legat)
 
-Per a instal·lacions personalitzades, guies pas a pas, o per adaptar la instal·lació a distribucions de Linux diferents de les basades en Debian (com Ubuntu), podeu consultar el procediment manual que ha estat la base del procediment d'instal·lació automatitzat.
+Per a instal·lacions sense scripts d'automatització, completalment manuals i guiades pas a pas, o s'explica tot el que s'ha de fer per instal·lar Django-Aula o, fins i tot, per adaptar la instal·lació a distribucions de Linux diferents de les basades en Debian (com Ubuntu), podeu consultar el procediment manual que ha estat la base per la creació del procediment d'instal·lació automatitzat.
 
 [Instruccions de Desplegament Manual](docs/MANUAL_LEGACY/instalacion.md)
 
-## 3. Altres mètodes d'instal·lació o desplegament
+---
 
-### 💻 3.1 Demo Ràpida (Entorn de Prova Pública)
 
-Existeix la possibilitat de crear una Demo de l'aplicatiu Django-Aula de forma ràpida, tant en una màquina virtual que tingui escriptori gràfic, com en un servidor públic.
 
-Aquesta Demo crea docents, alumnat i u horari fictici, de tal forma que permet fer-se una idea del funcionament de Django-Aula.
+## 3. Entorn de demostració o Demo de Django-Aula (Quick Demo)
 
-➡️ **[Instruccions per a crear-ne una Demo Ràpida](docs/QUICK_DEMO.md)**.
+L'entorn de demostració, conegut com Demo Django-Aula o Quick Demo, és una versió funcional del sistema i que es desplega en molts minuts, en funció de l'opció que s'escolli. Diposa de dades ficiticies (usuaris, professors i horaris) que ens faciliten veure l'aspecte visual i funcional de Django-Aula.
 
-### 🐳 3.2 Desplegament amb Docker (Entorn de Desenvolupament)
+A nivell informatiu, les dades fictícies que l'entorn de demostració portarà precarregades són:
 
-Si bé **Docker** no és el mètode de desplegament recomanat per a producció, és una eina excel·lent per a entorns de desenvolupament o proves ràpides.
+| Rol | Usuaris |
+| :--- | :--- |
+| **Professors** | `M0 ,M5 ,T0 ,T1 ,T3` |
+| **Tutors** | `M2 ,M3 ,M4 ,M7 ,T2 ,T4 ,T5` |
+| **Direcció** | `M1 ,M6, T1` |
+| **Alumnat rang** | `almn1 - almn229` |
 
-➡  **[Instruccions per fer-ne el desplegament amb Docker](docs/DOCKER.md)**.
 
+
+Actualment hi ha dues maneres d'instal·lar la Demo de Django-Aula, cadascuna d'elles amb els seus punts forts i febles:
+
+* **Instal·lació manual**
+* **Instal·lació automatitzada amb docker** (recomanada)
+
+
+
+
+### 💻 3.1 Instal·lació manual de la Demo de Django-Aula (Quick_Demo)
+
+La instal·lació manual de la Demo de Django-Aula és més lenta que l'automatitzada amb docker però és molt més flexible.
+
+Aquest tipus d'instal·lació possibilita crear una Demo de l'aplicatiu Django-Aula per a múltiples escenaris, com ara:
+
+* Màquina virtual d'accés restringit, amb o sense escriptori gràfic.
+* Màquina virtual amb accés des de qulsevol ordinaor d'una xarxa interna.
+* Instal·lació en un servidor públic amb accés lliure des d'Internet.
+
+➡️ **[Instruccions per a crear la Quick_Demo](docs/INSTALL_DEMO_MANUAL)**.
+
+
+
+
+### 🐳 3.2 Guia d'Instal·lació de Docker i Docker Compose
+
+La instal·lació de la Demo amb Docker és el procediment més ràpid amb diferència però, tot i ser funcional, l'accés dels usuaris observadors a la Demo es troba limitat, _de moment_, a tenir accés a la màquina física o virtual on s'ha instal·lat.
+
+Per instal·lar la Demo, **el primer pas imprescindible és instal·lar l'entorn de Docker i Docker Compose**.
+
+➡  **[Instruccions per instal·lar l'entorn de Docker i Docker Compose](docs/INSTALL_ENTORN_DOCKER.md)**.
+
+
+#### 🐳 3.2.1 Instal·lació ràpida de la Demo amb Docker (QUICK_DEMO)
+
+Aquest mètode només precisa diposar de tres arxius per fer el desplegament un dels quals, de fet, és opcional, però molt útil. Els arxus son:
+
+* **docker-compose.yml**: arxiu que descarrega i configura la Demo
+* **.env**: variables internes per la base de dades Postgres (es manté per compatibilitat)
+* **Makefile** (opcional): Facilita el desplegament amb l'ús d'ordres senzilles.
+
+Es recomana crear un directori, dins el directori de l'usuari instal·lador, on s'instal·larà la Demo.
+
+**El procés automatitzat**, que descarregarà els tres arxius necessaris, **comença amb la descàrrega i execució automàtica del script anomenat `install_quick_demo_docker.sh`** amb la següent ordre:
+
+```bash
+wget -q -O install_quick_demo_docker.sh https://raw.githubusercontent.com/rafatecno1/django-aula/refs/heads/master/docker/install_quick_demo_docker.sh && chmod +x install_quick_demo_docker.sh && bash ./install_quick_demo_docker.sh
+```
+
+Un cop feta la descarrega del script iniciador amb l'ordre anterior, s'executarà de forma autònoma i s'encarregarà de descarregar els arxius correctes de la carpeta `docker` del repositori per instal·lar els tres arxius que s'encarregaran de crear la Demo de Django-Aula.
+
+Per tenir més informació del procés es recomana consultar:
+
+➡  **[Instal·lació ràpida de la Demo amb Docker](docs/INSTALL_DEMO_DOCKER.md)**.
+
+
+
+#### 🐳 3.2.2 Guía per la construcció de la imatge de la Demo de Django-Aula amb Docker
+
+**Aquesta guia** reuneix el coneixement adquirit i **serveix per crear la imatge que, actualment, fa el desplegamet de la Demo amb docker** de forma ràpida i no és el mètode recomanat per instal·lar la Demo basada en Docker.
+
+**Serveix per crear exclusivament l'entorn de desenvolupament de la imatge Demo amb Docker i per a proves** 
+
+
+➡  **[Guía per la construcció de la imatge de la Demo de Django-Aula amb Docker](docs/CONSTRUCCIO_IMATGE_DEMO_DOCKER.md)**.
+
+---
 
 ## 4. Manual per la càrrega de dades, l'administració i el manteniment
 
