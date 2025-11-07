@@ -8,20 +8,20 @@ Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies
 
 # 📋 Índex de Continguts
 
-# Índice
-- [1. Característiques Principals i Valor Afegit](#1-Característiques-Principals-i-Valor-Afegit)
-- [2. Instal·lació i Desplegament de Django-Aula](#2-installacio-i-desplegament-de-django-aula)
-  - [🚀 2.1 Instal·lació Automatitzada de Django-Aula amb Scripts (Mètode Prioritari)](#21-installacio-automatitzada-de-django-aula-amb-scripts-metode-prioritari)
-  - [⚙️ 2.2 Desplegament Manual (Mètode Legat)](#22-desplegament-manual-mètode-legat)
-- [3. Entorn de demostració o Demo de Django-Aula (Quick Demo)](#3-entorn-de-demostració-o-demo-de-django-aula-quick-demo)
-  - [💻 3.1 Instal·lació manual de la Demo de Django-Aula (Quick_Demo)](#31-instal·lació-manual-de-la-demo-de-django-aula-quick_demo)
-  - [🐳 3.2 Guia d'Instal·lació de Docker i Docker Compose](#32-guia-dinstal·lació-de-docker-i-docker-compose)
-    - [🐳 3.2.1 **Instal·lació ràpida de la Demo amb Docker** (QUICK_DEMO)](#321-instal·lació-ràpida-de-la-demo-amb-docker-quick_demo)
-    - [🐳 3.2.2 Guía per la construcció de la imatge de la Demo de Django-Aula amb Docker](#322-guía-per-la-construcció-de-la-imatge-de-la-demo-de-django-aula-amb-docker)
-- [4. Manual per la càrrega de dades, l'administració i el manteniment](#4-manual-per-la-càrrega-de-dades-ladministració-i-el-manteniment)
-- [5. Contribució i Suport](#5-Contribució-i-Suport)
+- [1. Característiques Principals i Valor Afegit](#1-caracteristiques-principals-i-valor-afegit)
+- [2. Instal·lació i Desplegament de Django-Aula](#2-instal·lacio-i-desplegament-de-django-aula)
+  - [2.1 Instal·lació Automatitzada de Django-Aula amb Scripts (Mètode Prioritari)](#21-instal·lacio-automatitzada-de-django-aula-amb-scripts-metode-prioritari)
+  - [2.2 Desplegament Manual (Mètode Legat)](#22-desplegament-manual-metode-legat)
+- [3. Entorn de demostració o Demo de Django-Aula (Quick Demo)](#3-entorn-de-demostracio-o-demo-de-django-aula-quick-demo)
+  - [3.1 Instal·lació manual de la Demo de Django-Aula (Quick_Demo)](#31-instal·lacio-manual-de-la-demo-de-django-aula-quick_demo)
+  - [3.2 Guia d'Instal·lació de Docker i Docker Compose](#32-guia-dinstal·lacio-de-docker-i-docker-compose)
+    - [3.2.1 Instal·lació ràpida de la Demo amb Docker (QUICK_DEMO)](#321-instal·lacio-rapida-de-la-demo-amb-docker-quick_demo)
+    - [3.2.2 Guia per la construcció de la imatge de la Demo de Django-Aula amb Docker](#322-guia-per-la-construccio-de-la-imatge-de-la-demo-de-django-aula-amb-docker)
+- [4. Manual per la càrrega de dades, l'administració i el manteniment](#4-manual-per-la-carrega-de-dades-ladministracio-i-el-manteniment)
+- [5. Contribució i Suport](#5-contribucio-i-suport)
   - [Vols col·laborar-hi com a #DEV?](#vols-col·laborar-hi-com-a-dev)
   - [Necessites ajuda o vols reportar un error?](#necessites-ajuda-o-vols-reportar-un-error)
+
 
 ---
 
