@@ -25,6 +25,25 @@ Gesti de presncia, incidncies i ms per a Instituts, Escoles i Acadmies.
 
 ---
 
+# Índice
+  - [1. Caracterstiques Principals i Valor Afegit](#1-Caracterstiques-Principals-i-Valor-Afegit)
+  - [2. Installaci i Desplegament de Django-Aula](#2-Installaci-i-Desplegament-de-Django-Aula)
+    - [2.1 Installaci Automatitzada de Django-Aula amb Scripts (Mtode Prioritari)](#21-Installaci-Automatitzada-de-Django-Aula-amb-Scripts-Mtode-Prioritari)
+    - [2.2 Desplegament Manual (Mtode Legat)](#22-Desplegament-Manual-Mtode-Legat)
+  - [3. Entorn de demostraci o Demo de Django-Aula (Quick Demo)](#3-Entorn-de-demostraci-o-Demo-de-Django-Aula-Quick-Demo)
+    - [3.1 Installaci manual de la Demo de Django-Aula (Quick_Demo)](#31-Installaci-manual-de-la-Demo-de-Django-Aula-Quick_Demo)
+    - [3.2 Guia d'Installaci de Docker i Docker Compose](#32-Guia-dInstallaci-de-Docker-i-Docker-Compose)
+      - [3.2.1 Installaci rpida de la Demo amb Docker (QUICK_DEMO)](#321-Installaci-rpida-de-la-Demo-amb-Docker-QUICK_DEMO)
+      - [3.2.2 Gua per la construcci de la imatge de la Demo de Django-Aula amb Docker](#322-Gua-per-la-construcci-de-la-imatge-de-la-Demo-de-Django-Aula-amb-Docker)
+  - [4. Manual per la crrega de dades, l'administraci i el manteniment](#4-Manual-per-la-crrega-de-dades-ladministraci-i-el-manteniment)
+  - [5. Contribuci i Suport](#5-Contribuci-i-Suport)
+    - [Vols collaborar-hi com a #DEV?](#Vols-collaborar-hi-com-a-DEV)
+    - [Necessites ajuda o vols reportar un error?](#Necessites-ajuda-o-vols-reportar-un-error)
+
+
+
+
+---
 ## 1. Caracterstiques Principals i Valor Afegit
 
 Django-Aula s un sistema integral dissenyat per alleugerir la crrega de treball del personal i millorar la gesti acadmica i de convivncia.
