@@ -21,23 +21,22 @@ Aquest mètode està dissenyat per a entorns de prova, no de producció.
   - [5 Mantenir l'execucíó indefinida en el temps del servidor de Demostració](#5-Mantenir-lexecucíó-indefinida-en-el-temps-del-servidor-de-Demostració)
 
 ---
-
 - [1. Requisits de Servidor](#1-requisits-de-servidor)
-- [2. Usuaris que es crean en la Demo i les seves credencials](#2-usuaris-que-es-crean-en-la-demo-i-les-seves-credencials)
-- [3. Instruccions d'Instal·lació](#3-instruccions-dinstallacio)
-  - [3.1 Preparació de l'Entorn](#31-preparacio-de-lentorn)
-  - [3.2 Clonació del repositorio i Instal·lació de l'Aplicació](#32-clonacio-del-repositorio-i-installacio-de-laplicacio)
-  - [3.3 Creació de Dades i Execució](#33-creacio-de-dades-i-execucio)
-  - [3.4. Accés a la Demo amb Entorn Gràfic (Màquina Local)](#34-acces-a-la-demo-amb-entorn-grafic-maquina-local)
-- [4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo](#4-accedir-des-dun-altre-ordinador-a-la-maquina-on-sha-installat-la-demo)
-  - [4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT](#41-maquina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-nat)
-    - [4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host)](#411-configuracio-de-redireccio-de-ports-de-la-maquina-virtual-host)
-    - [4.1.2 Modificació de la llista ALLOWED_HOSTS de la Demo](#412-modificacio-de-la-llista-allowed_hosts-de-la-demo)
-  - [4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)](#42-maquina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-bridge-pont)
-    - [Opcional - Aconseguir una IP Estàtica](#opcional-aconseguir-una-ip-estatica)
-  - [4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS)](#43-installacio-de-la-demo-en-un-servidor-public-amb-acces-extern-vps)
-  - [4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *common.py*](#44-resum-de-les-modificacions-de-la-llista-allowed_hosts-de-larxiu-commonpy)
-- [5. Mantenir l'execució indefinida en el temps del servidor de Demostració](#5-mantenir-lexecucio-indefinida-en-el-temps-del-servidor-de-demostracio)
+- [2. Usuaris que es crean en la Demo i les seves credencials](#2-usuaris-que-es-crean-en-la-demo-i-les-seves-crendencials)
+- [3. Instruccions dInstal·lacio](#3-instruccions-dinstallacio)
+  - [3.1 Preparacio de lEntorn](#31-preparacio-de-lentorn)
+  - [3.2 Clonacio del repositorio i Instal·lacio de lAplicacio](#32-clonacio-del-repositorio-i-installacio-de-laplicacio)
+  - [3.3 Creacio de Dades i Execucio](#33-creacio-de-dades-i-execucio)
+  - [3.4. Acces a la Demo amb Entorn Grafic (Maquina Local)](#34-acces-a-la-demo-amb-entorn-grafic-maquina-local)
+- [4. Accedir des dun altre ordinador a la maquina on sha instal·lat la Demo](#4-accedir-des-dun-altre-ordinador-a-la-maquina-on-sha-installat-la-demo)
+  - [4.1 Maquina virtual creada amb VirtualBox i configurada amb xarxa NAT](#41-maquina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-nat)
+    - [4.1.1 Configuracio de Redireccio de Ports de la maquina virtual (Host)](#411-configuracio-de-redireccio-de-ports-de-la-maquina-virtual-host)
+    - [4.1.2 Modificacio de la llista ALLOWED_HOSTS de la Demo](#412-modificacio-de-la-llista-allowed_hosts-de-la-demo)
+  - [4.2 Maquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)](#42-maquina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-bridge-pont)
+    - [Opcional - Aconseguir una IP Estatica](#opcional-aconseguir-una-ip-estatica)
+  - [4.3 Instal·lacio de la Demo en un servidor public amb acces extern (VPS)](#43-installacio-de-la-demo-en-un-servidor-public-amb-acces-extern-vps)
+  - [4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de larxiu *common.py*](#44-resum-de-les-modificacions-de-la-llista-allowed_hosts-de-larxiu-commonpy)
+- [5. Mantenir lexecucio indefinida en el temps del servidor de Demostracio](#5-mantenir-lexecucio-indefinida-en-el-temps-del-servidor-de-demostracio)
 
 ---
 ## 1. Requisits de Servidor
