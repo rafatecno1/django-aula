@@ -22,6 +22,24 @@ Aquest mètode està dissenyat per a entorns de prova, no de producció.
 
 ---
 
+- [1. Requisits de Servidor](#1-requisits-de-servidor)
+- [2. Usuaris que es crean en la Demo i les seves credencials](#2-usuaris-que-es-crean-en-la-demo-i-les-seves-credencials)
+- [3. Instruccions d'Instal·lació](#3-instruccions-dinstallacio)
+  - [3.1 Preparació de l'Entorn](#31-preparacio-de-lentorn)
+  - [3.2 Clonació del repositorio i Instal·lació de l'Aplicació](#32-clonacio-del-repositorio-i-installacio-de-laplicacio)
+  - [3.3 Creació de Dades i Execució](#33-creacio-de-dades-i-execucio)
+  - [3.4. Accés a la Demo amb Entorn Gràfic (Màquina Local)](#34-acces-a-la-demo-amb-entorn-grafic-maquina-local)
+- [4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo](#4-accedir-des-dun-altre-ordinador-a-la-maquina-on-sha-installat-la-demo)
+  - [4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT](#41-maquina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-nat)
+    - [4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host)](#411-configuracio-de-redireccio-de-ports-de-la-maquina-virtual-host)
+    - [4.1.2 Modificació de la llista ALLOWED_HOSTS de la Demo](#412-modificacio-de-la-llista-allowed_hosts-de-la-demo)
+  - [4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)](#42-maquina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-bridge-pont)
+    - [Opcional - Aconseguir una IP Estàtica](#opcional-aconseguir-una-ip-estatica)
+  - [4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS)](#43-installacio-de-la-demo-en-un-servidor-public-amb-acces-extern-vps)
+  - [4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *common.py*](#44-resum-de-les-modificacions-de-la-llista-allowed_hosts-de-larxiu-commonpy)
+- [5. Mantenir l'execució indefinida en el temps del servidor de Demostració](#5-mantenir-lexecucio-indefinida-en-el-temps-del-servidor-de-demostracio)
+
+---
 ## 1. Requisits de Servidor
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.
