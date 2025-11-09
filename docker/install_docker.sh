@@ -13,7 +13,8 @@ fi
 
 USUARI_SUDO=$(logname)
 
-echo -e "\n\n"
+clear
+echo -e "\n"
 echo "⚙️ Iniciant instal·lació de Docker i Docker Compose per a l'usuari: ${USUARI_SUDO}"
 echo "------------------------------------------------------------------"
 echo -e "\n"
