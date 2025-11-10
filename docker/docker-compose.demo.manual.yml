@@ -27,6 +27,8 @@ services:
       - db
     env_file:
       - .env
+    environment:
+      - DEMO_ALLOWED_HOSTS=${DEMO_ALLOWED_HOSTS}
     command: >
       bash -c "
       wait-for-it db:5432 --timeout=60 --strict &&

@@ -26,6 +26,8 @@ services:
       - db
     env_file:
       - .env
+    environment:
+      - DEMO_ALLOWED_HOSTS=${DEMO_ALLOWED_HOSTS}
     restart: always
     ports:
       - "8000:8000"
