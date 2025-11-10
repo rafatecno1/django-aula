@@ -16,9 +16,9 @@ En resum, en aquesta guia es cobreix la instal·lació de la Demo en:
 
 - [1. Requisits de Servidor](#1-requisits-de-servidor)
 - [2. Usuaris que es crean en la Demo i les seves credencials](#2-usuaris-que-es-crean-en-la-demo-i-les-seves-credencials)
-- [3. Instruccions d'Instal·lació](#3-instruccions-d-instal-laci-)
-  * [3.1 Preparació de l'Entorn](#31-preparaci--de-l-entorn)
-  * [3.2 Clonació del repositorio i Instal·lació de l'Aplicació](#32-clonaci--del-repositorio-i-instal-laci--de-l-aplicaci-)
+- [3. Instruccions d'Instal·lació](#id3)
+  * [3.1 Preparació de l'Entorn](#id31)
+  * [3.2 Clonació del repositorio i Instal·lació de l'Aplicació](id32)
   * [3.3 Creació de Dades per la Demo](#33-creaci--de-dades-per-la-demo)
   * [3.4 Execució del servidor local de Django](#34-execuci--del-servidor-local-de-django)
   * [3.5. Accés a la Demo amb Entorn Gràfic (Màquina Local)](#35-acc-s-a-la-demo-amb-entorn-gr-fic--m-quina-local-)
@@ -60,11 +60,11 @@ Els usuaris de prova creats en el procés d'instal·lació tenen les següents c
 
 ---
 
-## 3. Instruccions d'Instal·lació
+## 3. Instruccions d'Instal·lació <a name="id3"></a>
 
 Aquestes comandes es poden executar en un entorn Linux, preferiblement Debian 13 o Ubuntu Server 24.04 LTS o superior.
 
-### 3.1 Preparació de l'Entorn
+### 3.1 Preparació de l'Entorn <a name="id31"></a>
 
 Des del directori principal de l'usuari instal·lador cal instal·lar les dependències bàsiques necessàries del sistema:
 
@@ -80,7 +80,7 @@ Llibreries gràfiques (necessàries en alguns entorns de desenvolupament):
 sudo apt install libgl1 libglib2.0-0t64
 ```
 
-### 3.2 Clonació del repositorio i Instal·lació de l'Aplicació
+### 3.2 Clonació del repositorio i Instal·lació de l'Aplicació <a name="id32"></a>
 
 Es recomana que la Demo de Django-Aula es posi a un directori que tingui un nom que no deixi dubtes, per exemple `demo-djau`.
 
