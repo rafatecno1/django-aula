@@ -14,34 +14,34 @@ En resum, en aquesta guia es cobreix la instal·lació de la Demo en:
 
 # Ìndex
 
-- [1. Requisits de Servidor](#1-requisits-de-servidor)
-- [2. Usuaris que es crean en la Demo i les seves credencials](#2-usuaris-que-es-crean-en-la-demo-i-les-seves-credencials)
-- [3. Instruccions d'Instal·lació](#id3)
+- [1. Requisits de Servidor](#id1)
+- [2. Usuaris que es crean en la Demo i les seves credencials](#id2)
+- [3. Instruccions generals d'instal·lació](#id3)
   * [3.1 Preparació de l'Entorn](#id31)
-  * [3.2 Clonació del repositorio i Instal·lació de l'Aplicació](id32)
-  * [3.3 Creació de Dades per la Demo](#33-creaci--de-dades-per-la-demo)
-  * [3.4 Execució del servidor local de Django](#34-execuci--del-servidor-local-de-django)
-  * [3.5. Accés a la Demo amb Entorn Gràfic (Màquina Local)](#35-acc-s-a-la-demo-amb-entorn-gr-fic--m-quina-local-)
-- [4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo](#4-accedir-des-d-un-altre-ordinador-a-la-m-quina-on-s-ha-instal-lat-la-demo)
-  * [4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT](#41-m-quina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-nat)
-    + [4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host)](#411-configuraci--de-redirecci--de-ports-de-la-m-quina-virtual--host-)
-    + [4.1.2 Addició de la llista ALLOWED_HOSTS de la Demo](#412-addici--de-la-llista-allowed-hosts-de-la-demo)
-  * [4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)](#42-m-quina-virtual-creada-amb-virtualbox-i-configurada-amb-xarxa-bridge--pont-)
-    + [Opcional - Aconseguir una IP Estàtica](#opcional---aconseguir-una-ip-est-tica)
-  * [4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS)](#43-instal-laci--de-la-demo-en-un-servidor-p-blic-amb-acc-s-extern--vps-)
-  * [4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *demo.py*](#44-resum-de-les-modificacions-de-la-llista--allowed-hosts--de-l-arxiu--demopy-)
-- [5 Mantenir l'execucíó indefinida en el temps del servidor de Demostració](#5-mantenir-l-execuc---indefinida-en-el-temps-del-servidor-de-demostraci-)
+  * [3.2 Clonació del repositorio i Instal·lació de l'Aplicació](#id32)
+  * [3.3 Creació de Dades per la Demo](#id33)
+  * [3.4 Execució del servidor local de Django](#id34)
+  * [3.5. Accés a la Demo amb Entorn Gràfic (Màquina Local)](#id35)
+- [4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo](#id4)
+  * [4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT](#id41)
+    + [4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host)](#id411)
+    + [4.1.2 Addició de la llista ALLOWED_HOSTS de la Demo](#id412)
+  * [4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)](#id42)
+    + [Opcional - Aconseguir una IP Estàtica](#id-ip-estatica)
+  * [4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS)](#id43)
+  * [4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *demo.py*](#id44)
+- [5 Mantenir l'execucíó indefinida en el temps del servidor de Demostració](#id5)
 
 
 ---
 
-## 1. Requisits de Servidor
+## 1. Requisits de Servidor <a name="id1"></a>
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.
 * **Accés:** Es requereix un usuari amb accés a "sudo".
 **[Documentació per crear un nou usuari amb permisos de "sudo"](USUARI_SUDO.md)**
 
-## 2. Usuaris que es crean en la Demo i les seves credencials
+## 2. Usuaris que es crean en la Demo i les seves credencials <a name="id2"></a>
 
 Els usuaris de prova creats en el procés d'instal·lació tenen les següents credencials:
 
@@ -105,7 +105,7 @@ Si es veu `(venv)` anem pel bon camí i es poden nstal·lar les dependències de
 pip3 install -r requirements.txt
 ```
 
-### 3.3 Creació de Dades per la Demo
+### 3.3 Creació de Dades per la Demo <a name="id33"></a>
 
 Un cop ha finalitat la instal·lació de la Demo, cal executar un script que crea les dades de demostració (professors, alumnes, horaris) i inicia el servidor de desenvolupament incorporat:
 
@@ -113,7 +113,7 @@ Un cop ha finalitat la instal·lació de la Demo, cal executar un script que cre
 ./scripts/create_demo_data.sh
 ```
 
-### 3.4 Execució del servidor local de Django
+### 3.4 Execució del servidor local de Django <a name="id34"></a>
 
 El servidor local de Django no està pensat per servir l'aplicació real de Django-Aula sinó per fer proves o pel desenvolupament de l'aplicatiu. No obstant és perfecte per servir la Demo, no cal més.
 
@@ -140,7 +140,7 @@ Quit the server with CONTROL-C.
 Aquest missate indica que tenim un servidor local en proves en correcte funcionament accessible només des de la màquina on s'ha instal·lat la Demo.
 
 
-### 3.5. Accés a la Demo amb Entorn Gràfic (Màquina Local)
+### 3.5. Accés a la Demo amb Entorn Gràfic (Màquina Local) <a name="id35"></a>
 
 Com s'explica a la secció anterior, quan s'executa la comanda *python manage.py runserver* l'aplicació es posa en marxa a l'adreça local del servidor: *http://127.0.0.1:8000*.
 
@@ -150,7 +150,7 @@ Si la Demo s'ha instal·lat en un ordinador, o a una màquina virtual, que dispo
 
 ![Pàgina principal servida en 127.0.0.1:8000](assets/demo/pagina_principal_demo.jpg)
 
-## 4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo
+## 4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo <a name="id4"></a>
 
 Si intenteu accedir a la Demo des d'una màquina on no s'hagi instal·lat la Demo no podreu accedir amb la IP "127.0.0.1"
 
@@ -183,11 +183,11 @@ nano aula/settings_dir/demo.py
 
 
 
-### 4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT
+### 4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT <a name="id41"></a>
 
 Si utilitzeu una màquina virtual amb configuració de xarxa **NAT**, heu de configurar una redirecció de ports als paràmetres de xarxa per tal que redirigeixi el trànsit del *host* (màquina anfitriona) al *guest* (màquina virtual):
 
-#### 4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host)
+#### 4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host) <a name="id411"></a>
 
 | Camp | Valor |
 | :--- | :--- |
@@ -199,7 +199,7 @@ Si utilitzeu una màquina virtual amb configuració de xarxa **NAT**, heu de con
 
 ![Redirecció de ports a la configuració de xarxa de VirtualBox de la màquina virtual (guest)](assets/demo/redicreccio_ports_vbox_nat.jpg)
 
-#### 4.1.2 Addició de la llista ALLOWED_HOSTS de la Demo
+#### 4.1.2 Addició de la llista ALLOWED_HOSTS de la Demo <a name="id412"></a>
 
 Per que la Demo respongui després de fer la redirecció de ports als paràmetres de la xarxa NAT de virtualBox, cal editar el fitxer `demo.py` de configuració de Django i afegir l'adreça IP des de la qual accedireu i que s'ha definit en la redirecció de ports:
 
@@ -210,7 +210,7 @@ Busqueu la línia "ALLOWED_HOSTS = []" i afegiu l'adreça del host "ALLOWED_HOST
 Obriu un navegador en la màquina on s'ha instal·lat VirtualBox i podreu escriure:
 **http://127.0.0.1:8000**
 
-### 4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)
+### 4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont) <a name="id42"></a>
 
 Si es vol que la màquina virtual tingui la seva pròpia adreça IP, donada pel gestor DHCP de la xarxa interna local, es pot seleccionar el paràmetre `bridge` en comptes de `NAT`.
 
@@ -241,7 +241,7 @@ Ara ja es pot obrir un navegador en la màquina anfitriona (host) on s'ha instal
 
 ![Accés a la Demo dins la màquina virtual (guest) amb IP privada gestionada dins la xarxa local interna](assets/demo/demo_vbox_bridge.jpg)
 
-#### Opcional - Aconseguir una IP Estàtica
+#### Opcional - Aconseguir una IP Estàtica <a name="id-ip-estatica"></a>
 
 **Atenció: La IP de la màquina virtual pot canviar quan s'apaga i es torna a engegar** perquè l'IP de la maquina Demo l'atorga el sistema DHCP de la xarxa interna, que entrega adreces IP a les màquines de forma variable, és a dir, no sempre té per què tenir la mateixa IP.
 
@@ -301,7 +301,7 @@ sudo netplan apply
 
 Ara ja es disposa de l'IP estàtica. Es pot comprovar amb `ip a` i reiniciant la màquina virtual Demo.
 
-### 4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS)
+### 4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS) <a name="id43"></a>
 
 Tot servidor a internet té una IP pública i és convenient definir un domini o subdomini per accedir-hi. Consulteu el document [Registres DNS](REGISTRES_DNS.md) si no recordeu com fer-ho. En aquest cas, s'han creat dos subdominis que apunten a l'IP pública del servidor VPS:
 > demo.djau.domini.cat  
@@ -334,7 +334,7 @@ http://SUBDOMINI:8000
 
 ![Accés a la Demo instal·lada en un VPS públic amb subdomini](assets/demo/pagina_principal_demo_vps.jpg)
 
-### 4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *demo.py*
+### 4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *demo.py* <a name="id44"></a>
 
 | Entorn | Configuració de "ALLOWED_HOSTS" |
 | :--- | :--- |
@@ -342,7 +342,7 @@ http://SUBDOMINI:8000
 | **Xarxa Interna Local** | `ALLOWED_HOSTS = ['127.0.0.1', 'IP_DEL_GUEST']` |
 | **VPS (Accés per Domini)** | `ALLOWED_HOSTS = ['127.0.0.1', 'IP_PúBLICA_VPS', 'demo.djau.domini.cat', 'www.demo.djau.domini.cat',]` |
 
-## 5 Mantenir l'execucíó indefinida en el temps del servidor de Demostració
+## 5 Mantenir l'execucíó indefinida en el temps del servidor de Demostració <a name="id5"></a>
 
 Normalmente s'accedeix a la màquina on s'ha instal·lat la Demo des d'un terminal de la nostra màquina personal, amb Linux o Windows, mitjançant el protocol SSH.
 
