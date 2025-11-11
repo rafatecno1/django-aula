@@ -57,6 +57,14 @@ sleep 1
 ls -lah docker-compose.yml Makefile .env
 sleep 2
 
+# --- 4. Assegurant que la comanda **make** existeix en l'entorn ---
+echo -e "\n"
+echo "✅ Assegurant que la comanda **make** existeix al sistema operatiu"
+
+sudo apt-get update -y && sudo apt-get install make -y
+sleep 2
+
+
 echo -e "\n"
 echo "ℹ️ Recomanacions importants per prosseguir:"
 echo "1. Les credencials del fitxer **.env** per aquesta instal·lació no s'han de modificar."
