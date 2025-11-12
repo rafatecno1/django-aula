@@ -100,10 +100,10 @@ fi
 # --- 6. Posar en marxa els contenidors ---
 
 echo
-echo "🕓 Iniciant comprovació..."
-echo "   -> Posant en marxa els contenidors (si no ho has fet abans)..."
+echo "🕓 Posant en marxa els contenidors de la Demo i de la Base de Dades PostgreSQL..."
+echo
 make serve
-
+echo
 
 # --- 7. Esperar que la base de dades estigui llesta ---
 
