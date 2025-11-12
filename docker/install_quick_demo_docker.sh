@@ -1,83 +1,92 @@
 #!/bin/bash
 # -------------------------------------------------------------
-# Script per a la instal·lació ràpida de la Demo Docker de django-aula.
-# Descarrega els fitxers de configuració essencials.
+# Instal·lació ràpida de la Demo Docker de django-aula
+# Descarrega els fitxers essencials i prepara la base de dades.
 # -------------------------------------------------------------
 
-# Informació del Repositori i Ubicació
+# --- 1. Informació del repositori ---
 REPO="rafatecno1/django-aula"
 BRANCA="master"
 URL_BASE="https://raw.githubusercontent.com/${REPO}/refs/heads/${BRANCA}/docker"
+SQL_URL="https://raw.githubusercontent.com/${REPO}/refs/heads/${BRANCA}/docker/demo-initdb/dades_demo.sql"
 
 clear
-echo -e "⚙️ Iniciant instal·lació ràpida de la Demo en Docker ...\n"
+echo -e "⚙️  Iniciant instal·lació ràpida de la Demo en Docker...\n"
 
-# --- 1. Definició dels Fitxers ---
-
-# Fitxers originals a descarregar (dins la carpeta 'docker/')
+# --- 2. Fitxers a descarregar ---
 FILES_TO_DOWNLOAD=(
     "docker-compose.demo.automatica.yml"
     "Makefile.demo.automatica"
     "env.demo.automatica"
 )
-
-# Fitxers de destinació (a l'arrel del projecte)
 DEST_FILES=(
     "docker-compose.yml"
     "Makefile"
     ".env"
 )
 
-# --- 2. Descàrrega dels Fitxers (Usant wget) ---
-
+# --- 3. Descarregar fitxers de configuració ---
 for i in "${!FILES_TO_DOWNLOAD[@]}"; do
-    ORIGIN_FILE="${FILES_TO_DOWNLOAD[$i]}"
-    DEST_FILE="${DEST_FILES[$i]}"
-    FULL_URL="${URL_BASE}/${ORIGIN_FILE}"
-    
-    echo "  -> Descarregant: ${ORIGIN_FILE} com a ${DEST_FILE}..."
-    
-    # Ús de wget: -q (mode silenciós), -O (guardar a l'arxiu especificat)
-    if wget -q -O "${DEST_FILE}" "${FULL_URL}"; then
-        echo "     [OK] -> Fitxer ${ORIGIN_FILE} descarregat correctament. Reanomenat com ${DEST_FILE}."
+    ORIGIN="${FILES_TO_DOWNLOAD[$i]}"
+    DEST="${DEST_FILES[$i]}"
+    URL="${URL_BASE}/${ORIGIN}"
+
+    echo "  -> Descarregant ${ORIGIN} com a ${DEST}..."
+    if wget -q -O "${DEST}" "${URL}"; then
+        echo "     ✅ Fitxer ${DEST} descarregat correctament."
     else
-        echo "     [ERROR] -> No s'ha pogut descarregar ${ORIGIN_FILE}."
+        echo "     ❌ Error en descarregar ${ORIGIN}."
         exit 1
     fi
-	echo -e "\n"
+    echo
 done
-sleep 2
 
-# --- 3. Passos Post-Instal·lació ---
+# --- 4. Descarregar el fitxer SQL ---
+echo "  -> Comprovant i preparant el fitxer de dades demo..."
+mkdir -p dades-demo-sql
 
-echo "✅ Fitxers de configuració de la Demo Docker descarregats correctament:"
-echo -e "\n"
-sleep 1
+if [ ! -f "dades-demo-sql/dades_demo.sql" ]; then
+    echo "     Descarregant dades_demo.sql..."
+    if wget -q -O "dades-demo-sql/dades_demo.sql" "${SQL_URL}"; then
+        echo "     ✅ dades_demo.sql descarregat correctament."
+    else
+        echo "     ❌ No s'ha pogut descarregar dades_demo.sql"
+        exit 1
+    fi
+else
+    echo "     ℹ️  El fitxer dades_demo.sql ja existeix. No es torna a descarregar."
+fi
 
-ls -lah docker-compose.yml Makefile .env
-sleep 2
+chmod 644 dades-demo-sql/dades_demo.sql
+echo
 
-# --- 4. Assegurant que la comanda **make** existeix en l'entorn ---
-echo -e "\n"
-echo "✅ Assegurant que la comanda **make** existeix al sistema operatiu"
+# --- 5. Comprovar la presència dels fitxers ---
+echo "✅ Fitxers preparats correctament:"
+ls -lah docker-compose.yml Makefile .env dades-demo-sql/dades_demo.sql
+echo
 
-sudo apt-get update -y && sudo apt-get install make -y
-sleep 2
+# --- 6. Instal·lar make si cal ---
+echo "🔧 Comprovant que 'make' estigui instal·lat..."
+if ! command -v make &> /dev/null; then
+    echo "   Instal·lant 'make'..."
+    sudo apt-get update -y && sudo apt-get install -y make
+else
+    echo "   ✅ 'make' ja està disponible."
+fi
 
-
-echo -e "\n"
-echo "ℹ️ Recomanacions importants per prosseguir:"
-echo "1. Les credencials del fitxer **.env** per aquesta instal·lació no s'han de modificar."
-echo "2. Es recomana reiniciar la màquina si no s'ha fet des de la la instal·lació de Docker i la creació de l'usuari amb permisos de 'sudo'."
-echo -e "\n"
-echo "ℹ️ Instruccions per posar en marxa la Demo"
-echo "1. Executeu **make serve** i la Demo es posarà en funcionament, que serà servida per 0.0.0.0:8000."
-echo "   -> ATENCIÓ: Si **make serve** falla per un problema de permisos cal executar manualment:"
-echo -e "\n"
-echo "   \$ newgrp docker"
-echo -e "\n"
-echo "2. Executeu **make logs**, per comprovar els logs de funcionament dels contenidors."
-echo "3. Si us cal detenir els contenidors de la Demo, executeu **make stop**."
-echo -e "\n"
+# --- 7. Missatge final ---
+echo
+echo "🚀 Instal·lació completada!"
+echo
+echo "ℹ️  Instruccions per posar en marxa la Demo:"
+echo "1️⃣  Executeu: make serve"
+echo "     -> Això crearà i iniciarà els contenidors 'demo_db' i 'demo_web'."
+echo
+echo "2️⃣  Per veure els logs: make logs"
+echo "3️⃣  Per aturar la demo: make stop"
+echo
+echo "📦  Els fitxers de la base de dades es troben a ./dades-demo-sql/"
+echo "     i s'importaran automàticament al primer inici del contenidor Postgres."
+echo
 
 exit 0
