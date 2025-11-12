@@ -9,11 +9,10 @@
 REPO="rafatecno1/django-aula"
 BRANCA="master"
 URL_BASE="https://raw.githubusercontent.com/${REPO}/refs/heads/${BRANCA}/docker"
-SQL_URL="https://raw.githubusercontent.com/${REPO}/refs/heads/${BRANCA}/docker/demo-initdb/dades_demo.sql"
 
 clear
 echo -e "⚙️  Iniciant instal·lació ràpida de la Demo en Docker...\n"
-
+echo
 
 # --- 2. Fitxers a descarregar ---
 
@@ -21,20 +20,28 @@ FILES_TO_DOWNLOAD=(
     "docker-compose.demo.automatica.yml"
     "Makefile.demo.automatica"
     "env.demo.automatica"
+    "dades_demo.sql"
 )
 DEST_FILES=(
     "docker-compose.yml"
     "Makefile"
     ".env"
+    "dades-demo-sql/dades_demo.sql"
 )
 
 
-# --- 3. Descarregar fitxers de configuració ---
+# --- 3. Descarregar fitxers de configuració i dades ---
+
+echo "📦 Descarregant fitxers necessaris..."
+mkdir -p dades-demo-sql
 
 for i in "${!FILES_TO_DOWNLOAD[@]}"; do
     ORIGIN="${FILES_TO_DOWNLOAD[$i]}"
     DEST="${DEST_FILES[$i]}"
     URL="${URL_BASE}/${ORIGIN}"
+
+    # Crear el directori si no existeix
+    mkdir -p "$(dirname "${DEST}")"
 
     echo "  -> Descarregant ${ORIGIN} com a ${DEST}..."
     if wget -q -O "${DEST}" "${URL}"; then
@@ -43,39 +50,23 @@ for i in "${!FILES_TO_DOWNLOAD[@]}"; do
         echo "     ❌ Error en descarregar ${ORIGIN}."
         exit 1
     fi
+
+    # Assignar permisos adequats
+    if [[ "${DEST}" == *.sql ]]; then
+        chmod 644 "${DEST}"
+    fi
+
     echo
 done
 
-
-# --- 4. Descarregar el fitxer SQL ---
-
-echo "  -> Comprovant i preparant el fitxer de dades demo..."
-mkdir -p dades-demo-sql
-
-if [ ! -f "dades-demo-sql/dades_demo.sql" ]; then
-    echo "     Descarregant dades_demo.sql..."
-    if wget -q -O "dades-demo-sql/dades_demo.sql" "${SQL_URL}"; then
-        echo "     ✅ dades_demo.sql descarregat correctament."
-    else
-        echo "     ❌ No s'ha pogut descarregar dades_demo.sql"
-        exit 1
-    fi
-else
-    echo "     ℹ️  El fitxer dades_demo.sql ja existeix. No es torna a descarregar."
-fi
-
-chmod 644 dades-demo-sql/dades_demo.sql
+echo "✅ Tots els fitxers s'han descarregat correctament."
 echo
 
-
-# --- 5. Comprovar la presència dels fitxers ---
-
-echo "✅ Fitxers preparats correctament:"
 ls -lah docker-compose.yml Makefile .env dades-demo-sql/dades_demo.sql
 echo
 
 
-# --- 6. Instal·lar make si cal ---
+# --- 4. Instal·lar make si cal ---
 
 echo "🔧 Comprovant que 'make' estigui instal·lat..."
 if ! command -v make &> /dev/null; then
@@ -86,7 +77,7 @@ else
 fi
 
 
-# --- 7. Pregunta pel domini o IP ---
+# --- 5. Pregunta pel domini o IP ---
 
 echo
 echo "🌍 Si la Demo ha de funcionar en una xarxa local cal definir quina IP té. Si es vol instal·lar en un servidor en internet (VPS) caldrà informar de la seva IP pública y del domini o subdomini, si n'hi ha."
@@ -106,7 +97,7 @@ else
 fi
 
 
-# --- 8. Posar en marxa els contenidors ---
+# --- 6. Posar en marxa els contenidors ---
 
 echo
 echo "🕓 Iniciant comprovació..."
@@ -114,7 +105,7 @@ echo "   -> Posant en marxa els contenidors (si no ho has fet abans)..."
 make serve
 
 
-# --- 9. Esperar que la base de dades estigui llesta ---
+# --- 7. Esperar que la base de dades estigui llesta ---
 
 # Comprovant que l'arxiu .env existeix
 if [ -f .env ]; then
@@ -142,7 +133,7 @@ done
 echo "    ✅ PostgreSQL està llest!"
 
 
-# --- 10. Comprovació del fitxer SQL ---
+# --- 8. Comprovació del fitxer SQL ---
 
 echo
 echo "🔍 Comprovant si s'ha carregat el fitxer SQL de dades de la demo..."
@@ -158,7 +149,7 @@ if [[ "$DB_LOGS" == *".sql"* ]]; then
         echo "   -> o torna a reiniciar amb: make down && make serve"
 fi
 
-# --- 11. Missatge final ---
+# --- 9. Missatge final ---
 
 echo
 echo
