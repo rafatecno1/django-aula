@@ -116,7 +116,6 @@ make serve
 
 # --- 9. Esperar que la base de dades estigui llesta ---
 
-
 # Comprovant que l'arxiu .env existeix
 if [ -f .env ]; then
     set -a
@@ -127,6 +126,7 @@ else
     exit 1
 fi
 
+echo
 echo "⌛ Esperant que la base de dades estigui llesta (pot trigar uns segons)..."
 TIMEOUT=60
 COUNT=0
@@ -139,18 +139,19 @@ until docker exec demo_db pg_isready -U "$DB_USER" >/dev/null 2>&1; do
         exit 1
     fi
 done
-echo "✅ PostgreSQL està llest!"
+echo "    ✅ PostgreSQL està llest!"
 
 
 # --- 10. Comprovació del fitxer SQL ---
 
+echo
 echo "🔍 Comprovant si s'ha carregat el fitxer SQL de dades de la demo..."
 DB_LOGS=$(docker logs demo_db 2>&1 | grep -E "docker-entrypoint-initdb.d/.*\.sql" | tail -n 1)
 
 if [[ "$DB_LOGS" == *".sql"* ]]; then
-        echo "✅ Base de dades inicialitzada correctament!"
-        echo "   Fragment del log:"
-        echo "   $DB_LOGS"
+        echo "    ✅ Base de dades inicialitzada correctament!"
+        echo "       Fragment del log:"
+        echo "       $DB_LOGS"
     else
         echo "⚠️  No s'ha trobat cap evidència que s'hagi executat dades_demo.sql"
         echo "   -> Revisa amb: docker logs demo_db | less"
@@ -159,20 +160,26 @@ fi
 
 # --- 11. Missatge final ---
 
-echo -e "\n Instal·lació completada!\n"
+echo
+echo
+echo "Finalització de l'automatització!"
 
 echo
 echo "--------------------------------------------"
-echo "📦  Estat final de la instal·lació"
+echo "📦  Estat final de l'estat dels contenidors"
 echo "--------------------------------------------"
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 echo "--------------------------------------------"
 echo
 echo 
-echo "ℹ️ Instruccions disponibles amb la comanda **make** per la Demo:"
+echo "ℹ️ Informació addicional"
+echo
+echo "Instruccions disponibles amb la comanda **make** per la Demo:"
 echo "   1. Si no està en marxa, executi: make serve"
 echo "   2. Per veure els logs:           make logs"
 echo "   3. Per detenir la Demo:          make stop"
+echo "   4. Per eliminar els contenidors: make down i després -> docker system prune -a"
+
 echo
 echo "🌐 Si ha definit IP o dominis a DEMO_ALLOWED_HOSTS, provi ara d'accedir-hi al navegador!"
 echo "   (p. ex. http://demo.elteudomini.cat:8000 o http://IP:8000)"
