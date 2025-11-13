@@ -39,7 +39,7 @@ Abans d'iniciar la instal·lació, és imprescindible preparar l'entorn amb la i
   👉 **[Documentació per crear un nou usuari amb permisos de `sudo`](USUARI_SUDO.md)**  
 
 És altament recomanable:  
-👉 **[Configurar el servidor per garantir un mínim de seguretat (Usuaris, Root sense SSH, Claus d’accés, Fail2Ban)](../SEGURIDAD_SSH.md)**
+👉 **[Configurar el servidor per garantir un mínim de seguretat (Usuaris, Root sense SSH, Claus d’accés, Fail2Ban)](SEGURIDAD_SSH.md)**
 
 <a name="id12"></a>
 ### 1.2 Configuració de Correu i DNS
