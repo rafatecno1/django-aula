@@ -40,7 +40,7 @@ El Proyecto es Open-source, y aquí se encuentra su repositorio Git: [https://gi
 * [Anexos](anexos/README.md)
   * [Exportación Saga](anexos/exportacion-saga.md)
   * [Importar alumnes Saga i Esfer@](../ANEXOS_DATOS/TutorialALUMNES_SAGA-ESFER@_a_DJAU.pdf)
-  * [Importar alumnes sense grup assignat](../ANEXOS_DATOS/ANEXOS_DATOS/IMPORTAR_A_DJAUsense_curs_actualitzat.pdf)
+  * [Importar alumnes sense grup assignat](../ANEXOS_DATOS/IMPORTAR_A_DJAUsense_curs_actualitzat.pdf)
   * [Pagaments de sortides](../ANEXOS_DATOS/Tutorial%20pagament%20activitats%20on-line.pdf)
   * [Importar horaris Kronowin](../ANEXOS_DATOS/exportacio-kronowin.pdf)
   * [Importar horaris Untis](manual-de-uso/carga-inicial-de-datos/README.md#para-untis)
