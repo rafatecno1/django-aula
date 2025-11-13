@@ -20,8 +20,8 @@ El Proyecto es Open-source, y aquí se encuentra su repositorio Git: [https://gi
 * [Características](caracteristicas.md)
 * [Funcionalidades](funcionalidades.md)
 * [**Instalación**]
-  * [Instalación automatizada **(Preferente)** en Ubuntu Server 24.04 LTS, Debian 13 o derivats](../../INSTALL_AUTOMATIC_DJAU_SCRIPTS.md)
-  * [Instalación siguiendo instrucciones detalladas para cada paso](../../MANUAL_LEGACY/instalacion.md)
+  * [Instalación automatizada **(Preferente)** en Ubuntu Server 24.04 LTS, Debian 13 o derivats](../INSTALL_AUTOMATIC_DJAU_SCRIPTS.md)
+  * [Instalación siguiendo instrucciones detalladas para cada paso](../MANUAL_LEGACY/instalacion.md)
 * [Manual del Administrador](manual-de-uso/README.md)
   * [Primer Inicio](manual-de-uso/primer-inicio.md)
   * [Carga Inicial de datos](manual-de-uso/carga-inicial-de-datos/README.md)
