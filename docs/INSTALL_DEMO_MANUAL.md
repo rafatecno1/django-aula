@@ -34,14 +34,15 @@ En resum, en aquesta guia es cobreix la instal·lació de la Demo en:
 
 
 ---
-
-## 1. Requisits de Servidor <a name="id1"></a>
+<a name="id1"></a>
+## 1. Requisits de Servidor 
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.
 * **Accés:** Es requereix un usuari amb accés a "sudo".
 **[Documentació per crear un nou usuari amb permisos de "sudo"](USUARI_SUDO.md)**
 
-## 2. Usuaris que es crean en la Demo i les seves credencials <a name="id2"></a>
+<a name="id2"></a>
+## 2. Usuaris que es crean en la Demo i les seves credencials
 
 Els usuaris de prova creats en el procés d'instal·lació tenen les següents credencials:
 
@@ -59,12 +60,13 @@ Els usuaris de prova creats en el procés d'instal·lació tenen les següents c
 - Cookies: Aquest programari utilitza cookies estrictament per al manteniment de la sessió.
 
 ---
-
-## 3. Instruccions d'Instal·lació <a name="id3"></a>
+<a name="id3"></a>
+## 3. Instruccions d'Instal·lació
 
 Aquestes comandes es poden executar en un entorn Linux, preferiblement Debian 13 o Ubuntu Server 24.04 LTS o superior.
 
-### 3.1 Preparació de l'Entorn <a name="id31"></a>
+<a name="id31"></a>
+### 3.1 Preparació de l'Entorn
 
 Des del directori principal de l'usuari instal·lador cal instal·lar les dependències bàsiques necessàries del sistema:
 
@@ -80,7 +82,8 @@ Llibreries gràfiques (necessàries en alguns entorns de desenvolupament):
 sudo apt install libgl1 libglib2.0-0t64
 ```
 
-### 3.2 Clonació del repositorio i Instal·lació de l'Aplicació <a name="id32"></a>
+<a name="id32"></a>
+### 3.2 Clonació del repositorio i Instal·lació de l'Aplicació
 
 Es recomana que la Demo de Django-Aula es posi a un directori que tingui un nom que no deixi dubtes, per exemple `demo-djau`.
 
@@ -104,16 +107,16 @@ Si es veu `(venv)` anem pel bon camí i es poden nstal·lar les dependències de
 ```bash
 pip3 install -r requirements.txt
 ```
-
-### 3.3 Creació de Dades per la Demo <a name="id33"></a>
+<a name="id33"></a>
+### 3.3 Creació de Dades per la Demo
 
 Un cop ha finalitat la instal·lació de la Demo, cal executar un script que crea les dades de demostració (professors, alumnes, horaris) i inicia el servidor de desenvolupament incorporat:
 
 ```bash
 ./scripts/create_demo_data.sh
 ```
-
-### 3.4 Execució del servidor local de Django <a name="id34"></a>
+<a name="id34"></a>
+### 3.4 Execució del servidor local de Django
 
 El servidor local de Django no està pensat per servir l'aplicació real de Django-Aula sinó per fer proves o pel desenvolupament de l'aplicatiu. No obstant és perfecte per servir la Demo, no cal més.
 
@@ -139,8 +142,8 @@ Quit the server with CONTROL-C.
 
 Aquest missate indica que tenim un servidor local en proves en correcte funcionament accessible només des de la màquina on s'ha instal·lat la Demo.
 
-
-### 3.5. Accés a la Demo amb Entorn Gràfic (Màquina Local) <a name="id35"></a>
+<a name="id35"></a>
+### 3.5. Accés a la Demo amb Entorn Gràfic (Màquina Local)
 
 Com s'explica a la secció anterior, quan s'executa la comanda *python manage.py runserver* l'aplicació es posa en marxa a l'adreça local del servidor: *http://127.0.0.1:8000*.
 
@@ -150,7 +153,8 @@ Si la Demo s'ha instal·lat en un ordinador, o a una màquina virtual, que dispo
 
 ![Pàgina principal servida en 127.0.0.1:8000](assets/demo/pagina_principal_demo.jpg)
 
-## 4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo <a name="id4"></a>
+<a name="id4"></a>
+## 4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo
 
 Si intenteu accedir a la Demo des d'una màquina on no s'hagi instal·lat la Demo no podreu accedir amb la IP "127.0.0.1"
 
@@ -181,13 +185,13 @@ Engegant el servidor local d'aquesta manera posibilita servir la Demo en qualsev
 nano aula/settings_dir/demo.py
 ```
 
-
-
-### 4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT <a name="id41"></a>
+<a name="id41"></a>
+### 4.1 Màquina virtual creada amb VirtualBox i configurada amb xarxa NAT
 
 Si utilitzeu una màquina virtual amb configuració de xarxa **NAT**, heu de configurar una redirecció de ports als paràmetres de xarxa per tal que redirigeixi el trànsit del *host* (màquina anfitriona) al *guest* (màquina virtual):
 
-#### 4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host) <a name="id411"></a>
+<a name="id411"></a>
+#### 4.1.1 Configuració de Redirecció de Ports de la màquina virtual (Host)
 
 | Camp | Valor |
 | :--- | :--- |
@@ -199,7 +203,8 @@ Si utilitzeu una màquina virtual amb configuració de xarxa **NAT**, heu de con
 
 ![Redirecció de ports a la configuració de xarxa de VirtualBox de la màquina virtual (guest)](assets/demo/redicreccio_ports_vbox_nat.jpg)
 
-#### 4.1.2 Addició de la llista ALLOWED_HOSTS de la Demo <a name="id412"></a>
+<a name="id412"></a>
+#### 4.1.2 Addició de la llista ALLOWED_HOSTS de la Demo
 
 Per que la Demo respongui després de fer la redirecció de ports als paràmetres de la xarxa NAT de virtualBox, cal editar el fitxer `demo.py` de configuració de Django i afegir l'adreça IP des de la qual accedireu i que s'ha definit en la redirecció de ports:
 
@@ -210,7 +215,8 @@ Busqueu la línia "ALLOWED_HOSTS = []" i afegiu l'adreça del host "ALLOWED_HOST
 Obriu un navegador en la màquina on s'ha instal·lat VirtualBox i podreu escriure:
 **http://127.0.0.1:8000**
 
-### 4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont) <a name="id42"></a>
+<a name="id42"></a>
+### 4.2 Màquina virtual creada amb VirtualBox i configurada amb xarxa BRIDGE (pont)
 
 Si es vol que la màquina virtual tingui la seva pròpia adreça IP, donada pel gestor DHCP de la xarxa interna local, es pot seleccionar el paràmetre `bridge` en comptes de `NAT`.
 
@@ -241,7 +247,8 @@ Ara ja es pot obrir un navegador en la màquina anfitriona (host) on s'ha instal
 
 ![Accés a la Demo dins la màquina virtual (guest) amb IP privada gestionada dins la xarxa local interna](assets/demo/demo_vbox_bridge.jpg)
 
-#### Opcional - Aconseguir una IP Estàtica <a name="id-ip-estatica"></a>
+<a name="id-ip-estatica"></a>
+#### Opcional - Aconseguir una IP Estàtica
 
 **Atenció: La IP de la màquina virtual pot canviar quan s'apaga i es torna a engegar** perquè l'IP de la maquina Demo l'atorga el sistema DHCP de la xarxa interna, que entrega adreces IP a les màquines de forma variable, és a dir, no sempre té per què tenir la mateixa IP.
 
@@ -301,7 +308,8 @@ sudo netplan apply
 
 Ara ja es disposa de l'IP estàtica. Es pot comprovar amb `ip a` i reiniciant la màquina virtual Demo.
 
-### 4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS) <a name="id43"></a>
+<a name="id43"></a>
+### 4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS)
 
 Tot servidor a internet té una IP pública i és convenient definir un domini o subdomini per accedir-hi. Consulteu el document [Registres DNS](REGISTRES_DNS.md) si no recordeu com fer-ho. En aquest cas, s'han creat dos subdominis que apunten a l'IP pública del servidor VPS:
 > demo.djau.domini.cat  
@@ -334,7 +342,8 @@ http://SUBDOMINI:8000
 
 ![Accés a la Demo instal·lada en un VPS públic amb subdomini](assets/demo/pagina_principal_demo_vps.jpg)
 
-### 4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *demo.py* <a name="id44"></a>
+<a name="id44"></a>
+### 4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *demo.py*
 
 | Entorn | Configuració de "ALLOWED_HOSTS" |
 | :--- | :--- |
@@ -342,7 +351,8 @@ http://SUBDOMINI:8000
 | **Xarxa Interna Local** | `ALLOWED_HOSTS = ['127.0.0.1', 'IP_DEL_GUEST']` |
 | **VPS (Accés per Domini)** | `ALLOWED_HOSTS = ['127.0.0.1', 'IP_PúBLICA_VPS', 'demo.djau.domini.cat', 'www.demo.djau.domini.cat',]` |
 
-## 5 Mantenir l'execucíó indefinida en el temps del servidor de Demostració <a name="id5"></a>
+<a name="id5"></a>
+## 5 Mantenir l'execucíó indefinida en el temps del servidor de Demostració
 
 Normalmente s'accedeix a la màquina on s'ha instal·lat la Demo des d'un terminal de la nostra màquina personal, amb Linux o Windows, mitjançant el protocol SSH.
 
@@ -360,7 +370,7 @@ nohup python -u manage.py runserver IP_PúBLICA_VPS:8000 &
 
 * **nohup** desconnecta el procés de la sessió ssh (encara que si fem *ctrl-c* el procés s'aturarà igualment).
 * **-u** indica a python que s'executi en mode sense memòria intermèdia per no perdre cap sortida del procés.
-* odeu afegir **&** després de l'ordre per empènyer el procés immediatament a segon pla i recuperar el shell, mantenint l'ús de *ctrl-c*.
+* Es pot afegir **&** després de l'ordre per empènyer el procés immediatament a segon pla i recuperar el shell, mantenint l'ús de *ctrl-c*.
 
 Per tancar el servidor *runserver* de python hi ha dues opcions:
 1. Es pot reiniciar el servidor

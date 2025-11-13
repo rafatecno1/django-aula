@@ -16,20 +16,22 @@ Cada fase consecutiva s'executa mitjançant un script específic i és imprescin
 
 ## Índex
 
-1. [Requisits i Preparació Prèvia](#1-requisits-i-preparació-prèvia)  
-   1.1 - [Requisits de Servidor](#11-requisits-de-servidor)  
-   1.2 - [Configuració de Correu i DNS](#12-configuració-de-correu-i-dns)  
-2. [Fases d’Instal·lació Automatitzada](#2-fases-dinstal·lació-automatitzada)  
-   2.1 - [Fase 1: Instal·lació i Configuració de Django-Aula](###21-fase-1-instal·lació-i-configuració-de-django-aula)  
-   2.2 - [Fase 2: Instal·lació del Servidor Web Apache](###22-fase-2-instal·lació-del-servidor-web-apache)  
-   2.3 - [Fase 3: Automatització de Tasques (CRON)](###23-fase-3-automatització-de-tasques-cron)
+- [1. Requisits i Preparació Prèvia](#id1)  
+   - [1.1 Requisits de Servidor](#id11)  
+   - [1.2 Configuració de Correu i DNS](#id12)  
+- [2. Fases d’Instal·lació Automatitzada](#id2)  
+   - [2.1 Fase 1: Instal·lació i Configuració de Django-Aula](#id21)  
+   - [2.2 Fase 2: Instal·lació del Servidor Web Apache](#id22)  
+   - [2.3 Fase 3: Automatització de Tasques (CRON)](#id23)
 
 ---
 
+<a name="id1"></a>
 ## 1. Requisits i Preparació Prèvia
 
 Abans d'iniciar la instal·lació, és imprescindible preparar l'entorn amb la informació i els permisos necessaris.
 
+<a name="id11"></a>
 ### 1.1 Requisits de Servidor
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.  
@@ -39,6 +41,7 @@ Abans d'iniciar la instal·lació, és imprescindible preparar l'entorn amb la i
 És altament recomanable:  
 👉 **[Configurar el servidor per garantir un mínim de seguretat (Usuaris, Root sense SSH, Claus d’accés, Fail2Ban)](../SEGURIDAD_SSH.md)**
 
+<a name="id12"></a>
 ### 1.2 Configuració de Correu i DNS
 
 L'aplicació necessita una adreça de correu per a l'enviament de notificacions i la gestió de sessions.
@@ -54,12 +57,14 @@ L'aplicació necessita una adreça de correu per a l'enviament de notificacions 
 
 ---
 
+<a name="id2"></a>
 ## 2. Fases d’Instal·lació Automatitzada
 
 L’aplicació s’instal·la i es configura mitjançant l’execució seqüencial de diferents scripts interactius.
 
 ---
 
+<a name="id21"></a>
 ### 2.1 Fase 1: Instal·lació i Configuració de Django-Aula (`install_djau.sh` + `setup_djau.sh`)
 
 El primer script, `install_djau.sh`, realitza la preparació inicial del sistema: instal·la totes les dependències necessàries (`Python`, `PostgreSQL`, etc.), crea els directoris i ajusta els permisos de l’usuari amb el qual es fa la instal·lació (per defecte, usuari `djau`).  
@@ -102,6 +107,7 @@ Un cop finalitzada l'execució d'aquest script es dona l'opció d'executar el sc
 
 ---
 
+<a name="id22"></a>
 ### 2.2 Fase 2: Instal·lació del Servidor Web Apache (`setup_apache.sh`)
 
 Django-Aula fa servir el servidor web **Apache**, per tant, aquest script instal·la i configura el servidor web, activa el tallafocs **UFW** i gestiona la creació de certificats, autofirmats o amb **Let's Encrypt** (si es tracta d’una instal·lació pública).
@@ -137,9 +143,9 @@ Un cop generats els certificats per Let's Encrypt sense errades, el script `setu
 * Comrovar si Cetbot ha programat correctament l'autorenovació dels certificats en el sistema, per estar-ne segurs de que s'autorenovaran.
 * Fer una simulació de renovació dels certificats
 
-
 ---
 
+<a name="id23"></a>
 ### 2.3 Fase 3: Automatització de Tasques (CRON) (`setup_cron.sh`)
 
 Django-Aula requereix dur a terme tasques periòdiques automatitzades.  

@@ -1,60 +1,58 @@
-# ?? Configuraci®Æ de Registres DNS per a Acc®¶s P®≤blic (VPS)
+# Configuraci√≥ de Registres DNS per a Acc√©s P√∫blic (VPS)
 
-Per poder accedir a l'aplicaci®Æ des d'Internet mitjan?ant un domini (i no nom®¶s per la IP), cal tenir un domini contractat i configurar els registres DNS que apunten a l'adre?a IP del servidor VPS.
+Per poder accedir a l'aplicaci√≥ des d'Internet mitjan?ant un domini (i no nom√©s per la IP), cal tenir un domini contractat i configurar els registres DNS que apunten a l'adre√ßa IP del servidor VPS.
 
-A m®¶s, per tal que el proc®¶s d'instal°§laci®Æ automatitzada pugui generar els certificats de seguretat **Let's Encrypt** (HTTPS), calen uns registres addicionals (tipus CAA).
+A m√©s, per tal que el proc√©s d'instalÔπûlaci√≥ automatitzada pugui generar els certificats de seguretat **Let's Encrypt** (HTTPS), calen uns registres addicionals (tipus CAA).
 
 ### 1. Requisits
 
 * **Domini Contractat:** Cal tenir un domini propi (p. ex., `elteudomini.cat`).
-* **Gestor DNS:** Acc®¶s al panell de control de DNS que proporciona l'empresa contractada.
-* **Adre?a IP P®≤blica:** Con®®ixer l'adre?a IP p®≤blica del vostre servidor VPS.
+* **Gestor DNS:** Acc√©s al panell de control de DNS que proporciona l'empresa contractada.
+* **adre√ßa IP P√∫blica:** Con√®ixer l'adre√ßa IP p√∫blica del vostre servidor VPS.
 
 ---
 
-## 2. Creaci®Æ dels Registres de Tipus A (Acc®¶s)
+## 2. Creaci√≥ dels Registres de Tipus A (Acc√©s)
 
-Els registres de tipus **A** s®Æn els encarregats de traduir el nom de domini (URL) a l'adre?a IP num®®rica del vostre servidor.
+Els registres de tipus **A** s√≥n els encarregats de traduir el nom de domini (URL) a l'adre√ßa IP num√®rica del vostre servidor.
 
 ### 2.1 Registre del Subdomini Principal (`djau`)
 
-Cal crear un registre **A** que defineixi el subdomini de l'aplicaci®Æ i l'apunti a la IP del VPS.
+Cal crear un registre **A** que defineixi el subdomini de l'aplicaci√≥ i l'apunti a la IP del VPS.
 
 | Camp | Valor |
 | :--- | :--- |
 | **Tipus de Registre** | **A** (Address Record) |
 | **Nom/Subdomini** | `djau` |
-| **Destinaci®Æ/IP** | L'adre?a IP del vostre VPS |
+| **Destinaci√≥/IP** | L'adre√ßa IP del vostre VPS |
 
-![Creci®Æ del registre A del subdomini](assets/dns/crear_registre_A_subdomini.jpg)
+![Creci√≥ del registre A del subdomini](assets/dns/crear_registre_A_subdomini.jpg)
 
-Un cop creat, el registre apareixer®§ al llistat del panell de control de DNS:
+Un cop creat, el registre apareixer√† al llistat del panell de control de DNS:
 
 ![Entrada en el llistat de registres del registre A creat pel subdomini](assets/dns/registre_A_subdomini.jpg)
 
-En visualitzar els detalls del registre creat, es veur®§ la correspond®®ncia entre el subdomini complet i la IP:
+En visualitzar els detalls del registre creat, es veur√† la correspond√®ncia entre el subdomini complet i la IP:
 
-![Edici®Æ Registre A del subdomini](assets/dns/editant_registre_A_subdomini.jpg)
+![Edici√≥ Registre A del subdomini](assets/dns/editant_registre_A_subdomini.jpg)
 
 ### 2.2 Registre del Subdomini `www.` (Opcional)
 
-Per assegurar que els usuaris que afegeixen el prefix `www.` al domini puguin accedir sense problemes (i perqu®® el proc®¶s de certificaci®Æ de Let's Encrypt ho cobreixi), ®¶s recomanable crear un segon registre **A**:
+Per assegurar que els usuaris que afegeixen el prefix `www.` al domini puguin accedir sense problemes (i perqu√® el proc√©s de certificaci√≥ de Let's Encrypt ho cobreixi), √©s recomanable crear un segon registre **A**:
 
 | Camp | Valor |
 | :--- | :--- |
 | **Tipus de Registre** | **A** (Address Record) |
 | **Nom/Subdomini** | `www.djau` |
-| **Destinaci®Æ/IP** | L'adre?a IP del vostre VPS |
+| **Destinaci√≥/IP** | L'adre√ßa IP del vostre VPS |
 
 ---
 
-## 3. Creaci®Æ dels Registres de Tipus CAA (Let's Encrypt)
+## 3. Creaci√≥ dels Registres de Tipus CAA (Let's Encrypt)
 
-Els registres de tipus **CAA** (Certification Authority Authorization) especifiquen quines entitats (CAs) estan autoritzades a emetre certificats per al vostre domini. Aquest registre ®¶s **imprescindible** per permetre que **Certbot/Let's Encrypt** pugui generar autom®§ticament els certificats.
+Els registres de tipus **CAA** (Certification Authority Authorization) especifiquen quines entitats (CAs) estan autoritzades a emetre certificats per al vostre domini. Aquest registre √©s **imprescindible** per permetre que **Certbot/Let's Encrypt** pugui generar autom√†ticament els certificats.
 
-Cal crear un registre CAA pel subdomini principal i un altre per si s'ha optat per crear-ne un altre pel subdomini que comen?a per www, del tal manera que permeti expressament que la CA Let's Encrypt (identificada com `letsencrypt.org`) emeti certificats per als vostres subdominis .
-
-### 3.1 Registres CAA
+Cal crear, com a m√≠nim, un registre CAA pel subdomini principal i, recomanable, un altre registre per si es vol assegurar l'acc√©s https quan comen√ßa per www, del tal manera que permeti expressament que la CA Let's Encrypt (identificada com `letsencrypt.org`) emeti certificats per als vostres subdominis .
 
 | Camp | Valor |
 | :--- | :--- |
@@ -62,14 +60,14 @@ Cal crear un registre CAA pel subdomini principal i un altre per si s'ha optat p
 | **Nom/Subdomini** | `djau` i `www.djau`|
 | **Valor/Target** | `0 issue "letsencrypt.org"` |
 
-En visualitzar els detalls d'un dels registres creats, es veur®§ la correspond®®ncia entre el subdomini complet i l'entitat certificadora CA Let's Encrypt:
+En visualitzar els detalls d'un dels registres creats, es veur√† la correspond√®ncia entre el subdomini complet i l'entitat certificadora CA Let's Encrypt:
 
-![Edici®Æ Registre CAA Let's Encrypt](assets/dns/editant_Registre_CAA_LetsEncrypt.jpg)
+![Edici√≥ Registre CAA Let's Encrypt](assets/dns/editant_Registre_CAA_LetsEncrypt.jpg)
 
-Un cop creat, els registres haurien d'apar®®ixer al panell de control de DNS:
+Un cop creat, els registres haurien d'apar√®ixer al panell de control de DNS:
 
 ![Entrada en el llistat de registres del registre del registre CAA Let's Encrypt pel subdomini](assets/dns/registre_CAA_LetsEncrypt.jpg)
 
-![Entrada en el llistat de registres del registre del registre CAA Let's Encrypt pel subdomini que comen?a per www](assets/dns/registre2_CAA_LetsEncrypt.jpg)
+![Entrada en el llistat de registres del registre del registre CAA Let's Encrypt pel subdomini que comen√ßa per www](assets/dns/registre2_CAA_LetsEncrypt.jpg)
 
-**Nota:** Despr®¶s de crear o modificar qualsevol registre DNS, pot trigar unes hores (temps de propagaci®Æ) fins que els canvis siguin efectius arreu del m®Æn.
+**Nota:** Despr√©s de crear o modificar qualsevol registre DNS, pot trigar unes hores (temps de propagaci√≥) fins que els canvis siguin efectius arreu del m√≥n.

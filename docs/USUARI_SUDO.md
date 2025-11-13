@@ -1,4 +1,4 @@
-# 👥 Creació d'un Nou Usuari amb Permisos 'sudo'
+# Creació d'un Nou Usuari amb Permisos 'sudo'
 
 Aquesta guia detalla el procediment per crear un nou usuari del sistema (no root) i assignar-li els permisos necessaris per executar tasques administratives (`sudo`).
 
