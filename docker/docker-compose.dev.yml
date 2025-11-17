@@ -1,7 +1,7 @@
 # docker-compose.dev.yml
 services:
   db:
-    image: postgres:14-alpine
+    image: postgres:postgres:17.7-alpine
     container_name: dev_db
     ports:
       - "5432:5432"
