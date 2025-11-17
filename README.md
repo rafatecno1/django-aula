@@ -2,7 +2,9 @@
 
 Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies.
 
-![Imgur](http://i.imgur.com/YlCRTap.png)
+<p align="center">
+    <img src="http://i.imgur.com/YlCRTap.png" alt="Django-Aula responsive" width="70%">
+</p>
 
 [![Tecnologia](https://img.shields.io/badge/Tecnologia-Django%205.1-092E20.svg?style=for-the-badge&logo=django)](https://www.djangoproject.com/)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL-336791.svg?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
@@ -13,6 +15,16 @@ Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies
 
 **[Llicència i Crèdits](LICENSE)** | **EL PROGRAMA NO TÉ CAP GARANTIA, UTILITZEU-LO SOTA LA VOSTRA RESPONSABILITAT.**
 
+---
+
+# 📋 Índex de Continguts
+
+- [1. Introducció](#iintroduccio)
+- [2. Requisits del sistema operatiu per instal·lar Django-Aula](#requisits)
+- [3. Desplegament d'una Demostració de Django-Aula (Quick Demo) amb Docker 🐳 ](#quickdemo)
+- [4. Instal·lació i càrrega de dades de Django-Aula per ús real a un Centre Educatiu](#produccio)
+- [5. Equip Desenvolupador i Suport Tècnic](#dev-suport-tecnic)
+   
 ---
 
 <a name="introduccio"></a>
@@ -40,7 +52,7 @@ Per qualsevol tipus d'instal·lació, ja sigui per un ús real o per l'entorn de
 ---
 
 <a name="quickdemo"></a>
-## 🐳 Desplegament d'una Demostració de Django-Aula (Quick Demo) amb Docker
+## Desplegament d'una Demostració de Django-Aula (Quick Demo) amb Docker 🐳 
 
 L'entorn de demostració, conegut com Demo, és una versió funcional del sistema i que es pot posar en funcionament en molts pocs minuts. Disposa de dades ficiticies (usuaris, professors, alumnat i un horari mínim) que faciliten observar l'aspecte visual i interaccionar, des de diferents rols, amb les funcionalitats de l'aplicatiu real Django-Aula.
 
@@ -79,7 +91,7 @@ Tot i que el procés anterior és autònom i interactívament configurable, es r
 
 
 <a name="produccio"></a>
-## 🚀 Instal·lació de Django-Aula per ús real a un Centre Educatiu i càrrega de dades (Entorn de Producció)
+## 🚀 Instal·lació i càrrega de dades de Django-Aula per ús real a un Centre Educatiu (Entorn de Producció)
 
 ### 1a part. Procés d'instal·lació.
 
@@ -99,9 +111,8 @@ Després de la instal·lació el sistema estarà preparat per rebre les dades re
 
 ---
 
-<a name="doc_manteniment"></a>
+<a name="dev-suport-tecnic"></a>
 ## 📚 Equip Desenvolupador i Suport Tècnic
-
 
 * **Vols col·laborar-hi com a #DEV?**  
 Aquestes són les [Issues prioritàries](https://github.com/ctrl-alt-d/django-aula/issues?q=is%3Aissue%20state%3Aopen%20label%3APrioritari)
