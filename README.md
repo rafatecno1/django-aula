@@ -16,46 +16,46 @@ Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies
 ---
 
 <a name="introduccio"></a>
-## Introducció. Característiques Principals i Valor Afegit
+## Introducció
 
-Django-Aula és un sistema integral dissenyat per alleugerir la càrrega de treball del personal docent d'un centre educatiu, millorant la gestió acadèmica i de convivència, al mateix temps que possibilita que manté informades les famílies.
+### Característiques Principals i Valor Afegit
 
-El programa cobreix tots els aspectes clau de la gestió diària del centre educatiu: **Presència**, **Incidències**, **Actuacions**, **Sortides** i **Portal de Famílies**.
+Django-Aula és un sistema integral dissenyat per alleugerir la càrrega de treball del personal docent d'un centre educatiu, millorant la gestió acadèmica i de convivència, al mateix temps que possibilita mantenir informades les famílies.
 
-➡️ **[Llegir totes les CARACTERÍSTIQUES (perfil de gestió)](docs/USER_MANUAL/caracteristicas.md)**
+El programa cobreix tots els aspectes clau de la gestió diària del centre educatiu: **Presència**, **Incidències**, **Actuacions**, **Sortides** i **Portal de Famílies**. Per a més detalls:
 
-➡️ **[Llegir totes les FUNCIONALITATS (detall tècnic i pantalles)](docs/USER_MANUAL/funcionalidades.md)**
+➡️ **[Sobre les CARACTERÍSTIQUES generals](docs/USER_MANUAL/caracteristicas.md)**
+
+➡️ **[Sobre les FUNCIONALITATS concretes, amb captures de pantalla](docs/USER_MANUAL/funcionalidades.md)**
 
 
 
 <a name="requisits"></a>
-## Requisits del sistema operatiu
+## Requisits del sistema operatiu per istal·lar Django-Aula
 
-Django-Aula s'instal·la en un servidor amb sistema operatiu Linux, preferiblement Debian 13, Ubuntu Server 24.04 LTS o superior, o derivats de la mateixa base.
+Django-Aula s'instal·la en un servidor amb sistema operatiu Linux i està adaptat per Debian 13, Ubuntu Server 24.04 LTS o superior, o derivats de la mateixa base.
 
-És altament recomanable haver creat un usuari amb permisos de SUDO.
+Per qualsevol tipus d'instal·lació, ja sigui per un ús real o per l'entorn de demostració, ès altament recomanable haver creat un usuari amb permisos de *SUDO*. [El procés està documentat.](USUARI_SUDO.md)
 
 ---
 
 <a name="quickdemo"></a>
 ## 🐳 Desplegament d'una Demostració de Django-Aula (Quick Demo) amb Docker
 
-L'entorn de demostració, conegut com Demo, és una versió funcional del sistema i que es pot posar en funcionament en molts pocs minuts.
+L'entorn de demostració, conegut com Demo, és una versió funcional del sistema i que es pot posar en funcionament en molts pocs minuts. Disposa de dades ficiticies (usuaris, professors, alumnat i un horari mínim) que faciliten observar l'aspecte visual i interaccionar, des de diferents rols, la funcionalitat de l'aplicatiu real Django-Aula.
 
-Diposa de dades ficiticies (usuaris, professors, alumnat i un horari mínim) que ens faciliten veure l'aspecte visual i funcional de l'aplicatiu real Django-Aula.
-
-El desplegament de la Demo està automatitzat amb la descàrrega i execució de dos scritps i consta de dues passes consecutives:
+El desplegament de la Demo s'ha automatitzat amb l'execució de dues comandes i consta de dues passes consecutives:
 
 
-### 1 - Instal·lació automàtica de Docker i Docker Compose
+### 1a - Instal·lació automàtica de Docker i Docker Compose
 
 ```bash
 wget -q -O install_docker.sh https://raw.githubusercontent.com/rafatecno1/django-aula/refs/heads/master/docker/install_docker.sh && chmod +x install_docker.sh && sudo ./install_docker.sh
 ```
 
-### 2 - Instal·lació automàtica de la Demo de Django-Aula
+### 2a - Instal·lació automàtica de la Demo de Django-Aula
 
-Es recomana crear un subdirectori dins el directori de l'usuari instal·lador per instal·lar la Demo (ex. demo-djau-docker):
+Es recomana crear un subdirectori dins el directori de l'usuari instal·lador per instal·lar la Demo, en aquest exemple `demo-djau-docker`:
 
 ```bash
 mkdir demo-djau-docker && cd demo-djau-docker && \
@@ -64,7 +64,7 @@ chmod +x install_quick_demo_docker.sh && \
 bash ./install_quick_demo_docker.sh
 ```
 
-Si vol informació molt més detallada sobre el tipus de màquina (no virtualitzada, virtualitzada o servidor d'accés públic) on es pot instal·lar, com adaptar el procés automatitzat o sobre la instal·lació manual tant de l'entorn de docker com de la Demo, pot consultar els següents documents:
+No obstant: Es recomana llegir la informació, molt més detallada del procés, segons el tipus de màquina (no virtualitzada, virtualitzada o servidor d'accés públic) on s'instal·larà la Demo. També podria estar interessat en dur a terme la instal·lació manual tant de l'entorn de docker com de la Demo. Per tots aquests casos es recomana consultar els següents documents:
 
 
 ➡️ **[Instal·lació de l'entorn de Docker i Docker Compose](docs/INSTALL_ENTORN_DOCKER.md)**.
@@ -77,7 +77,7 @@ Si vol informació molt més detallada sobre el tipus de màquina (no virtualitz
 <a name="produccio"></a>
 ## 🚀 Instal·lació i càrrega de dades de Django-Aula per ús real a un Centre Educatiu (Entorn de Producció)
 
-### Procés d'instal·lació
+### 1a part. Procés d'instal·lació.
 
 Si vol instal·lar Django-Aula per fer-lo servir a un centre educatiu cal un servidor de producció, ja sigui un servidor públic (VPS) o un servidor local (xarxa local), que pot ser una màquina real o una màquina virtual (VM). Per tots aquests casos hi ha dues opcions:
 
@@ -87,7 +87,7 @@ Si vol instal·lar Django-Aula per fer-lo servir a un centre educatiu cal un ser
 * Mètode Clàssic: Desplegament manual pas a pas.  
     ➡️ **[Instruccions de Desplegament Manual](docs/MANUAL_LEGACY/instalacion.md)**
 
-### Procés de càrrega de dades
+### 2 part. Procés de càrrega de dades
 
 Després de la instal·lació el sistema estarà preparat per rebre les dades del centre educatiu (alumnat, docents, aules, horaris, etc).
 
@@ -98,10 +98,13 @@ Després de la instal·lació el sistema estarà preparat per rebre les dades de
 <a name="doc_manteniment"></a>
 ## 📚 Equip Desenvolupador i Suport Tècnic
 
-| Documentació | Enllaç |
-| :--- | :--- |
-| **Contribució** | ➡️ [Vols col·laborar-hi com a #DEV?](#id-dev) |
-| **Ajuda / Errors** | ➡️ [Utilitza el Formulari d'ajuda/Issues](#id-error) |
+
+* **Vols col·laborar-hi com a #DEV?**  
+Aquestes són les [Issues prioritàries](https://github.com/ctrl-alt-d/django-aula/issues?q=is%3Aissue%20state%3Aopen%20label%3APrioritari)
+* **Pregüntes d'ús freqüent**.  
+[FAQs](https://github.com/ctrl-alt-d/django-aula/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3AFAQ+)
+* **Has trobat errors? Necessites ajuda?** Utilitza el Formulari per demanar ajuda o comunicar errors (*Issues*)  
+[Issues/Formularis d'ajuda](https://github.com/ctrl-alt-d/django-aula/issues/new/choose)
 
 ---
 
