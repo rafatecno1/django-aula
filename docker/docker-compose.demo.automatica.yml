@@ -1,7 +1,7 @@
 # docker/docker-compose.demo.automatica.yml
 services:
   db:
-    image: postgres:14-alpine
+    image: postgres:17-alpine
     container_name: demo_db
     ports:
       - "5432:5432"
