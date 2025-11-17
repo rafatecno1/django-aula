@@ -19,7 +19,7 @@ Gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies
 
 # 📋 Índex de Continguts
 
-- [1. Introducció](#iintroduccio)
+- [1. Introducció](#introduccio)
 - [2. Requisits del sistema operatiu per instal·lar Django-Aula](#requisits)
 - [3. Desplegament d'una Demostració de Django-Aula (Quick Demo) amb Docker 🐳 ](#quickdemo)
 - [4. Instal·lació i càrrega de dades de Django-Aula per ús real a un Centre Educatiu](#produccio)
