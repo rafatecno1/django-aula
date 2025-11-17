@@ -49,8 +49,12 @@ El desplegament de la Demo s'ha automatitzat amb l'execució de dues comandes i 
 
 ### 1a - Instal·lació automàtica de Docker i Docker Compose
 
+Des del directori de l'usuari instal·lador:
+
 ```bash
-wget -q -O install_docker.sh https://raw.githubusercontent.com/rafatecno1/django-aula/refs/heads/master/docker/install_docker.sh && chmod +x install_docker.sh && sudo ./install_docker.sh
+wget -q -O install_docker.sh https://raw.githubusercontent.com/rafatecno1/django-aula/refs/heads/master/docker/install_docker.sh && \
+chmod +x install_docker.sh && \
+sudo ./install_docker.sh
 ```
 
 ### 2a - Instal·lació automàtica de la Demo de Django-Aula
@@ -64,7 +68,7 @@ chmod +x install_quick_demo_docker.sh && \
 bash ./install_quick_demo_docker.sh
 ```
 
-No obstant: Es recomana llegir la informació, molt més detallada del procés, segons el tipus de màquina (no virtualitzada, virtualitzada o servidor d'accés públic) on s'instal·larà la Demo. També hi haurà qui estarà interessat en dur a terme la instal·lació manual, tant de l'entorn de docker com de la Demo. Per tots aquests casos es recomana consultar els següents documents:
+Tot i que el procés anterior és autònom i interactívament configurable, es recomana llegir la informació, molt més detallada del procés, segons el tipus de màquina (no virtualitzada, virtualitzada o servidor d'accés públic) on s'instal·larà la Demo. També hi haurà qui estarà interessat en dur a terme la instal·lació manual, tant de l'entorn de docker com de la Demo. Per tots aquests casos es recomana consultar els següents detallats documents:
 
 
 ➡️ **[Instal·lació de l'entorn de Docker i Docker Compose](docs/INSTALL_ENTORN_DOCKER.md)**.
@@ -89,7 +93,7 @@ Si vol instal·lar Django-Aula per fer-lo servir a un centre educatiu cal un ser
 
 ### 2 part. Procés de càrrega de dades
 
-Després de la instal·lació el sistema estarà preparat per rebre les dades del centre educatiu (alumnat, docents, aules, horaris, etc).
+Després de la instal·lació el sistema estarà preparat per rebre les dades reals del centre educatiu pel curs escolar (alumnat, docents, aules, horaris, etc).
 
 ➡️ **[Instruccions per la càrrega de dades del centre educatiu](docs/USER_MANUAL/README.md)**.
 
