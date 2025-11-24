@@ -42,7 +42,7 @@ El programa cobreix tots els aspectes clau de la gestió diària del centre educ
 
 Es pot consultar un índex complet amb tota la informació sobre Django-Aula:
 
-➡️ **[SÍndex complet sobre Django-Aula](docs/README.md)**
+➡️ **[Sndex complet sobre Django-Aula](docs/README.md)**
 
 
 <a name="requisits"></a>
@@ -50,7 +50,7 @@ Es pot consultar un índex complet amb tota la informació sobre Django-Aula:
 
 Django-Aula s'instal·la en un servidor amb sistema operatiu Linux i està adaptat per Debian 13, Ubuntu Server 24.04 LTS o superior, o derivats de la mateixa base.
 
-Per qualsevol tipus d'instal·lació, ja sigui per un ús real o per l'entorn de demostració, ès altament recomanable haver creat un usuari amb permisos de *SUDO*. [El procés està documentat.](docs/USUARI_SUDO.md)
+Per qualsevol tipus d'instal·lació, ja sigui per un ús real o per l'entorn de demostració, ès altament recomanable haver creat un usuari amb permisos de *SUDO*. [El procés està documentat.](docs/USER_MANUAL/ajuda-install/usuari_sudo.md)
 
 ---
 
@@ -86,11 +86,11 @@ bash ./install_quick_demo_docker.sh
 Tot i que el procés anterior és autònom i interactívament configurable, es recomana llegir la informació, molt més detallada del procés, segons el tipus de màquina (no virtualitzada, virtualitzada o servidor d'accés públic) on s'instal·larà la Demo. També hi haurà qui estarà interessat en dur a terme la instal·lació manual, tant de l'entorn de docker com de la Demo. Per tots aquests casos es recomana consultar els següents detallats documents:
 
 
-➡️ **[Instal·lació de l'entorn de Docker i Docker Compose](docs/I/USER_MANUAL/demo/install_entorn_docker.md)**.
+➡️ **[Instal·lació de l'entorn de Docker i Docker Compose](docs/USER_MANUAL/demo/install_entorn_docker.md)**.
 
-➡️ **[Instal·lació ràpida de la Demo amb Docker](docs/I/USER_MANUAL/demo/install_demo_docker.md)**.
+➡️ **[Instal·lació ràpida de la Demo amb Docker](docs/USER_MANUAL/demo/install_demo_docker.md)**.
 
-➡️ **[Instal·lació manual de la Demo (sense Dckcker)](docs/I/USER_MANUAL/demo/install_demo_manual)**.
+➡️ **[Instal·lació manual de la Demo (sense Dckcker)](docs/USER_MANUAL/demo/install_demo_manual)**.
 
 
 <a name="produccio"></a>
@@ -101,10 +101,10 @@ Tot i que el procés anterior és autònom i interactívament configurable, es r
 Si vol instal·lar Django-Aula per fer-lo servir a un centre educatiu cal un servidor de producció, ja sigui un servidor públic (VPS) o un servidor local (xarxa local), que pot ser una màquina real o una màquina virtual (VM). Per tots aquests casos hi ha dues opcions:
 
 * **Mètode Prioritari i recomanat: Desplegament completament automatitzat** amb scripts.  
-    ➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/Iinstall_automatic_djau_scripts.md)**
+    ➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/install_automatic_djau_scripts.md)**
 
 * Mètode Clàssic: Desplegament manual pas a pas.  
-    ➡️ **[Instruccions de Desplegament Manual](docs/Minstall_djau_manual.md)**
+    ➡️ **[Instruccions de Desplegament Manual](docs/install_djau_manual.md)**
 
 ### 2 part. Procés de càrrega de dades
 
