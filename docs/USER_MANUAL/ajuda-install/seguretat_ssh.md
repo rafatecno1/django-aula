@@ -24,7 +24,7 @@ Aquest document recull les pràctiques clau per augmentar la seguretat de l'acc�
 És una pràctica de seguretat fonamental **no utilitzar mai l'usuari `root` per a tasques diàries** ni per a la instal·lació d'aplicacions com Django-Aula.
 
 * **Risc:** L'usuari `root` té permisos absoluts. Si es compromet, l'atacant obté el control total del servidor.
-* **Recomanació:** Totes les tasques d'instal·lació i manteniment s'han de fer amb un usuari estàndard amb permisos `sudo` (com l'usuari **`djau`** creat al document **[USUARI_SUDO.md](USUARI_SUDO.md)**).
+* **Recomanació:** Totes les tasques d'instal·lació i manteniment s'han de fer amb un usuari estàndard amb permisos `sudo` (com l'usuari **`djau`** creat al document **[usuari_sudo](usuari_sudo.md)**).
 
 ---
 

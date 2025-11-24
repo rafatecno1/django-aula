@@ -25,7 +25,7 @@ Cal tenir en commpte que **És un pas obligatori per dur a terme qualsevol opera
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.
 * **Accés:** Es requereix un usuari amb Accés a `sudo`.  
-   **[Documentació per crear un nou usuari amb permisos de `sudo`](USUARI_SUDO.md)** 
+   **[Documentació per crear un nou usuari amb permisos de `sudo`](../ajuda-install/usuari_sudo.md)** 
 
 <a name="id2"></a>
 ## 2. Procés automatitzat d'Instal·lació de l'entorn Docker (Recomanat)

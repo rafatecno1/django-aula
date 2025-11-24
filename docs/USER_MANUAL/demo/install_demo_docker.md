@@ -4,7 +4,7 @@ Aquest document explica com posar en funcionament, de la manera més ràpida i f
 
 Cal recordar que el primer pas és instal·lar l'entorn de Docker i docker-compose i és una fase imprescindible si no s'ha fet abans:
 
-  👉 **[Guia per la instal·lació de Docker i docker-compose](INSTALL_ENTORN_DOCKER.md)**  (Es pot obviar si ja s'ha fet)
+  👉 **[Guia per la instal·lació de Docker i docker-compose](install_entorn_docker.md)**  (Es pot obviar si ja s'ha fet)
 
 La Demo, desplegada amb Docker, utilitza una imatge preparada per crear un contenidor amb les **dades de demostració precàrregades**, el que permet un estalvi de temps molt important.
 
@@ -171,5 +171,3 @@ http://demo.djau.elteudomini.cat:8000
 
 
 > **IMPORTANT:** Aquesta Demo Docker corre amb un servidor de proves de Django, pensat pel desenvolupament de l'aplicatiu, i és molt limitat. No està preparat ni per acceptar connexions segures de tipus https ni per fer front a atacs de hackers. La seva perdurabilitat en el temps no es pot assegurar.
-
-

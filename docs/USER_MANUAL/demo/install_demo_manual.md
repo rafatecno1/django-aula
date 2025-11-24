@@ -39,7 +39,7 @@ En resum, en aquesta guia es cobreix la instal·lació de la Demo en:
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.
 * **Accés:** Es requereix un usuari amb accés a "sudo".
-**[Documentació per crear un nou usuari amb permisos de "sudo"](USUARI_SUDO.md)**
+**[Documentació per crear un nou usuari amb permisos de "sudo"](../ajuda-install/usuari_sudo.md)**
 
 <a name="id2"></a>
 ## 2. Usuaris que es crean en la Demo i les seves credencials
@@ -151,7 +151,7 @@ Si la Demo s'ha instal·lat en un ordinador, o a una màquina virtual, que dispo
 
 **http://127.0.0.1:8000**
 
-![Pàgina principal servida en 127.0.0.1:8000](assets/demo/pagina_principal_demo.jpg)
+![Pàgina principal servida en 127.0.0.1:8000](assets/pagina_principal_demo.jpg)
 
 <a name="id4"></a>
 ## 4. Accedir des d'un altre ordinador a la màquina on s'ha instal·lat la Demo
@@ -201,7 +201,7 @@ Si utilitzeu una màquina virtual amb configuració de xarxa **NAT**, heu de con
 | **IP Guest** | "10.0.2.15" (Típicament però cal comprobar-ho dins la màquina virtual amb `ip a`) |
 | **Port Guest** | "8000" |
 
-![Redirecció de ports a la configuració de xarxa de VirtualBox de la màquina virtual (guest)](assets/demo/redicreccio_ports_vbox_nat.jpg)
+![Redirecció de ports a la configuració de xarxa de VirtualBox de la màquina virtual (guest)](assets/redicreccio_ports_vbox_nat.jpg)
 
 <a name="id412"></a>
 #### 4.1.2 Addició de la llista ALLOWED_HOSTS de la Demo
@@ -245,7 +245,7 @@ En el cas d'exemple que es mostra en aquestes instruccions es pot veure l'IP a a
 Ara ja es pot obrir un navegador en la màquina anfitriona (host) on s'ha instal·lat VirtualBox i es pot escriure:
 **http://192.168.18.163:8000**
 
-![Accés a la Demo dins la màquina virtual (guest) amb IP privada gestionada dins la xarxa local interna](assets/demo/demo_vbox_bridge.jpg)
+![Accés a la Demo dins la màquina virtual (guest) amb IP privada gestionada dins la xarxa local interna](assets/demo_vbox_bridge.jpg)
 
 <a name="id-ip-estatica"></a>
 #### Opcional - Aconseguir una IP Estàtica
@@ -311,7 +311,7 @@ Ara ja es disposa de l'IP estàtica. Es pot comprovar amb `ip a` i reiniciant la
 <a name="id43"></a>
 ### 4.3 Instal·lació de la Demo en un servidor públic amb accés extern (VPS)
 
-Tot servidor a internet té una IP pública i és convenient definir un domini o subdomini per accedir-hi. Consulteu el document [Registres DNS](REGISTRES_DNS.md) si no recordeu com fer-ho. En aquest cas, s'han creat dos subdominis que apunten a l'IP pública del servidor VPS:
+Tot servidor a internet té una IP pública i és convenient definir un domini o subdomini per accedir-hi. Consulteu el document [Registres DNS](../ajuda-install/registres_dns.md) si no recordeu com fer-ho. En aquest cas, s'han creat dos subdominis que apunten a l'IP pública del servidor VPS:
 > demo.djau.domini.cat  
 > www.demo.djau.domini.cat
 
@@ -340,7 +340,7 @@ D'aquesta senzilla manera, sense haver d'instal·lar un servidor web per producc
 >http://IP_DEL_TEU_SERVIDOR:8000  
 http://SUBDOMINI:8000
 
-![Accés a la Demo instal·lada en un VPS públic amb subdomini](assets/demo/pagina_principal_demo_vps.jpg)
+![Accés a la Demo instal·lada en un VPS públic amb subdomini](assets/pagina_principal_demo_vps.jpg)
 
 <a name="id44"></a>
 ### 4.4 Resum de les modificacions de la llista *ALLOWED_HOSTS* de l'arxiu *demo.py*
