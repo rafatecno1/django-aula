@@ -42,7 +42,7 @@ El programa cobreix tots els aspectes clau de la gestió diària del centre educ
 
 Es pot consultar un índex complet amb tota la informació sobre Django-Aula:
 
-➡️ **[Sndex complet sobre Django-Aula](docs/README.md)**
+➡️ **[Índex complet sobre Django-Aula](docs/README.md)**
 
 
 <a name="requisits"></a>
@@ -90,7 +90,7 @@ Tot i que el procés anterior és autònom i interactívament configurable, es r
 
 ➡️ **[Instal·lació ràpida de la Demo amb Docker](docs/USER_MANUAL/demo/install_demo_docker.md)**.
 
-➡️ **[Instal·lació manual de la Demo (sense Dckcker)](docs/USER_MANUAL/demo/install_demo_manual)**.
+➡️ **[Instal·lació manual de la Demo (sense Docker)](docs/USER_MANUAL/demo/install_demo_manual.md)**.
 
 
 <a name="produccio"></a>
@@ -101,16 +101,16 @@ Tot i que el procés anterior és autònom i interactívament configurable, es r
 Si vol instal·lar Django-Aula per fer-lo servir a un centre educatiu cal un servidor de producció, ja sigui un servidor públic (VPS) o un servidor local (xarxa local), que pot ser una màquina real o una màquina virtual (VM). Per tots aquests casos hi ha dues opcions:
 
 * **Mètode Prioritari i recomanat: Desplegament completament automatitzat** amb scripts.  
-    ➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/install_automatic_djau_scripts.md)**
+➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/install_automatic_djau_scripts.md)**
 
 * Mètode Clàssic: Desplegament manual pas a pas.  
-    ➡️ **[Instruccions de Desplegament Manual](docs/install_djau_manual.md)**
+➡️ **[Instruccions de Desplegament Manual](docs/install_djau_manual.md)**
 
 ### 2 part. Procés de càrrega de dades
 
 Després de la instal·lació el sistema estarà preparat per rebre les dades reals del centre educatiu pel curs escolar (alumnat, docents, aules, horaris, etc).
 
-➡️ **[Instruccions per la càrrega de dades del centre educatiu](docc/README.md)**.
+➡️ **[Instruccions per la càrrega de dades del centre educatiu](docs/README.md)**.
 
 ---
 
