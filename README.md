@@ -101,7 +101,7 @@ Tot i que el procés anterior és autònom i interactívament configurable, es r
 Si vol instal·lar Django-Aula per fer-lo servir a un centre educatiu cal un servidor de producció, ja sigui un servidor públic (VPS) o un servidor local (xarxa local), que pot ser una màquina real o una màquina virtual (VM). Per tots aquests casos hi ha dues opcions:
 
 * **Mètode Prioritari i recomanat: Desplegament completament automatitzat** amb scripts.  
-➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/install_automatic_djau_scripts.md)**
+➡️ **[GUIA COMPLETA D'INSTAL·LACIÓ AUTOMATITZADA](docs/install_djau_automatic_scripts.md)**
 
 * Mètode Clàssic: Desplegament manual pas a pas.  
 ➡️ **[Instruccions de Desplegament Manual](docs/install_djau_manual.md)**

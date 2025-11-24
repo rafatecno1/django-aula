@@ -20,7 +20,7 @@ El Proyecto es Open-source, y aquí se encuentra su repositorio Git: [https://gi
 * [Características](USER_MANUAL/caracteristicas.md)
 * [Funcionalidades](USER_MANUAL/funcionalidades.md)
 * [Instalación](README.md)
-  * [Instalación automatizada **(Preferente)** en Ubuntu Server 24.04 LTS, Debian 13 o derivats](install_automatic_djau_scripts.md)
+  * [Instalación automatizada **(Preferente)** en Ubuntu Server 24.04 LTS, Debian 13 o derivats](install_djau_automatic_scripts.md)
   * [Instalación clásica con instrucciones detalladas paso a paso](install_djau_manual.md)
   * [Ajudes per la instal·lació](USER_MANUAL/ajuda-install/README.md)
     * [Creació d'un usuari amb permisos SUDO](USER_MANUAL/ajuda-install/usuari_sudo.md)
