@@ -414,8 +414,8 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 
 REPO_URL="https://github.com/rafatecno1/django-aula.git"
 #REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
-GIT_BRANCH="feature/apache-catchall-flood-control"
-#GIT_BRANCH="master"
+#GIT_BRANCH="feature/apache-catchall-flood-control"
+GIT_BRANCH="master"
 
 # Usamos sudo -u como el usuario de la aplicación para clonar o actualizar
 
@@ -449,7 +449,7 @@ fi
 
 echo -e "\n"
 sleep 3
-🎯
+
 
 # -------------------------------------------------------------------------------------------------
 # CREACIÓN DEL ARCHIVO config_vars.sh CON LAS VARIABLES COMUNES PER LA INSTALACIÓN DE LA APLICACIÓN

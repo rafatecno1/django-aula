@@ -329,8 +329,9 @@ EOT
     # 3. Habilitar el nou Virtual Host
     sudo a2ensite zzz-catchall.conf > /dev/null
 
-    echo -e "${C_EXITO}✅ Fitxer zzz-catchall.conf instal·lat i habilitat (Necessita recàrrega d'Apache).${RESET}"
+    echo -e "${C_EXITO}✅ Fitxer zzz-catchall.conf instal·lat i habilitat.${RESET}"
     echo "⚠️ Aquest Virtual Host només actua sobre peticions que NO coincideixen amb $PROJECT_FOLDER.conf."
+    sleep 2
 }
 
 
@@ -587,6 +588,7 @@ if [ $? -ne 0 ]; then
 	echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo en la prueba de configuración de Apache. Revise los archivos de configuración creados. La instalación se detiene.${RESET}"
     exit 1 # Detener la instalación si el Vhost SSL es inválido
 fi
+echo -e "/n"
 
 # 5.5 Informació del certificado autofirmado o instal·lació del certificado Let's Encrypt
 
