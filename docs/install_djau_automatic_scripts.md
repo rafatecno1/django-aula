@@ -36,10 +36,10 @@ Abans d'iniciar la instal·lació, és imprescindible preparar l'entorn amb la i
 
 * **Sistema Operatiu:** Ubuntu Server 22.04 LTS o Debian 13.  
 * **Accés:** SSH amb privilegis `root` o un usuari amb accés a `sudo`.  
-  👉 **[Documentació per crear un nou usuari amb permisos de `sudo`](USUARI_SUDO.md)**  
+  👉 **[Documentació per crear un nou usuari amb permisos de `sudo`](USER_MANUAL/ajuda-install/usuari_sudo.md)**  
 
 És altament recomanable:  
-👉 **[Configurar el servidor per garantir un mínim de seguretat (Usuaris, Root sense SSH, Claus d’accés, Fail2Ban)](SEGURIDAD_SSH.md)**
+👉 **[Configurar el servidor per garantir un mínim de seguretat (Usuaris, Root sense SSH, Claus d’accés, Fail2Ban)](USER_MANUAL/ajuda-install/seguretat_ssh.md)**
 
 <a name="id12"></a>
 ### 1.2 Configuració de Correu i DNS
@@ -47,13 +47,13 @@ Abans d'iniciar la instal·lació, és imprescindible preparar l'entorn amb la i
 L'aplicació necessita una adreça de correu per a l'enviament de notificacions i la gestió de sessions.
 
 * **Compte de Correu:** Cal crear un compte dedicat i obtenir una **contrasenya d’aplicació** (*App Password*) si s’utilitza un servei com Google o Microsoft.  
-  👉 **[Guia per a la creació de Compte de Correu i Contrasenya d'Aplicació](CONFIG_CORREO.md)**
+  👉 **[Guia per a la creació de Compte de Correu i Contrasenya d'Aplicació](USER_MANUAL/ajuda-install/config_correu.md)**
 
 * **Dominis i DNS:** La configuració dels registres DNS dependrà del tipus de servidor:
   * **Servidor intern privat, sense accés a Internet:** Accés per IP interna o nom de la màquina dins la xarxa.  
   * **Servidor extern públic (típicament un VPS):** El domini principal (`$DOMAIN_NAME`) i el `www.` han d'apuntar a l'IP pública del servidor.  
 
-  👉 **[Guia per a la creació dels registres DNS per redirigir les visites al servidor públic i per a la instal·lació de certificats Let's Encrypt](REGISTRES_DNS.md)**
+  👉 **[Guia per a la creació dels registres DNS per redirigir les visites al servidor públic i per a la instal·lació de certificats Let's Encrypt](USER_MANUAL/ajuda-install/registres_dns.md)**
 
 ---
 
