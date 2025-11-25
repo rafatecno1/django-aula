@@ -245,10 +245,10 @@ apt-get install -y \
     libglib2.0-0t64
 
 check_install "$APT_DESC"
-	
+
 # -----------------------------------------------------------------
 # GESTIÓN DE CÓDIGO
-# -----------------------------------------------------------------	
+# -----------------------------------------------------------------
 APT_DESC="Gestión de Código (git)"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
 apt-get install -y git
@@ -434,7 +434,8 @@ if [ -d "$FULL_PATH" ] && [ "$(ls -A "$FULL_PATH")" ]; then
 	# Nota: La rama local debe coincidir con la remota. Asumimos 'main' o 'master'.
 
 	# 2. Realizar la descarga y actualización forzada
-	sudo -u "$APP_USER" git -C "$FULL_PATH" pull "$REPO_URL"
+        sudo -u "$APP_USER" git clone -b feature/apache-catchall-flood-control "$REPO_URL" "$PROJECT_FOLDER"
+#	sudo -u "$APP_USER" git -C "$FULL_PATH" pull "$REPO_URL"
     
     if [ $? -ne 0 ]; then
         echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar el repositorio en '$FULL_PATH'.${RESET}"
