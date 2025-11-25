@@ -424,27 +424,28 @@ echo -e "\n"
 # Aquesta instal·lació NO està pensada per a actualitzar; si el directori existeix, s'aborta per seguretat.
 # Si cal actualitzar, s'ha d'esborrar el directori o utilitzar el procés manual.
 
-# 1. COMPROBAR SI EL DIRECTORIO YA EXISTE
-if [ -d "$FULL_PATH" ]; then
+# COMPROVACIÓ: El directori existeix I no està buit?
+if [ -d "$FULL_PATH" ] && [ "$(ls -A "$FULL_PATH")" ]; then
+    # ⛔ CAS 1: Directori existeix i no està buit -> ABORTAR
     echo -e "${C_ERROR}❌ ERROR CRÍTIC: El directori '$FULL_PATH' ja existeix.${RESET}"
     echo "L'script 'install_djau.sh' està dissenyat per a una instal·lació nova."
     echo "Si vol actualitzar, cal seguir les instruccions manuals específiques al repositori de Github. També pot esborrar el directori $FULL_PATH."
     echo -e "\n"
     exit 1
+else
+    echo -e "${C_INFO}Clonant $REPO_URL, branca '$GIT_BRANCH' en $FULL_PATH. Això pot tardar un moment...${RESET}"
+
+    # Clonar el repositori com l'usuari de l'aplicació, forçant la branca especificada
+    sudo -u "$APP_USER" git clone -b "$GIT_BRANCH" "$REPO_URL" "$FULL_PATH"
+
+    if [ $? -ne 0 ]; then
+        echo -e "${C_ERROR}❌ ERROR: Falla al clonar la branca '$GIT_BRANCH' del repositori '$REPO_URL'.${RESET}"
+        echo "Comprovi la URL, conexió a internet o permisos de l'usuario '$APP_USER'."
+        echo -e "\n"
+        exit 1
+    fi
+    echo -e "${C_EXITO}✅ Repositori clonat (Branca: $GIT_BRANCH) a '$FULL_PATH'.${RESET}"
 fi
-
-echo -e "${C_INFO}Clonant $REPO_URL, branca '$GIT_BRANCH' en $FULL_PATH. Això pot tardar un moment...${RESET}"
-
-# Clonar el repositori com l'usuari de l'aplicació, forçant la branca especificada
-sudo -u "$APP_USER" git clone -b "$GIT_BRANCH" "$REPO_URL" "$FULL_PATH"
-
-if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ERROR: Falla al clonar la branca '$GIT_BRANCH' del repositorio '$REPO_URL'.${RESET}"
-    echo "Compruebe la URL, conexión a internet o permisos del usuario '$APP_USER'."
-    echo -e "\n"
-    exit 1
-fi
-echo -e "${C_EXITO}✅ Repositorio clonado (Branca: $GIT_BRANCH) en '$FULL_PATH'.${RESET}"
 
 echo -e "\n"
 sleep 3
