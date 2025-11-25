@@ -185,10 +185,10 @@ sudo sed -i '/^ServerName *$/d' "$APACHE_CONF"
 # 2. VERIFICACIÓN Y ADICIÓN IDEMPOTENTE
 # Verifica si la directiva ServerName ya existe con el argumento correcto.
 if ! grep -q "^ServerName $DOMAIN_CLEAN" "$APACHE_CONF"; then
-    
+
     # Se añade solo si NO existe.
     echo "ServerName $DOMAIN_CLEAN" | sudo tee -a "$APACHE_CONF" > /dev/null
-    
+
     echo -e "${C_EXITO}✅ Directiva 'ServerName $DOMAIN_CLEAN' añadida a $APACHE_CONF (Limpieza automática OK).${RESET}"
 else
     echo -e "${C_INFO}ℹ️ La directiva 'ServerName $DOMAIN_CLEAN' ya existe en $APACHE_CONF. No se realizaron cambios.${RESET}"
@@ -253,7 +253,7 @@ if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
 		echo -e "${C_INFO}   El certificado autofirmado TEMPORAL será reemplazado por el de Let's Encrypt.${RESET}"
 
 		else
-		
+
 		# LÓGICA CERTIFICADO AUTOFIRMADO (Self-Signed)
 		echo -e "${C_INFO}-> Convirtiendo el certificado Self-Signed creado temportalmente en permanente para $DOMAIN_CLEAN${RESET}"
 		echo -e "${C_INFO}⚠️ Advertencia: Los navegadores web mostrarán un mensaje de no confianza...${RESET}"
@@ -318,7 +318,7 @@ setup_catchall() {
     RewriteEngine On
     # Regla: Per qualsevol petició, retorna 403 (tancar connexió).
     RewriteRule ^ - [R=403,L]
-    ErrorDocument 403 " " # Forçar el tancament de la connexió (comportament 444)
+    ErrorDocument 403 /catchall-403
 
     <Directory /var/www/catchall>
         Require all denied
@@ -350,10 +350,10 @@ SSL_CONF="$VHOST_DIR/$PROJECT_FOLDER-ssl.conf"				# Nombre para el VHost https e
 HTTP_INTERNAL_CONF="$VHOST_DIR/$PROJECT_FOLDER-int.conf"	# Nombre para el VHost http interno
 
 if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
-    
+
     echo -e "${C_INFO}-> Configurando Vhosts para entorno PÚBLICO (HTTP a HTTPS)${RESET}"
 	echo -e "\n"
-	
+
 	# 3.1 Creando archivo para acceso por HTTP (Redirección)
 	echo -e "${C_SUBTITULO}--- 3.1 Creando archivo para acceso por HTTP externo (Redirección) ---${RESET}"
 	echo -e "${C_SUBTITULO}----------------------------------------------------------------------${RESET}"
@@ -441,8 +441,8 @@ cat << EOF | sudo tee "$HTTP_INTERNAL_CONF" > /dev/null
 		locale="ca_ES.utf8"
 	WSGIProcessGroup $PROJECT_FOLDER
 	WSGIApplicationGroup %{GLOBAL}
-	WSGIScriptAlias / $WSGI_PATH 
-	
+	WSGIScriptAlias / $WSGI_PATH
+
 	# Alias para contenido estático (collectstatic)
 	Alias /site-css/admin $FULL_PATH/aula/static/admin/
 	Alias /site-css $FULL_PATH/aula/static/
@@ -537,7 +537,7 @@ if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
 
     a2ensite "$PROJECT_FOLDER-ssl.conf" > /dev/null
     echo -e "${C_EXITO}✅ Vhost HTTPS (443) habilitado. Servidor web listo.${RESET}"
-    
+
     echo -e "\n"
     echo -e "${C_EXITO}✅ Vhosts ($PROJECT_FOLDER y $PROJECT_FOLDER-ssl) habilitados.${RESET}"
 
@@ -555,7 +555,10 @@ sleep 1
 echo -e "${C_SUBTITULO}--- 5.3 Configuración de Seguridad Adicional (Catch-all) ---${RESET}"
 echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
 
-read_prompt "¿Desitja instal·lar el Virtual Host 'Catch-all' (zzz-catchall.conf) que bloquejarà peticions no reconegudes arribin a Django-Aula i aquest respongui amb un correu, per cada petició, generant **flood** a l'administrador? (Recomanat en Producció) [s/N]: " CATCHALL_CHOICE "n"
+echo
+echo -e "${C_INFO}ℹ️ Si un servidor està exposat a internet sempre rebrà intents d'accedir al servidor que acaben arribant a Django-aula. L'aplicatiu els rebutja si no es troben dins [ALLOWED_HOSTS], però es genera un correu de notificació a l'administrador per cada intent de connexió rebutjat.${RESET}"
+echo
+read_prompt "¿Desitja instal·lar el Virtual Host 'Catch-all' (zzz-catchall.conf) que bloquejarà aquestes peticions no reconegudes per a que no arribin a Django-Aula? (Recomanat en Producció) [s/N]: " CATCHALL_CHOICE "n"
 
 CATCHALL_CHOICE_LOWER=$(echo "$CATCHALL_CHOICE" | tr '[:upper:]' '[:lower:]')
 
@@ -601,10 +604,10 @@ elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 
 	echo -e "${C_SUBTITULO}--- 5.4 Ejecutando Certbot para generar e instalar los certificados de Let's Encrypt ---${RESET}"
 	echo -e "${C_SUBTITULO}----------------------------------------------------------------------------------------${RESET}"
-	
+
 	echo -e "${C_INFO}ℹ️ Certbot ejecutará una herramienta de comprobación interactiva y le hará preguntas sobre la configuración.${RESET}"
 	echo -e "\n"
-	
+
 	echo -e "${C_INFO}Hay parámetros importantes que definir como:${RESET}"
 	echo -e "${NEGRITA}  - Ingresar un correo válido.${RESET}"
 	echo -e "${NEGRITA}  - Seleccionar 'Enter' para habilitar HTTPS en ambos dominios (con y sin www).${RESET}"
@@ -613,18 +616,18 @@ elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 
 	# Ejecutar Certbot de forma interactiva
 	certbot --apache --redirect
-	
+
 	echo -e "\n"
 	if [ $? -ne 0 ]; then
 		echo -e "${C_ERROR}❌ ERROR: Fallo en la obtención del certificado Let's Encrypt. La instalación continuará con el certificado Self-Signed original, si se pudo generar anteriormente como paso previo y necesario.${RESET}"
 	else
 		echo -e "${C_EXITO}✅ Certificados Let's Encrypt obtenidos e instalados con éxito. Apache2 modificado.${RESET}"
 		echo -e "${C_INFO}ℹ️ La renovación automática está configurada por Certbot (certbot.timer).${RESET}"
-		
+
 		# ----------------------------------------------
 		# VERIFICACIÓN Y PRUEBA DE RENOVACIÓN DE CERTBOT
 		# ----------------------------------------------
-		
+
 		echo -e "\n"
 		echo -e "${C_SUBTITULO}--- Verificación de la Renovación de Certificados ---${RESET}"
 		echo -e "${C_SUBTITULO}-----------------------------------------------------${RESET}"
@@ -646,7 +649,7 @@ elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 			echo -e "${C_INFO}-> Ejecutando: sudo certbot renew --dry-run${RESET}"
 			echo -e "\n" 
 			certbot renew --dry-run
-			
+
 			echo -e "\n"
 			if [ $? -eq 0 ]; then
 				echo -e "${C_EXITO}✅ Simulación de renovación completada con éxito. El proceso automático funcionará.${RESET}"

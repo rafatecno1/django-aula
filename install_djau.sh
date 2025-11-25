@@ -207,12 +207,12 @@ if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar los paquetes existentes (apt-get upgrade).${RESET}"
     echo -e "${C_INFO}⚠️ Este fallo puede indicar dependencias rotas o problemas de sistema, pero puede ser un error de red temporal.${RESET}"
     echo -e "\n"
-    
+
     # Pregunta de continuación
     read_prompt "¿Desea continuar igualmente con la instalación de dependencias? (sí/NO - Enter para NO): " CONTINUE_ACTION "no"
-    
+
     RESPONSE_LOWER=$(echo "$CONTINUE_ACTION" | tr '[:upper:]' '[:lower:]')
-    
+
     if [[ "$RESPONSE_LOWER" != "sí" ]] && [[ "$RESPONSE_LOWER" != "si" ]]; then
         echo -e "${C_ERROR}🛑 Instalación cancelada por el usuario.${RESET}"
 		echo -e "\n"
@@ -414,57 +414,41 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 
 REPO_URL="https://github.com/rafatecno1/django-aula.git"
 #REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
+GIT_BRANCH="feature/apache-catchall-flood-control"
+#GIT_BRANCH="master"
 
 # Usamos sudo -u como el usuario de la aplicación para clonar o actualizar
 
 echo -e "\n"
 
+# Aquesta instal·lació NO està pensada per a actualitzar; si el directori existeix, s'aborta per seguretat.
+# Si cal actualitzar, s'ha d'esborrar el directori o utilitzar el procés manual.
+
 # 1. COMPROBAR SI EL DIRECTORIO YA EXISTE
-if [ -d "$FULL_PATH" ] && [ "$(ls -A "$FULL_PATH")" ]; then
-    
-	# Directorio existe y no está vacío -> Proceder a actualizar (pull)
-	echo -e "${C_INFO}ℹ️ El directorio '$FULL_PATH' ya existe y se usará para la instalación automatizada de DJANGO-AULA para producción.${RESET}"
-
-	# 1. Descartar todos los cambios locales para evitar el error de fusión
-	echo -e "${C_INFO}⚠️ ADVERTENCIA: Intentando actualizar el repositorio y se descartarán los cambios locales no confirmados (git reset --hard) para asegurar la actualización.${RESET}"
-	echo -e "${C_INFO}⚠️ No se debe actualizar de esta forma una instalación ya existente en un entorno para desarrolladores, que debería encontrarse en otro directorio diferente.${RESET}"
-
-	echo -e "\n"
-	sudo -u "$APP_USER" git -C "$FULL_PATH" reset --hard 
-	# Nota: La rama local debe coincidir con la remota. Asumimos 'main' o 'master'.
-
-	# 2. Realizar la descarga y actualización forzada
-        sudo -u "$APP_USER" git clone -b feature/apache-catchall-flood-control "$REPO_URL" "$PROJECT_FOLDER"
-#	sudo -u "$APP_USER" git -C "$FULL_PATH" pull "$REPO_URL"
-    
-    if [ $? -ne 0 ]; then
-        echo -e "${C_ERROR}❌ ERROR: Fallo al actualizar el repositorio en '$FULL_PATH'.${RESET}"
-        echo "Asegúrese de que no hay conflictos locales no resueltos."
-        echo -e "\n"
-        exit 1
-    fi
-    echo -e "${C_EXITO}✅ Repositorio actualizado con éxito en '$FULL_PATH'.${RESET}"
-    
-else
-    
-    # Directorio NO existe o está vacío -> Proceder a clonar
-    echo -e "${C_INFO}Clonando $REPO_URL en $FULL_PATH. Esto puede tardar un rato...${RESET}"
-    
-    # Clonar el repositorio como el usuario de la aplicación
-    sudo -u "$APP_USER" git clone "$REPO_URL" "$FULL_PATH"
-    
-    if [ $? -ne 0 ]; then
-        echo -e "${C_ERROR}❌ ERROR: Fallo al clonar el repositorio '$REPO_URL'.${RESET}"
-        echo "Compruebe la URL, conexión a internet o permisos del usuario '$APP_USER'."
-        echo -e "\n"
-        exit 1
-    fi
-    echo -e "${C_EXITO}✅ Repositorio clonado en '$FULL_PATH'.${RESET}"
+if [ -d "$FULL_PATH" ]; then
+    echo -e "${C_ERROR}❌ ERROR CRÍTIC: El directori '$FULL_PATH' ja existeix.${RESET}"
+    echo "L'script 'install_djau.sh' està dissenyat per a una instal·lació nova."
+    echo "Si vol actualitzar, cal seguir les instruccions manuals específiques al repositori de Github. També pot esborrar el directori $FULL_PATH."
+    echo -e "\n"
+    exit 1
 fi
 
-echo -e "\n"
+echo -e "${C_INFO}Clonant $REPO_URL, branca '$GIT_BRANCH' en $FULL_PATH. Això pot tardar un moment...${RESET}"
 
+# Clonar el repositori com l'usuari de l'aplicació, forçant la branca especificada
+sudo -u "$APP_USER" git clone -b "$GIT_BRANCH" "$REPO_URL" "$FULL_PATH"
+
+if [ $? -ne 0 ]; then
+    echo -e "${C_ERROR}❌ ERROR: Falla al clonar la branca '$GIT_BRANCH' del repositorio '$REPO_URL'.${RESET}"
+    echo "Compruebe la URL, conexión a internet o permisos del usuario '$APP_USER'."
+    echo -e "\n"
+    exit 1
+fi
+echo -e "${C_EXITO}✅ Repositorio clonado (Branca: $GIT_BRANCH) en '$FULL_PATH'.${RESET}"
+
+echo -e "\n"
 sleep 3
+🎯
 
 # -------------------------------------------------------------------------------------------------
 # CREACIÓN DEL ARCHIVO config_vars.sh CON LAS VARIABLES COMUNES PER LA INSTALACIÓN DE LA APLICACIÓN
