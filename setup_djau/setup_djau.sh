@@ -36,6 +36,25 @@ else
     exit 1
 fi
 
+
+# Funció per afegir les variables avançades (comentades) a settings_local.py
+add_advanced_settings() {
+    # 🚨 NOTA: S'assumeix que advanced_settings.py és al mateix directori que setup_djau.sh
+    ADVANCED_FILE="./advanced_settings.py" 
+    LOCAL_SETTINGS_PATH="$PROJECT_FOLDER/aula/settings_local.py" # La carpeta aula és dins del projecte
+
+    # 1. Afegir un separador al final de settings_local.py
+    echo -e "\n\n# ----------------------------------------------------------------------" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
+    echo -e "# --- PARAMETRITZACIONS AVANÇADES (Variables del fitxer 'advanced_settings.py') ---" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
+    echo -e "# ----------------------------------------------------------------------" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
+
+    # 2. Llegir el fitxer, comentar cada línia de codi Python i afegir-lo al settings_local.py
+    #    - grep -E '^[^#]' ignora línies que ja són comentari o estan buides.
+    #    - sed 's/^/# /' afegeix un '#' i un espai al principi de la línia restant.
+    cat "$ADVANCED_FILE" | grep -E '^[^#\s]+' | sed 's/^/# /' | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
+}
+
+
 echo -e "\n\n"
 echo -e "${C_PRINCIPAL}==============================================================="
 echo -e "${C_PRINCIPAL}--- CONFIGURACIÓN DE DJANGO Y BASE DE DATOS${RESET} ${CIANO}(setup_djau.sh)${RESET} ${C_PRINCIPAL}---"
@@ -320,6 +339,26 @@ fi
 echo -e "${C_EXITO}✅ settings_local.py configurado y personalizado.${RESET}"
 sleep 3
 
+
+# --- OPCIONS AVANÇADES DE CONFIGURACIÓ ---
+echo -e "\n"
+read_prompt "⚙️ Voleu afegir les opcions de parametrització avançada (comentades amb el símbol #) a settings_local.py? (per defecte NO) [si/NO]: " ADVANCED_PARAMS_CHOICE "NO"
+ADVANCED_PARAMS_CHOICE_LOWER=$(echo "$ADVANCED_PARAMS_CHOICE" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$ADVANCED_PARAMS_CHOICE_LOWER" == "s" || "$ADVANCED_PARAMS_CHOICE_LOWER" == "si" ]]; then
+
+    echo -e "${C_INFO}ℹ️ Afegint parametritzacions avançades (comentades amb el símbol #) a settings_local.py...${RESET}"
+
+    add_advanced_settings
+
+    echo -e "${C_EXITO}✅ Parametritzacions afegides. Es trobaran al final de settings_local.py. Descomenteu treient el símbol # i modifiqueu els valors de les necessàries pel seu centre educatiu.${RESET}"
+
+else
+    echo "⏭️ Parametritzacions avançades no sol·licitades. Saltant.${RESET}"
+fi
+# --- FI OPCIONS AVANÇADES ---
+
+
 # ----------------------------------------------------------------------
 # 4. MIGRACIONES Y CONFIGURACIÓN DE USUARIOS
 # ----------------------------------------------------------------------
@@ -388,7 +427,7 @@ try:
     # 1. Intentar obtener el usuario. Si no existe, lanza la excepción DoesNotExist.
     try:
         user = User.objects.get(username='admin')
-        
+
         # 2. Si existe, actualizar sus credenciales.
         user.email = '${ADMIN_EMAIL}'
         user.set_password('${ADMIN_PASS}') # set_password maneja el hashing de la contraseña
