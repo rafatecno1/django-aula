@@ -257,7 +257,7 @@ echo -e "\n"
 echo "Si ha seguido las 3 fases indicadas en el orden correcto y no ha habido errores en el proceso..."
 echo -e "${NEGRITA}La aplicación DJANGO-AULA habrá quedado instalada con éxito.${RESET}. A partir de ahora DJANGO-AULA (DjAu) ya está listo para recibir los datos de su centro educativo."
 echo -e "\n"
-echo -e "${NEGRITA}➡️ SIGUIENTE PASO: Carga de Datos y Configuración del curso escolar${RESET}"."
+echo -e "${NEGRITA}➡️ SIGUIENTE PASO: Carga de Datos y Configuración del curso escolar.${RESET}"
 echo -e "   Consulte las instrucciones detalladas para todo el proceso de la carga de datos en el apartado correspondiente en GitHub"
 
 # ----------------------------------------------------------------------
