@@ -53,8 +53,6 @@ Aquestes variables es gestionen mitjançant l'arxiu de configuració local. En e
 | :--- | :--- | :--- |
 | `CUSTOM_MODUL_SORTIDES_ACTIU` | Activa el mòdul de gestió de sortides i activitats. | `True` |
 | `CUSTOM_SORTIDES_OCULTES_A_FAMILIES` | Si **True**, s'oculten les sortides a les famílies (si la gestió o pagament es fa amb una plataforma externa). | `False` |
-| `CUSTOM_MODUL_MATRICULA_ACTIU` | Activa el mòdul de matrícula. | `False` |
-| `CONDICIONS_MATRICULA` | Ruta al fitxer de text amb les condicions de matrícula (permet marques HTML). | `Comentat` |
 | `CUSTOM_QUOTES_ACTIVES` | Si **True**, activa si es permet fer servir les quotes. | `False` |
 | `CUSTOM_TIPUS_QUOTA_MATRICULA` | Nom del tipus de quota per als pagaments de matrícula. | `Comentat` |
 | `CUSTOM_QUOTA_UNICA_MATRICULA` | Si **True**, permet utilitzar una única definició de quota per a tot l'alumnat de matrícula. | `Comentat` |
