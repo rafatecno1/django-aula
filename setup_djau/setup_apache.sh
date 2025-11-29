@@ -267,73 +267,6 @@ else
     sleep 3
 fi
 
-# ----------------------------------------------------------------------
-# FUNCIÓ OPCIONAL: INSTAL·LACIÓ DEL CATCH-ALL (zzz-catchall.conf)
-# ----------------------------------------------------------------------
-
-# Argument: $1 - 'yes' o 'no' per instal·lar
-setup_catchall() {
-    if [ "$1" != "yes" ]; then
-        echo "⏭️ Instal·lació de Catch-all no sol·licitada. Saltant."
-        return 0
-    fi
-
-    echo -e "\n"
-    echo "⚙️ Instal·lant Virtual Host 'Catch-all' (zzz-catchall.conf) per bloquejar tràfic no desitjat (flood control)."
-
-    # 1. Crear el directori per al DocumentRoot buit (requisit de l'Apache)
-    sudo mkdir -p /var/www/catchall
-
-    # 2. Crear el fitxer de configuració zzz-catchall.conf
-    # NOTA: Utilitzem ServerName _ i ServerAlias * per atrapar tot el tràfic no reclamat
-    sudo tee /etc/apache2/sites-available/zzz-catchall.conf > /dev/null <<EOT
-# --- CATCH-ALL PER TRÀFIC NO RECONEGUT (zzz-catchall.conf) ---
-# Aquest host es carrega a la fi (zzz) per capturar el tràfic que cap altre VirtualHost ha reclamat.
-# Això evita que els bots consumeixin recursos de l'aplicació Django i enviïn correus d'error.
-
-## 1. TRAFIC HTTP (80)
-<VirtualHost *:80>
-    ServerName _
-    ServerAlias *
-    DocumentRoot /var/www/catchall
-
-    # Bloquejar peticions no reconegudes amb un error 400 (Bad Request)
-    ErrorDocument 400 "Host no reconegut"
-    RewriteEngine On
-    RewriteRule ^ - [R=400,L]
-</VirtualHost>
-
-## 2. TRAFIC HTTPS (443)
-<VirtualHost *:443>
-    ServerName _
-    ServerAlias *
-    DocumentRoot /var/www/catchall
-
-    SSLEngine on
-    # Configuració SSL dummy (Apache necessita un certificat per iniciar 443)
-    SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem
-    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
-
-    # TANCAMENT IMMEDIAT (403 Forbidden)
-    RewriteEngine On
-    # Regla: Per qualsevol petició, retorna 403 (tancar connexió).
-    RewriteRule ^ - [R=403,L]
-    ErrorDocument 403 /catchall-403
-
-    <Directory /var/www/catchall>
-        Require all denied
-    </Directory>
-</VirtualHost>
-EOT
-
-    # 3. Habilitar el nou Virtual Host
-    sudo a2ensite zzz-catchall.conf > /dev/null
-
-    echo -e "${C_EXITO}✅ Fitxer zzz-catchall.conf instal·lat i habilitat.${RESET}"
-    echo "⚠️ Aquest Virtual Host només actua sobre peticions que NO coincideixen amb $PROJECT_FOLDER.conf."
-    sleep 2
-}
-
 
 # ----------------------------------------------------------------------
 # 3. CREACIÓN DE ARCHIVOS VIRTUAL HOST
@@ -552,7 +485,7 @@ echo -e "\n"
 sleep 1
 
 
-# 5.3 PREGUNTA OPCIONAL: INSTAL·LACIÓ DEL CATCH-ALL
+# 5.3 INSTAL·LACIÓ OPCIONAL: VIRTUAL-HOST PER CATCH-ALL
 echo -e "${C_SUBTITULO}--- 5.3 Configuración de Seguridad Adicional (Catch-all) ---${RESET}"
 echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
 
@@ -566,9 +499,64 @@ CATCHALL_CHOICE_LOWER=$(echo "$CATCHALL_CHOICE" | tr '[:upper:]' '[:lower:]')
 if [[ "$CATCHALL_CHOICE_LOWER" == "s" || "$CATCHALL_CHOICE_LOWER" == "si" ]]; then
     # Habilitem el mòdul rewrite si l'usuari vol el catch-all, per si de cas
     a2enmod rewrite > /dev/null 2>&1
-    setup_catchall "yes"
+
+    echo -e "\n"
+    echo "⚙️ Instal·lant Virtual Host 'Catch-all' (zzz-catchall.conf) per bloquejar tràfic no desitjat (flood control)."
+
+    # 1. Crear el directori per al DocumentRoot buit (requisit de l'Apache)
+    sudo mkdir -p /var/www/catchall
+
+    # 2. Crear el fitxer de configuració zzz-catchall.conf
+    # NOTA: Utilitzem ServerName _ i ServerAlias * per atrapar tot el tràfic no reclamat
+    sudo tee /etc/apache2/sites-available/zzz-catchall.conf > /dev/null <<EOT
+# --- CATCH-ALL PER TRÀFIC NO RECONEGUT (zzz-catchall.conf) ---
+# Aquest host es carrega a la fi (zzz) per capturar el tràfic que cap altre VirtualHost ha reclamat.
+# Això evita que els bots consumeixin recursos de l'aplicació Django i enviïn correus d'error.
+
+## 1. TRAFIC HTTP (80)
+<VirtualHost *:80>
+    ServerName _
+    ServerAlias *
+    DocumentRoot /var/www/catchall
+
+    # Bloquejar peticions no reconegudes amb un error 400 (Bad Request)
+    ErrorDocument 400 "Host no reconegut"
+    RewriteEngine On
+    RewriteRule ^ - [R=400,L]
+</VirtualHost>
+
+## 2. TRAFIC HTTPS (443)
+<VirtualHost *:443>
+    ServerName _
+    ServerAlias *
+    DocumentRoot /var/www/catchall
+
+    SSLEngine on
+    # Configuració SSL dummy (Apache necessita un certificat per iniciar 443)
+    SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem
+    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+
+    # TANCAMENT IMMEDIAT (403 Forbidden)
+    RewriteEngine On
+    # Regla: Per qualsevol petició, retorna 403 (tancar connexió).
+    RewriteRule ^ - [R=403,L]
+    ErrorDocument 403 /catchall-403
+
+    <Directory /var/www/catchall>
+        Require all denied
+    </Directory>
+</VirtualHost>
+EOT
+
+    # 3. Habilitar el nou Virtual Host
+    sudo a2ensite zzz-catchall.conf > /dev/null
+
+    echo -e "${C_EXITO}✅ Fitxer zzz-catchall.conf instal·lat i habilitat.${RESET}"
+    echo "⚠️ Aquest Virtual Host només actua sobre peticions que NO coincideixen amb $PROJECT_FOLDER.conf."
+    sleep 2
+
 else
-    setup_catchall "no"
+    echo "⏭️ Instal·lació de Catch-all no sol·licitada. Saltant."
 fi
 
 echo -e "\n"
@@ -588,7 +576,8 @@ if [ $? -ne 0 ]; then
 	echo -e "${C_ERROR}❌ ERROR CRÍTICO: Fallo en la prueba de configuración de Apache. Revise los archivos de configuración creados. La instalación se detiene.${RESET}"
     exit 1 # Detener la instalación si el Vhost SSL es inválido
 fi
-echo -e "/n"
+
+echo -e "\n"
 
 # 5.5 Informació del certificado autofirmado o instal·lació del certificado Let's Encrypt
 
