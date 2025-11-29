@@ -11,9 +11,9 @@ location = lambda x: os.path.join(PROJECT_DIR, x)
 # ------------------------------------------------------------------------------------
 
 # Quantitat, per defecte, de logins errònis abans de bloquejar l'usuari (sobreescriu el 3 de common.py)
-# LIMITLOGIN = 5 
+# LIMITLOGIN = 5
 
-# Temps màxim d'inactivitat (en segons) abans de tancar la sessió. 
+# Temps màxim d'inactivitat (en segons) abans de tancar la sessió.
 # CUSTOM_TIMEOUT = 900 # 15 minuts
 
 # Timeout per grup d'usuaris (sobreescriu CUSTOM_TIMEOUT si l'usuari és del grup)
@@ -31,7 +31,7 @@ location = lambda x: os.path.join(PROJECT_DIR, x)
 # CUSTOM_TIPUS_INCIDENCIES = False
 
 # Si True, cada retard registrat genera automàticament una incidència.
-# CUSTOM_RETARD_PROVOCA_INCIDENCIA = False 
+# CUSTOM_RETARD_PROVOCA_INCIDENCIA = False
 
 # Defineix el tipus d'incidència que genera un retard si l'opció anterior és True.
 # CUSTOM_RETARD_TIPUS_INCIDENCIA = {"tipus": "Incidència", "es_informativa": False}
@@ -134,10 +134,10 @@ location = lambda x: os.path.join(PROJECT_DIR, x)
 # CUSTOM_SORTIDES_PAGAMENT_ONLINE = False
 
 # Entorn Redsys: True per a real, False per a proves.
-# CUSTOM_REDSYS_ENTORN_REAL = False 
+# CUSTOM_REDSYS_ENTORN_REAL = False
 
 # Preu mínim per una sortida per activar el pagament online.
-# CUSTOM_PREU_MINIM_SORTIDES_PAGAMENT_ONLINE = 1 
+# CUSTOM_PREU_MINIM_SORTIDES_PAGAMENT_ONLINE = 1
 
 # Si True, activa si es permet fer pagament per caixer.
 # CUSTOM_SORTIDES_PAGAMENT_CAIXER = True
