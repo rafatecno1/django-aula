@@ -39,6 +39,7 @@ El Proyecto es Open-source, y aquí se encuentra su repositorio Git: [https://gi
     * [Carga de Horarios, Aulas y Asignaturas](USER_MANUAL/manual-de-uso/carga-inicial-de-datos/carga-de-horarios-aulas-y-asignaturas.md)
     * [Tareas Recomendables](USER_MANUAL/manual-de-uso/carga-inicial-de-datos/tareas-recomendables.md)
     * [Creación del Horario](USER_MANUAL/manual-de-uso/carga-inicial-de-datos/creacion-del-horario.md)
+  * [Configuración inicial avanzada](USER_MANUAL/manual-de-uso/configuracio_avancada.md)
   * [Actualización a última versión](USER_MANUAL/manual-de-uso/actualitza.md)
   * [Inicialización a final de curso](USER_MANUAL/manual-de-uso/inicialitza.md)
   * [Cuotas](USER_MANUAL/manual-de-uso/quotes.md)

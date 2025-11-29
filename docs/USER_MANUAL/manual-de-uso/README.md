@@ -6,6 +6,8 @@ En este documento se enlazará todos los documentos necesarios para el correcto 
 
 [Carga inicial de datos](carga-inicial-de-datos/README.md)
 
+[configuración inicial avanzada](configuracio_avancada.md)
+
 [Actualización a última versión](./actualitza.md)
 
 [Inicialización a final de curso](./inicialitza.md)
