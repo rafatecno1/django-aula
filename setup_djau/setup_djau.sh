@@ -36,25 +36,6 @@ else
     exit 1
 fi
 
-
-# Funció per afegir les variables avançades (comentades) a settings_local.py
-add_advanced_settings() {
-    # 🚨 NOTA: S'assumeix que advanced_settings.py és al mateix directori que setup_djau.sh
-    ADVANCED_FILE="./advanced_settings.py" 
-    LOCAL_SETTINGS_PATH="$PROJECT_FOLDER/aula/settings_local.py" # La carpeta aula és dins del projecte
-
-    # 1. Afegir un separador al final de settings_local.py
-    echo -e "\n\n# ----------------------------------------------------------------------" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
-    echo -e "# --- PARAMETRITZACIONS AVANÇADES (Variables del fitxer 'advanced_settings.py') ---" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
-    echo -e "# ----------------------------------------------------------------------" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
-
-    # 2. Llegir el fitxer, comentar cada línia de codi Python i afegir-lo al settings_local.py
-    #    - grep -E '^[^#]' ignora línies que ja són comentari o estan buides.
-    #    - sed 's/^/# /' afegeix un '#' i un espai al principi de la línia restant.
-    cat "$ADVANCED_FILE" | grep -E '^[^#\s]+' | sed 's/^/# /' | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
-}
-
-
 echo -e "\n\n"
 echo -e "${C_PRINCIPAL}==============================================================="
 echo -e "${C_PRINCIPAL}--- CONFIGURACIÓN DE DJANGO Y BASE DE DATOS${RESET} ${CIANO}(setup_djau.sh)${RESET} ${C_PRINCIPAL}---"
@@ -339,7 +320,6 @@ fi
 echo -e "${C_EXITO}✅ settings_local.py configurado y personalizado.${RESET}"
 sleep 3
 
-
 # --- OPCIONS AVANÇADES DE CONFIGURACIÓ ---
 echo -e "\n"
 read_prompt "⚙️ Voleu afegir les opcions de parametrització avançada (comentades amb el símbol #) a settings_local.py? (per defecte NO) [si/NO]: " ADVANCED_PARAMS_CHOICE "NO"
@@ -349,12 +329,30 @@ if [[ "$ADVANCED_PARAMS_CHOICE_LOWER" == "s" || "$ADVANCED_PARAMS_CHOICE_LOWER" 
 
     echo -e "${C_INFO}ℹ️ Afegint parametritzacions avançades (comentades amb el símbol #) a settings_local.py...${RESET}"
 
-    add_advanced_settings
+    # 1. Definicions de Rutes (utilitzant les rutes absolutes globals)
+    ADVANCED_FILE="$SETUP_DIR/advanced_settings.py"
+    LOCAL_SETTINGS_PATH="$FULL_PATH/aula/settings_local.py"
+
+    # 2. Comprovació d'existència (Molt recomanable mantenir-la per evitar errors)
+    if [ ! -f "$LOCAL_SETTINGS_PATH" ] || [ ! -s "$ADVANCED_FILE" ]; then
+        echo -e "${C_ERROR}❌ ERROR: No s'han trobat els fitxers d'origen/destí per a les parametritzacions avançades. Saltant.${RESET}"
+        return 1
+    fi
+
+    # 3. Afegir un separador al final de settings_local.py
+    echo -e "\n\n# ----------------------------------------------------------------------" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
+    echo -e "# --- PARAMETRITZACIONS AVANÇADES (Variables del fitxer 'advanced_settings.py') ---" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
+    echo -e "# ----------------------------------------------------------------------" | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
+
+    # 4. Copiar contingut d'advanced_settings.py.
+    #    - S'assumeix que advanced_settings.py ja està COMPLETAMENT comentat perquè la importació no afegirà el símbol # davant de cada línia.
+    #    - Eliminem el preamble, els imports i la funció 'location' amb 'sed'.
+    cat "$ADVANCED_FILE" | sed '1,/location = lambda x: os.path.join(PROJECT_DIR, x)/d' | sudo -u "$APP_USER" tee -a "$LOCAL_SETTINGS_PATH" > /dev/null
 
     echo -e "${C_EXITO}✅ Parametritzacions afegides. Es trobaran al final de settings_local.py. Descomenteu treient el símbol # i modifiqueu els valors de les necessàries pel seu centre educatiu.${RESET}"
 
 else
-    echo "⏭️ Parametritzacions avançades no sol·licitades. Saltant.${RESET}"
+    echo "⏭️ PNo s'afegiran les parametritzacions avançades perquè no han sigut sol·licitades.${RESET}"
 fi
 # --- FI OPCIONS AVANÇADES ---
 

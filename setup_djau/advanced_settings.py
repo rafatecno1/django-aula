@@ -11,10 +11,10 @@ location = lambda x: os.path.join(PROJECT_DIR, x)
 # ------------------------------------------------------------------------------------
 
 # Quantitat, per defecte, de logins errònis abans de bloquejar l'usuari (sobreescriu el 3 de common.py)
-LIMITLOGIN = 5 
+# LIMITLOGIN = 5 
 
 # Temps màxim d'inactivitat (en segons) abans de tancar la sessió. 
-CUSTOM_TIMEOUT = 900 # 15 minuts
+# CUSTOM_TIMEOUT = 900 # 15 minuts
 
 # Timeout per grup d'usuaris (sobreescriu CUSTOM_TIMEOUT si l'usuari és del grup)
 # CUSTOM_TIMEOUT_GROUP = {
@@ -28,10 +28,10 @@ CUSTOM_TIMEOUT = 900 # 15 minuts
 
 # Si True, activa la possibilitat de classificar les incidències per tipus.
 # Afecta la pantalla d'alertes i el valor unicode de les incidències.
-CUSTOM_TIPUS_INCIDENCIES = False
+# CUSTOM_TIPUS_INCIDENCIES = False
 
 # Si True, cada retard registrat genera automàticament una incidència.
-CUSTOM_RETARD_PROVOCA_INCIDENCIA = False 
+# CUSTOM_RETARD_PROVOCA_INCIDENCIA = False 
 
 # Defineix el tipus d'incidència que genera un retard si l'opció anterior és True.
 # CUSTOM_RETARD_TIPUS_INCIDENCIA = {"tipus": "Incidència", "es_informativa": False}
@@ -40,31 +40,31 @@ CUSTOM_RETARD_PROVOCA_INCIDENCIA = False
 # CUSTOM_RETARD_FRASE = "Ha arribat tard a classe."
 
 # Nombre de dies que es permet crear o modificar una incidència antiga.
-CUSTOM_PERIODE_CREAR_O_MODIFICAR_INCIDENCIA = 90
+# CUSTOM_PERIODE_CREAR_O_MODIFICAR_INCIDENCIA = 90
 
 # Si True, l'acumulació d'incidències obliga al professor que li ha posat a expulsar l'alumne.
-CUSTOM_INCIDENCIES_PROVOQUEN_EXPULSIO = True
+# CUSTOM_INCIDENCIES_PROVOQUEN_EXPULSIO = True
 
 # Nombre de dies que es permet modificar l'assistència (per correcció de professors).
-CUSTOM_PERIODE_MODIFICACIO_ASSISTENCIA = 90
+# CUSTOM_PERIODE_MODIFICACIO_ASSISTENCIA = 90
 
 # Dies en els que les incidencies prescriuen.
-CUSTOM_DIES_PRESCRIU_INCIDENCIA = 30
+# CUSTOM_DIES_PRESCRIU_INCIDENCIA = 30
 
 # Dies en els que les expulsions prescriuen.
-CUSTOM_DIES_PRESCRIU_EXPULSIO = 90
+# CUSTOM_DIES_PRESCRIU_EXPULSIO = 90
 
 # Si True, només el tutor pot justificar faltes dels seus alumnes.
-CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR = True
+# CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR = True
 
 # Si True, permet copiar el llistat d'assistència des d'una altra hora.
-CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = False
+# CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = False
 
 # Si True, gestiona el retard de primera hora pel tutor (en lloc de consergeria/administració).
-CUSTOM_RETARD_PRIMERA_HORA_GESTIONAT_PEL_TUTOR = False
+# CUSTOM_RETARD_PRIMERA_HORA_GESTIONAT_PEL_TUTOR = False
 
 # Faltes d'absència no justificades (en dies) per tal de generar carta base.
-CUSTOM_FALTES_ABSENCIA_PER_CARTA = 15
+# CUSTOM_FALTES_ABSENCIA_PER_CARTA = 15
 
 # Número de faltes no justificades per tal de generar carta, segons el tipus.
 # Els tipus de carta es troben a aula/apps/tutoria/business_rules/cartaaabsentisme.py
@@ -85,21 +85,15 @@ CUSTOM_FALTES_ABSENCIA_PER_CARTA = 15
 # ------------------------------------------------------------------------------------
 
 # Activa el mòdul de gestió de sortides i activitats.
-CUSTOM_MODUL_SORTIDES_ACTIU = True
+# CUSTOM_MODUL_SORTIDES_ACTIU = True
 
 # Si True, deixa ocultes les sortides a les famílies.
 # Només s'ha de fer servir si el centre educatiu té un sistema de notificacions i pagaments propi i no vol fer servir el Djau,
 # però igualment vol definir les sortides i gestionar l'alumnat i professorat afectat.
-CUSTOM_SORTIDES_OCULTES_A_FAMILIES = False 
-
-# Activa el mòdul de matrícula.
-CUSTOM_MODUL_MATRICULA_ACTIU = False
-
-# Fitxer de text amb les condicions de matrícula (es poden fer servir marques HTML).
-# CONDICIONS_MATRICULA = location( r'../customising/TermesIcondicions/MATRICULA.sample' )
+# CUSTOM_SORTIDES_OCULTES_A_FAMILIES = False
 
 # Si True, activa si es permet fer servir les quotes.
-CUSTOM_QUOTES_ACTIVES = False
+# CUSTOM_QUOTES_ACTIVES = False
 
 # Nom del tipus de quota per als pagaments de matrícula. Ha d'estar definit a la BD.
 # CUSTOM_TIPUS_QUOTA_MATRICULA = None  # Exemple: 'material'
@@ -108,22 +102,22 @@ CUSTOM_QUOTES_ACTIVES = False
 # CUSTOM_QUOTA_UNICA_MATRICULA = False
 
 # Si True, permet que la família pugui modificar els seus paràmetres a l'aplicació.
-CUSTOM_FAMILIA_POT_MODIFICAR_PARAMETRES = False
+# CUSTOM_FAMILIA_POT_MODIFICAR_PARAMETRES = False
 
 # Si True, permet a la família enviar comunicats.
-CUSTOM_FAMILIA_POT_COMUNICATS = False
+# CUSTOM_FAMILIA_POT_COMUNICATS = False
 
 # Si True, activa el mòdul de presència setmanal (graella amb faltes).
-CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU = False
+# CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU = False
 
 # Si False, desactiva la comprovació de "és presència" en el control (només per a configuració avançada)
-CUSTOM_NO_CONTROL_ES_PRESENCIA = False
+# CUSTOM_NO_CONTROL_ES_PRESENCIA = False
 
 # Si True, permet als tutors tenir accés als informes de seguiment de faltes i incidències.
-CUSTOM_TUTORS_INFORME = False
+# CUSTOM_TUTORS_INFORME = False
 
 # Activa el filtre per mostrar la ruleta d'alumnes a la pantalla de passar llista.
-CUSTOM_RULETA_ACTIVADA = True
+# CUSTOM_RULETA_ACTIVADA = True
 
 # Permet mostrar si l'alumne és major d'edat i quina marca utilitzar.
 # CUSTOM_MOSTRAR_MAJORS_EDAT = False
@@ -137,19 +131,19 @@ CUSTOM_RULETA_ACTIVADA = True
 # ------------------------------------------------------------------------------------
 
 # Si True, permet realitzar pagaments online (requereix configuració Redsys/entitat)
-CUSTOM_SORTIDES_PAGAMENT_ONLINE = False
+# CUSTOM_SORTIDES_PAGAMENT_ONLINE = False
 
 # Entorn Redsys: True per a real, False per a proves.
-CUSTOM_REDSYS_ENTORN_REAL = False 
+# CUSTOM_REDSYS_ENTORN_REAL = False 
 
 # Preu mínim per una sortida per activar el pagament online.
-CUSTOM_PREU_MINIM_SORTIDES_PAGAMENT_ONLINE = 1 
+# CUSTOM_PREU_MINIM_SORTIDES_PAGAMENT_ONLINE = 1 
 
 # Si True, activa si es permet fer pagament per caixer.
-CUSTOM_SORTIDES_PAGAMENT_CAIXER = True
+# CUSTOM_SORTIDES_PAGAMENT_CAIXER = True
 
 # Si True, utilitza un formulari de dades reduït per a pagaments.
-CUSTOM_FORMULARI_SORTIDES_REDUIT = True
+# CUSTOM_FORMULARI_SORTIDES_REDUIT = True
 
 # Textos d'instruccions de pagament: (S'han mantingut els teus exemples)
 # CUSTOM_SORTIDES_INSTRUCCIONS_PAGAMENT = """Podeu fer el pagament amb targeta de crèdit a qualsevol caixer de CaixaBank, amb el codi de barres o amb el codi entitat: XXXXXXXXXX"""
@@ -171,7 +165,7 @@ CUSTOM_FORMULARI_SORTIDES_REDUIT = True
 
 # Permet reordenar la llista d'assistència (alumne, grup, cognoms...)
 # S'han afegit els teus comentaris d'explicació.
-# CUSTOM_ORDER_PRESENCIA = ['alumne'] 
+# CUSTOM_ORDER_PRESENCIA = ['alumne']
 # Es pot triar entre ['alumne___cognoms','alumne__nom, 'alumne__grup', 'alumne']
 # 'alumne': Ordena primer per grup i després per cognom de l'alumnat (alumnes de diferents grups)
 # 'alumne nom': Ordena l'alumnat per nom
@@ -182,7 +176,7 @@ CUSTOM_FORMULARI_SORTIDES_REDUIT = True
 # CUSTOM_DATE_FORMAT = "%-d %B de %Y"  # Exemple: '5 d'abril de 1999'
 
 # Quantitat màxima de destinataris per cada email, depèn del servidor de correu
-CUSTOM_MAX_EMAIL_RECIPIENTS = 100
+# CUSTOM_MAX_EMAIL_RECIPIENTS = 100
 
 # Per afegir altres dades dels alumnes des de Sincronitza / Dades addicionals alumnat.
 # CUSTOM_DADES_ADDICIONALS_ALUMNE = [
@@ -212,18 +206,6 @@ CUSTOM_MAX_EMAIL_RECIPIENTS = 100
 #         'visibilitat': ['Familia','Professor'],
 #     },
 # ]
-
-# Rutes per a fitxers de condicions i GPD (generalment queden comentades)
-# DADES_FISCALS_FILE = location( r'../customising/TermesIcondicions/DADESFISCALS.sample' )
-# POLITICA_VENDA_FILE = location( r'../customising/TermesIcondicions/POLITICAVENDA.sample' )
-# Fitxer de text amb l'avís sobre el tractament de dades personals.
-# Es mostra a la part inferior de les pantalles d'entrada de dades com la de "Canvi de paràmetres".
-# INFORGPD = location( r'../customising/TermesIcondicions/INFORGPD.sample' )
-# Política de cookies (es fa servir en les condicions dels pagaments online).
-# POLITICA_COOKIES = location( r'../customising/TermesIcondicions/POLITICACOOKIES.sample' )
-# Informació sobre protecció de dades de caràcter personal (es fa servir en les condicions dels pagaments online).
-# POLITICA_RGPD = location( r'../customising/TermesIcondicions/POLITICARGPD.sample' )
-
 
 # ------------------------------------------------------------------------------------
 # 6. CONFIGURACIÓ TÈCNICA AVANÇADA
