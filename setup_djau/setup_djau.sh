@@ -190,7 +190,7 @@ else
     PROTOCOL_URL="https://$DOMAIN_CLEAN"
 fi
 
-# 4. Generar la lista de ALLOWED_HOSTS (incluyendo www. y 127.0.0.1)
+# 4. Generar la lista de ALLOWED_HOSTS (incluyendo www. ,127.0.0.1 i localhost)
 # ----------------------------------------------------------------------
 
 # 4.1. Comprobación de la variante WWW: Si el dominio limpio NO empieza por 'www.', la añadimos.
@@ -201,7 +201,7 @@ else
 fi
 
 # 4.2. Construir la lista final de ALLOWED_HOSTS
-ALLOWED_HOSTS_LIST="127.0.0.1,$DOMAIN_CLEAN"
+ALLOWED_HOSTS_LIST="127.0.0.1,localhost,$DOMAIN_CLEAN"
 
 if [ -n "$WWW_DOMAIN" ]; then
     ALLOWED_HOSTS_LIST="$ALLOWED_HOSTS_LIST,$WWW_DOMAIN"
