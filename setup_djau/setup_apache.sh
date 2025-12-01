@@ -297,7 +297,7 @@ if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
 	<VirtualHost *:80>
 		ServerAdmin $SERVER_ADMIN
 		ServerName $DOMAIN_CLEAN
-		ServerAlias www.$DOMAIN_CLEAN
+		ServerAlias www.$DOMAIN_CLEAN 127.0.0.1 localhost
 		RedirectMatch permanent ^(.*)$ https://$DOMAIN_CLEAN$1
 	</VirtualHost>
 EOF
@@ -315,7 +315,7 @@ EOF
 <VirtualHost *:443>
 	ServerAdmin $SERVER_ADMIN
 	ServerName $DOMAIN_CLEAN
-	ServerAlias www.$DOMAIN_CLEAN
+	ServerAlias www.$DOMAIN_CLEAN 127.0.0.1 localhost
 
 	# Configuración WSGI
 	WSGIDaemonProcess $PROJECT_FOLDER python-home=$VENV_PATH python-path=$FULL_PATH \\
@@ -368,7 +368,7 @@ cat << EOF | sudo tee "$HTTP_INTERNAL_CONF" > /dev/null
 <VirtualHost *:80>
 	ServerAdmin $SERVER_ADMIN
 	ServerName $DOMAIN_CLEAN
-	ServerAlias www.$DOMAIN_CLEAN
+	ServerAlias www.$DOMAIN_CLEAN 127.0.0.1 localhost
 
 	# Configuración WSGI
 	WSGIDaemonProcess $PROJECT_FOLDER python-home=$VENV_PATH python-path=$FULL_PATH \\
@@ -679,7 +679,43 @@ echo -e "\n\n"
 echo -e "${C_PRINCIPAL}===================================================================="
 echo -e "${C_PRINCIPAL}--- FASE 2. CONFIGURACIÓN DE APACHE FINALIZADA${RESET} ${CIANO}(setup_apache.sh)${RESET} ${C_PRINCIPAL}---"
 echo -e "${C_PRINCIPAL}====================================================================${RESET}"
+
+echo -e "\n\n"
+echo -e "${C_CAPITULO}======================================="
+echo -e "${C_CAPITULO}--- INFORMACIÓ D'ACCÉS A L'APLICATIU ---"
+echo -e "${C_CAPITULO}=======================================${RESET}"
 echo -e "\n"
+
+if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
+    echo -e "${C_INFO}ℹ️ L'accés ha d'utilitzar la URL segura (HTTPS).${RESET}"
+    
+    if [[ "$CERT_TYPE_LOWER" == "auto" ]]; then
+        echo -e "${C_INFO}Com que s'ha instal·lat un certificat ${NEGRITA}Autofirmat TEMPORAL${RESET}, el navegador mostrarà una ADVERTÈNCIA DE SEGURETAT. Haurà de confirmar l'excepció per continuar i accedir a l'aplicatiu.${RESET}"
+        echo -e "\n"
+        echo -e "${C_SUBTITULO}URL d'Accés per IP (Recomanat per a Tests/VM):${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://127.0.0.1${RESET}"
+        echo -e "\n"
+        echo -e "${C_SUBTITULO}URL d'Accés per Domini (Utilitza el nom del certificat):${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://$DOMAIN_CLEAN${RESET}"
+        echo -e "   (Aquesta URL només funcionarà si '$DOMAIN_CLEAN' està definit al fitxer /etc/hosts de la VM o resolt amb registre DNS d'un servidor de domini.)"
+    else
+        echo -e "${C_INFO}S'ha instal·lat un certificat ${NEGRITA}Vàlid (Let's Encrypt)${RESET}. L'accés hauria de ser segur.${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://$DOMAIN_CLEAN${RESET}"
+    fi
+
+else # INTERNA
+    echo -e "${C_INFO}S'ha instal·lat en mode ${NEGRITA}INTERN${RESET} (sense SSL).${RESET}"
+    echo -e "${C_SUBTITULO}URL d'Accés: ${RESET}"
+    echo -e "${NEGRITA}   ➡️ http://127.0.0.1${RESET}"
+    echo -e "${NEGRITA}   ➡️ http://$DOMAIN_CLEAN${RESET} (Si està definit a /etc/hosts o amb registre DNS d'un servidor de dormini.)"
+fi
+echo -e "\n"
+
+
+
+
+
+
 
 echo -e "${C_INFO}La aplicación debería estar disponible en: ${RESET}${C_SUBTITULO}$DOMAIN_CLEAN${RESET}"
 echo -e "\n"
