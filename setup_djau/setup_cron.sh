@@ -257,8 +257,42 @@ echo -e "\n"
 echo "Si ha seguido las 3 fases indicadas en el orden correcto y no ha habido errores en el proceso..."
 echo -e "${NEGRITA}La aplicación DJANGO-AULA habrá quedado instalada con éxito.${RESET}. A partir de ahora DJANGO-AULA (DjAu) ya está listo para recibir los datos de su centro educativo."
 echo -e "\n"
+
+echo -e "${C_CAPITULO}--- Recordatori d'accés a l'aplicatiu ---${RESET}"
+echo -e "\n"
+
+if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
+    echo -e "${C_INFO}ℹ️ L'accés ha d'utilitzar la URL segura (HTTPS).${RESET}"
+    
+    if [[ "$CERT_TYPE_LOWER" == "auto" ]]; then
+        echo -e "${C_INFO}Com que s'ha instal·lat un certificat ${NEGRITA}Autofirmat TEMPORAL${RESET}, el navegador mostrarà una ADVERTÈNCIA DE SEGURETAT. Haurà de confirmar l'excepció per continuar i accedir a l'aplicatiu.${RESET}"
+        echo -e "\n"
+        echo -e "${C_SUBTITULO}URL d'Accés per IP (Recomanat per a Tests/VM):${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://127.0.0.1${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://localhost${RESET}"
+        echo -e "\n"
+        echo -e "${C_SUBTITULO}URL d'Accés per Domini (Utilitza el nom del certificat):${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://$DOMAIN_CLEAN${RESET}"
+        echo -e "   (Aquesta URL només funcionarà si '$DOMAIN_CLEAN' està definit al fitxer /etc/hosts de la VM o resolt amb registre DNS d'un servidor de domini.)"
+    else
+        echo -e "${C_INFO}S'ha instal·lat un certificat ${NEGRITA}Vàlid (Let's Encrypt)${RESET}. L'accés hauria de ser segur.${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://$DOMAIN_CLEAN${RESET}"
+    fi
+
+else # INTERNA
+    echo -e "${C_INFO}S'ha instal·lat en mode ${NEGRITA}INTERN${RESET} (sense SSL).${RESET}"
+    echo -e "${C_SUBTITULO}URL d'Accés: ${RESET}"
+    echo -e "${NEGRITA}   ➡️ http://127.0.0.1${RESET}"
+    echo -e "${NEGRITA}   ➡️ http://localhost${RESET}"
+    echo -e "${NEGRITA}   ➡️ http://$DOMAIN_CLEAN${RESET} (Si està definit a /etc/hosts o amb registre DNS d'un servidor de dormini.)"
+fi
+echo -e "\n"
+
+echo -e "${C_CAPITULO}--- CÀRREGA DE DADES DEL CURS ESCOLAR ---${RESET}"
+echo -e "\n"
 echo -e "${NEGRITA}➡️ SIGUIENTE PASO: Carga de Datos y Configuración del curso escolar.${RESET}"
 echo -e "   Consulte las instrucciones detalladas para todo el proceso de la carga de datos en el apartado correspondiente en GitHub"
+echo -e "\n\n"
 
 # ----------------------------------------------------------------------
 # PAS FINAL: ADVERTÈNCIA DE SEGURETAT CRÍTICA
