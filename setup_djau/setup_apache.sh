@@ -708,6 +708,7 @@ else # INTERNA
     echo -e "${C_INFO}S'ha instal·lat en mode ${NEGRITA}INTERN${RESET} (sense SSL).${RESET}"
     echo -e "${C_SUBTITULO}URL d'Accés: ${RESET}"
     echo -e "${NEGRITA}   ➡️ http://127.0.0.1${RESET}"
+    echo -e "${NEGRITA}   ➡️ http://localhost${RESET}"
     echo -e "${NEGRITA}   ➡️ http://$DOMAIN_CLEAN${RESET} (Si està definit a /etc/hosts o amb registre DNS d'un servidor de dormini.)"
 fi
 echo -e "\n"
