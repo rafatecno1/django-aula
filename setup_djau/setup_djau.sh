@@ -533,7 +533,6 @@ echo "export DB_NAME='$DB_NAME'" >> "$SETUP_DIR/config_vars.sh"
 echo "export DB_USER='$DB_USER'" >> "$SETUP_DIR/config_vars.sh"
 echo "export LOCALITAT='$LOCALITAT'" >> "$SETUP_DIR/config_vars.sh"
 
-#echo "export DOMAIN_NAME='$DOMAIN_NAME'" >> "$SETUP_DIR/config_vars.sh"
 echo "export DOMAIN_CLEAN='$DOMAIN_CLEAN'" >> "$SETUP_DIR/config_vars.sh"                           # El dominio puro para Apache VHosts.
 echo "export PROTOCOL_URL='$PROTOCOL_URL'" >> "$SETUP_DIR/config_vars.sh"                           # La URL con http o https para el mensaje final.
 echo "export ALLOWED_HOSTS_LIST='$ALLOWED_HOSTS_LIST'" >> "$SETUP_DIR/config_vars.sh"               # Lista para uso general/informativo en Bash (separada por comas)
