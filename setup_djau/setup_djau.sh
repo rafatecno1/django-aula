@@ -319,7 +319,7 @@ fi
 
 echo -e "${C_EXITO}✅ settings_local.py configurado y personalizado.${RESET}"
 sleep 3
-
+echo -e "\n"
 
 # 3.5 Opcions avançades de configuracó (settings_local.py)
 
@@ -333,7 +333,7 @@ echo -e "${C_INFO}   * ${NEGRITA}Llindars d'alerta automàtica${RESET} (p. ex., 
 echo -e "${C_INFO}   * ${NEGRITA}Comportament específic de la lògica de negoci${RESET} per al centre educatiu.${RESET}"
 echo -e "${C_INFO}   * Configuració avançada de logs o cache.${RESET}"
 echo -e "\n"
-echo -e "${C_INFO}   ${NEGRITA}Recomanació:${RESET} Generalment, és millor incloure'ls (${NEGRITA}SI${RESET}), ja que estaran comentats no tindran cap efecte, però ${NEGRITA}facilitaran la personalització posterior${RESET} de l'aplicatiu conjuntament amb l'equip directiu.${RESET}"
+echo -e "${C_INFO}   ${NEGRITA}Recomanació:${RESET} Generalment, és millor incloure'ls (${NEGRITA}SI${RESET}), ja que estaran comentats i no tindran cap efecte, però ${NEGRITA}facilitaran la personalització posterior${RESET} de l'aplicatiu conjuntament amb l'equip directiu.${RESET}"
 echo -e "\n"
 
 # --- OPCIONS AVANÇADES DE CONFIGURACIÓ ---
