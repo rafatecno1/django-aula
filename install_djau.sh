@@ -268,6 +268,7 @@ check_install "$APT_DESC"
 APT_DESC="Utilidades de administración"
 echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
 apt-get install -y \
+    openssh-server \
     nano \
     htop \
     btop \
