@@ -368,37 +368,78 @@ echo -e "\n"
 
 sleep 2
 
+# ----------------------------------------------------------------------
+# 3.5 Generación y configuración del Locale (ca_ES.utf8)
+# ----------------------------------------------------------------------
+echo -e "\n"
 echo -e "${C_SUBTITULO}--- 3.5 Generando y configurando el Locale (ca_ES.utf8) ---${RESET}"
 echo -e "${C_SUBTITULO}-----------------------------------------------------------${RESET}"
+echo -e "\n"
 
-# 1. Asegurar que el locale ca_ES.utf8 esté descomentado en /etc/locale.gen
-echo -e "${C_INFO}ℹ️ Descomentando 'ca_ES.utf8' en /etc/locale.gen...${RESET}"
-# Usa sed para quitar el '#' al inicio de la línea, si existe.
-# NOTA: Usamos 'UTF-8' con guion para coincidir con el formato del archivo.
-sudo sed -i '/^# *ca_ES.UTF-8 UTF-8/s/^# *//' /etc/locale.gen
+TARGET_LOCALE="ca_ES.UTF-8"
+LOCALE_GEN_FILE="/etc/locale.gen"
 
-# 2. Generar todos los locales activos
-echo -e "${C_INFO}ℹ️ Ejecutando locale-gen (Generará todos los locales activos)...${RESET}"
+# ----------------------------------------------------------------------------------
+# PAS 1: Neteja i preparació del fitxer /etc/locale.gen
+# ----------------------------------------------------------------------------------
+
+echo -e "${C_INFO}ℹ️ Ajustant ${LOCALE_GEN_FILE} per a una generació ràpida i conservadora...${RESET}"
+echo -e "${C_INFO}    Només es deixaran actius (descomentats) els locals ${NEGRITA}${TARGET_LOCALE}${RESET} i d'Espanyol d'Espanya, la resta es comentaran.${RESET}"
+
+# 1. Comentar totes les línies que no siguin un comentari (#) o línies buides.
+# Això desactiva els locals que venen per defecte en distros d'escriptori.
+# Comencem per una còpia de seguretat.
+sudo cp "$LOCALE_GEN_FILE" "$LOCALE_GEN_FILE.bak"
+sudo sed -i -r '/^\s*[a-zA-Z]/ s/^/#/' "$LOCALE_GEN_FILE"
+
+# 2. Descomentar (activar) el local requerit per DjAu.
+# Es busca la línia 'ca_ES.UTF-8 UTF-8' i se li elimina el possible '#' inicial.
+sudo sed -i '/^#\s*ca_ES.UTF-8/ s/^#\s*//' "$LOCALE_GEN_FILE"
+
+# 3. Descomentar (activar) el local per espanyol (es_ES).
+sudo sed -i '/^#\s*es_ES.UTF-8/ s/^#\s*//' "$LOCALE_GEN_FILE"
+
+echo -e "${C_EXITO}✅ Fitxer ${LOCALE_GEN_FILE} preparat. Només s'activaran els locals necessaris.${RESET}"
+sleep 1
+
+# ----------------------------------------------------------------------------------
+# PAS 2: Execució de locale-gen (Generació ràpida)
+# ----------------------------------------------------------------------------------
+
+echo -e "${C_INFO}ℹ️ Executant locale-gen (Generarà només els locals seleccionats, serà ràpid)...${RESET}"
 sudo locale-gen
 
 if [ $? -ne 0 ]; then
-    echo -e "${C_ERROR}❌ ERROR: Fallo al generar los locales. Esto puede ser un error crítico para Django.${RESET}"
+    echo -e "${C_ERROR}❌ ERROR CRÍTIC: La generació dels locals ha fallat. Revisi si el paquet 'locales' està instal·lat.${RESET}"
+    exit 1
 fi
+echo -e "${C_EXITO}✅ Generació de locals completada.${RESET}"
+sleep 1
 
-# 3. Forzar la configuración del sistema
+# ----------------------------------------------------------------------------------
+# PAS 3: Fixar el local del sistema a 'ca_ES.UTF-8'
+# ----------------------------------------------------------------------------------
+
 echo -e "\n"
-echo -e "${C_INFO}ℹ️ Configurando el locale del sistema a 'ca_ES.UTF-8'...${RESET}"
-sudo update-locale LANG=ca_ES.UTF-8
+echo -e "${C_INFO}⚠️ ATENCIÓ: Per a que l'aplicatiu DjAu funcioni correctament amb la codificació i ordenació de dades (collation) del sistema operatiu, ${NEGRITA}es fixarà el local del sistema a ${TARGET_LOCALE}.${RESET}"
 
-# 4. Verificación de éxito
+echo -e "${C_INFO}ℹ️ Configurando el locale del sistema a '${TARGET_LOCALE}'...${RESET}"
+sudo update-locale LANG="$TARGET_LOCALE"
+
+# Comprovar si el fitxer ha estat generat (locale -a)
 if locale -a | grep -q -i "ca_es.utf8"; then
-    echo -e "${C_EXITO}✅ Locale 'ca_ES.utf8' asegurado y configurado correctamente.${RESET}"
+    # Comprovar si la variable LANG s'ha escrit correctament a /etc/default/locale
+    if grep -q "LANG=$TARGET_LOCALE" /etc/default/locale; then
+        echo -e "${C_EXITO}✅ Locale 'ca_ES.utf8' assegurat i configurat correctament.${RESET}"
+    else
+        echo -e "${C_ERROR}❌ ADVERTÈNCIA CRÍTICA: El local 'ca_ES.UTF-8' s'ha generat, però la variable de sistema no s'ha pogut fixar a /etc/default/locale. Reviseu-ho manualment.${RESET}"
+    fi
 else
-    echo -e "${C_ERROR}❌ ADVERTENCIA CRÍTICA: El locale 'ca_ES.utf8' no se pudo generar. Revise manualmente /etc/locale.gen.${RESET}"
+    # El local no s'ha generat
+    echo -e "${C_ERROR}❌ ADVERTENCIA CRÍTICA: El locale 'ca_ES.utf8' no es pudo generar. Revise manualmente /etc/locale.gen. Recordi que s'ha fet una còpia de serguretat de l'arxiu original en $LOCALE_GEN_FILE.bak${RESET}"
 fi
 
 sleep 2
-
 
 # ----------------------------------------------------------------------
 # 4. CLONACIÓN DEL REPOSITORIO 
