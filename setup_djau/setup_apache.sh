@@ -672,8 +672,13 @@ else
 	echo -e "\n"
 	echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
 fi
-sleep 5
+sleep 2
 
+echo -e "\n"
+echo -e "${C_INFO}--- Añadiendo variables al archivo${RESET} ${CIANO}config_vars.sh${RESET} ${C_INFO}automáticamente ---${RESET}\n"
+echo "export CERT_TYPE_LOWER='$CERT_TYPE_LOWER'" >> "$SETUP_DIR/config_vars.sh"               # Pel missatge final informatiu (setup_cron.sh)
+
+sleep 2
 
 echo -e "\n\n"
 echo -e "${C_PRINCIPAL}===================================================================="
@@ -711,15 +716,6 @@ else # INTERNA
     echo -e "${NEGRITA}   ➡️ http://localhost${RESET}"
     echo -e "${NEGRITA}   ➡️ http://$DOMAIN_CLEAN${RESET} (Si està definit a /etc/hosts o amb registre DNS d'un servidor de dormini.)"
 fi
-echo -e "\n"
-
-
-
-
-
-
-
-echo -e "${C_INFO}La aplicación debería estar disponible en: ${RESET}${C_SUBTITULO}$DOMAIN_CLEAN${RESET}"
 echo -e "\n"
 
 echo -e "${C_INFO}--- SIGUIENTE FASE: FASE 3 - TAREAS PROGRAMADAS Y MANTENIMIENTO ---${RESET}"
