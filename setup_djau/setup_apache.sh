@@ -694,6 +694,7 @@ if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
         echo -e "\n"
         echo -e "${C_SUBTITULO}URL d'Accés per IP (Recomanat per a Tests/VM):${RESET}"
         echo -e "${NEGRITA}   ➡️ https://127.0.0.1${RESET}"
+        echo -e "${NEGRITA}   ➡️ https://localhost${RESET}"
         echo -e "\n"
         echo -e "${C_SUBTITULO}URL d'Accés per Domini (Utilitza el nom del certificat):${RESET}"
         echo -e "${NEGRITA}   ➡️ https://$DOMAIN_CLEAN${RESET}"
