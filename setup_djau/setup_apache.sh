@@ -34,6 +34,14 @@ else
     exit 1
 fi
 
+# Detectar el sistema d'inicialització
+IS_SYSTEMD=0 # Per defecte, assumim que no és systemd (Devuan, etc.)
+
+if command -v systemctl >/dev/null 2>&1; then
+    # La comanda systemctl s'ha trobat: és un sistema systemd (Debian, Ubuntu)
+    IS_SYSTEMD=1
+fi
+
 echo -e "\n\n"
 echo -e "${C_PRINCIPAL}================================================================="
 echo -e "${C_PRINCIPAL}--- FASE 2: SERVIDOR WEB Y CERTIFICADOS SSL${RESET} ${CIANO}(setup_apache.sh)${RESET} ${C_PRINCIPAL}---"
@@ -628,8 +636,27 @@ elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 		RESPONSE_LOWER=$(echo "$CHECK_TIMER" | tr '[:upper:]' '[:lower:]')
 
 		if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
-			echo -e "${C_INFO}-> Estado de certbot.timer:${RESET}"
-			systemctl status certbot.timer
+
+
+if [ "$IS_SYSTEMD" -eq 1 ]; then
+    # Mètode systemd
+    sudo systemctl status certbot.timer
+else
+    # Mètode cron (Devuan/No-systemd)
+    echo "ℹ️ Comprovant la configuració de renovació (Cron Job)..."
+    if [ -f /etc/cron.d/certbot ]; then
+        echo "✅ Fitxer /etc/cron.d/certbot trobat. La renovació està programada per Cron."
+    else
+        echo "❌ No s'ha trobat la programació automàtica de renovació. S'ha de verificar manualment."
+    fi
+fi
+
+
+
+
+
+#			echo -e "${C_INFO}-> Estado de certbot.timer:${RESET}"
+#			systemctl status certbot.timer
 		fi
 		echo -e "\n" 
 		read_prompt "¿Desea ejecutar una simulación de renovación de certificados (dry-run)? Esto no modificará el sistema, sólo és una simulación. (sí/NO - Enter para NO): " DRY_RUN_TEST "no"
@@ -658,7 +685,10 @@ echo -e "\n"
 echo -e "${C_SUBTITULO}--- 5.6 Recargando la configuración del servidor Apache para aplicar los cambios ---${RESET}"
 echo -e "${C_SUBTITULO}------------------------------------------------------------------------------------${RESET}"
 
-systemctl reload apache2
+SERVICE_NAME="apache2"
+
+#systemctl reload apache2
+service apache2 reload
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al recargar Apache2. Revisa los logs y la sintaxis de los Vhosts.${RESET}"
@@ -667,9 +697,36 @@ if [ $? -ne 0 ]; then
 else
 	# Mostrar el estado del servicio para confirmación
 	echo -e "Estado del servicio Apache2:\n"
-	systemctl status apache2 | grep Loaded
-	systemctl status apache2 | grep Active
-	echo -e "\n"
+
+        if [ "$IS_SYSTEMD" -eCq 1 ]; then 
+                #Mètode systemd
+		echo "Systemd"
+                systemctl status "$SERVICE_NAME" | grep Loaded
+                systemctl status "$SERVICE_NAME" | grep Active
+        else
+                #Mètode SysVinit/Procés
+		echo "SysVinit"
+                if ps aux | grep -v grep | grep -q "$SERVICE_NAME"; then
+#                        echo "Active: active (running)"
+                        echo "✅ El servei $SERVICE_NAME està Actiu (Running)."
+                else
+#                        echo "Active: inactive (stopped)"
+                        echo "❌ El servei $SERVICE_NAME no està Actiu (Aturat)."
+                fi
+        fi
+
+
+#	systemctl status apache2 | grep Loaded
+#	systemctl status apache2 | grep Active
+#       service apache2 status
+#        echo -e "\n"
+        # Comprovació de l'estat d'execució (Simula systemctl status | grep Active)
+#        if ps aux | grep -v grep | grep -q apache2; then
+#            echo "✅ El servei Apache2 està Actiu (Running)."
+#        else
+#            echo "❌ El servei Apache2 no està Actiu (Aturat)."
+#        fi
+        echo -e "\n"
 	echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
 fi
 sleep 2
@@ -693,7 +750,7 @@ echo -e "\n"
 
 if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
     echo -e "${C_INFO}ℹ️ L'accés ha d'utilitzar la URL segura (HTTPS).${RESET}"
-    
+
     if [[ "$CERT_TYPE_LOWER" == "auto" ]]; then
         echo -e "${C_INFO}Com que s'ha instal·lat un certificat ${NEGRITA}Autofirmat TEMPORAL${RESET}, el navegador mostrarà una ADVERTÈNCIA DE SEGURETAT. Haurà de confirmar l'excepció per continuar i accedir a l'aplicatiu.${RESET}"
         echo -e "\n"

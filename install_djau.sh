@@ -311,14 +311,16 @@ sleep 5
 echo -e "\n"
 
 # Reiniciar para asegurar que la configuración está activa
-sudo systemctl restart fail2ban
+#sudo systemctl restart fail2ban
+sudo service fail2ban restart
 
 echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
 echo -e "\n"
 echo -e "${C_INFO}ℹ️ Puede verificar el estado del sistema en cualquier momento con:${RESET}"
 echo -e "\n"
 echo -e "${C_INFO}sudo systemctl status fail2ban${RESET}"
-sudo systemctl status fail2ban | grep Active
+#sudo systemctl status fail2ban | grep Active
+sudo service fail2ban status
 echo -e "\n"
 sleep 2
 echo -e "${C_INFO}sudo fail2ban-client status${RESET}"
