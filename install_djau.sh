@@ -306,13 +306,31 @@ check_install "$APT_DESC"
 # -----------------------------------------------------------------
 # SEGURIDAD Y CONFIGURACIÓN DEL SISTEMA
 # -----------------------------------------------------------------
-APT_DESC="Seguridad, Cron y Locale (fail2ban, locales, haveged)"
-echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
-apt-get install -y \
+
+
+if [ "$IS_SYSTEMD" -eq 1 ]; then
+    # Instal·lació normal amb systemd
+    APT_DESC="Seguridad, Cron y Locales (fail2ban, locales, haveged)"
+    echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+    apt-get install -y \
     cron \
     fail2ban \
     locales \
-    haveged # Generador de Entropía (crucial para openssl en VPS)
+    haveged # Generador de Entropía
+
+else
+    # Excepció per a Devuan/No-systemd
+    APT_DESC="Seguridad, Cron y Locales (locales, haveged)"
+    echo -e "${C_INFO}ℹ️ $APT_DESC${RESET}"
+    apt-get install -y \
+    cron \
+    locales \
+    haveged # Generador de Entropía
+    echo
+    echo -e "${C_ADVERTENCIA}⚠️ ADVERTÈNCIA: S'ha detectat un sistema no systemd (Dcom Devuan o similar). Fail2Ban no s'instal·larà automàticament.${RESET}"
+    echo -e "${C_ADVERTENCIA}   Aquest paquet pot generar errors crítics en la instal·lació en certs entorns SysVinit/nucli minimalista.${RESET}"
+    echo -e "${C_ADVERTENCIA}   Per raons de seguretat, es recomana a l'usuari instal·lar i configurar Fail2Ban manualment després de la instal·lació.${RESET}"
+fi
 
 check_install "$APT_DESC"
 
@@ -327,42 +345,47 @@ sleep 2
 echo -e "${C_SUBTITULO}--- 3.2 Configurando Fail2Ban ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------${RESET}"
 
-# Copia de la configuración por defecto a local para evitar cambios en la original
-if [ ! -f /etc/fail2ban/jail.local ]; then
-    echo -e "${C_INFO}ℹ️ Creando jail.local para configuración local...${RESET}"
-    cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+if [ "$IS_SYSTEMD" -eq 1 ]; then
+
+   # Copia de la configuración por defecto a local para evitar cambios en la original
+   if [ ! -f /etc/fail2ban/jail.local ]; then
+       echo -e "${C_INFO}ℹ️ Creando jail.local para configuración local...${RESET}"
+       cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+   fi
+
+   echo -e "${C_INFO}ℹ️ Esperando 5 segundos para que Fail2Ban inicie completamente el socket...${RESET}"
+   sleep 5
+   echo -e "\n"
+
+   # Reiniciar para asegurar que la configuración está activa
+   systemctl restart fail2ban
+
+   echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
+   echo -e "\n"
+   echo -e "${C_INFO}ℹ️ Puede verificar el estado del sistema en cualquier momento con:${RESET}"
+   echo -e "\n"
+   echo -e "${C_INFO}sudo systemctl status fail2ban${RESET}"
+   systemctl status fail2ban | grep Active
+   echo -e "\n"
+   sleep 2
+   echo -e "${C_INFO}sudo fail2ban-client status${RESET}"
+   fail2ban-client status
+   echo -e "\n"
+   sleep 2
+   echo -e "${C_INFO}sudo fail2ban-client status sshd${RESET}"
+   fail2ban-client status sshd
+   echo -e "\n"
+   sleep 2
+   #Tarda mucho tiempo en acabar. Parece que el proceso ha fallado y se ha quedado bloqueado.
+   #echo -e "${C_INFO}sudo tail -f /var/log/fail2ban.log${RESET}"
+   #sudo tail -f /var/log/fail2ban.log
+   #echo -e "\n"
+   #sleep 2
+else
+   echo
+   echo -e "${C_INFO}ℹ️ Fail2Ban no ha sido instalado, por defecto, en este sistema$.{RESET}"
 fi
-
-echo -e "${C_INFO}ℹ️ Esperando 5 segundos para que Fail2Ban inicie completamente el socket...${RESET}"
-sleep 5
-echo -e "\n"
-
-# Reiniciar para asegurar que la configuración está activa
-#sudo systemctl restart fail2ban
-sudo service fail2ban restart
-
-echo -e "${C_EXITO}✅ Fail2Ban instalado y servicio reiniciado. Protegiendo SSH y otros servicios.${RESET}"
-echo -e "\n"
-echo -e "${C_INFO}ℹ️ Puede verificar el estado del sistema en cualquier momento con:${RESET}"
-echo -e "\n"
-echo -e "${C_INFO}sudo systemctl status fail2ban${RESET}"
-#sudo systemctl status fail2ban | grep Active
-sudo service fail2ban status
-echo -e "\n"
-sleep 2
-echo -e "${C_INFO}sudo fail2ban-client status${RESET}"
-sudo fail2ban-client status
-echo -e "\n"
-sleep 2
-echo -e "${C_INFO}sudo fail2ban-client status sshd${RESET}"
-sudo fail2ban-client status sshd
-echo -e "\n"
-sleep 2
-#Tarda mucho tiempo en acabar. Parece que el proceso ha fallado y se ha quedado bloqueado.
-#echo -e "${C_INFO}sudo tail -f /var/log/fail2ban.log${RESET}"
-#sudo tail -f /var/log/fail2ban.log
-#echo -e "\n"
-sleep 2
+echo
 
 echo -e "${C_SUBTITULO}--- 3.3 Creación de directorios para el proyecto DJANGO-AULA y para los datos privados del proyecto ---${RESET}"
 echo -e "${C_SUBTITULO}-------------------------------------------------------------------------------------------------------${RESET}"
