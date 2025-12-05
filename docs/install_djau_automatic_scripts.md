@@ -162,9 +162,9 @@ sudo ./setup_cron.sh
 
 En finalitzar, el script informa de les tasques programades i dels horaris d’execució.  
 
-Un cop completada la **Fase 3**, el servidor estarà totalment operatiu.  
-Podeu accedir a l’aplicació mitjançant el domini que s'hagi configurat, típicament quelcom com:
+Un cop completada la **Fase 3**, el servidor estarà totalment operatiu i obtindreu, per pantalla, tota la informació que cal per accedir a l'aplicatiu, segons el tipus d'instal·lació que s'hagi triat.  
+Com exemple i per una instal·lació definitiva, podreu accedir a l’aplicació mitjançant el domini que s'hagi configurat, típicament quelcom com:
 
 ```
-https://djau.elteudomini.cat]
+https://djau.elteudomini.cat
 ```
