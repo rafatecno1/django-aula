@@ -327,7 +327,7 @@ else
     locales \
     haveged # Generador de Entropía
     echo
-    echo -e "${C_ADVERTENCIA}⚠️ ADVERTÈNCIA: S'ha detectat un sistema no systemd (Dcom Devuan o similar). Fail2Ban no s'instal·larà automàticament.${RESET}"
+    echo -e "${C_ADVERTENCIA}⚠️ ADVERTÈNCIA: S'ha detectat un sistema no systemd (Com Devuan o similar). Fail2Ban no s'instal·larà automàticament.${RESET}"
     echo -e "${C_ADVERTENCIA}   Aquest paquet pot generar errors crítics en la instal·lació en certs entorns SysVinit/nucli minimalista.${RESET}"
     echo -e "${C_ADVERTENCIA}   Per raons de seguretat, es recomana a l'usuari instal·lar i configurar Fail2Ban manualment després de la instal·lació.${RESET}"
 fi
@@ -383,7 +383,7 @@ if [ "$IS_SYSTEMD" -eq 1 ]; then
    #sleep 2
 else
    echo
-   echo -e "${C_INFO}ℹ️ Fail2Ban no ha sido instalado, por defecto, en este sistema$.{RESET}"
+   echo -e "${C_INFO}ℹ️ Fail2Ban no ha sido instalado, por defecto, en este sistema$.${RESET}"
 fi
 echo
 
