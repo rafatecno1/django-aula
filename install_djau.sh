@@ -165,7 +165,7 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 
 
 # 3. Usuario de la Aplicación
-read_prompt "Introduce el nombre del USUARIO DE LINUX que instalará la aplicación (debe existir y tener sudo) (por defecto: djau): " APP_USER "djau"
+read_prompt "Introduce el nombre del USUARIO DE LINUX que instalará la aplicación (debe existir y tener sudo) (por defecto: $SUDO_USER): " APP_USER "$SUDO_USER"
 
 # Verifica si el usuario existe antes de continuar (Verificación crucial)
 if id -u "$APP_USER" >/dev/null 2>&1; then
