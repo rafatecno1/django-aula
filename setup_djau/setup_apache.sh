@@ -680,10 +680,10 @@ if [ "$IS_SYSTEMD" -eq 1 ]; then
 	systemctl reload "$SERVICE_NAME"
 else
 	#Mètode SysVinit/Procés
-	echo "SysVinit. Reload Apache."
 	service "$SERVICE_NAME" reload
 fi
 
+echo
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al recargar Apache2. Revisa los logs y la sintaxis de los Vhosts.${RESET}"
@@ -694,20 +694,20 @@ else
 	echo -e "Estado del servicio Apache2:\n"
 
         if [ "$IS_SYSTEMD" -eq 1 ]; then 
-                #Mètode systemd
-                systemctl status "$SERVICE_NAME" | grep Loaded
-                systemctl status "$SERVICE_NAME" | grep Active
+            #Mètode systemd
+            systemctl status "$SERVICE_NAME" | grep Loaded
+            systemctl status "$SERVICE_NAME" | grep Active
 	        echo -e "\n"
-		echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
+			echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
         else
-                #Mètode SysVinit/Procés
-		echo "SysVinit"
-		service "$SERVICE_NAME" status
-                if ps aux | grep -v grep | grep -q "$SERVICE_NAME"; then
-                        echo -e "${C_EXITO}✅ El servei $SERVICE_NAME està Actiu (Running).${RESET}"
-                else
-                        echo -e "${C_ERROR}❌ El servei $SERVICE_NAME no està Actiu (Aturat). Caldrà comprovar manualment on és el problema.${RESET}"
-                fi
+            #Mètode SysVinit/Procés
+			service "$SERVICE_NAME" status
+			echo
+            if ps aux | grep -v grep | grep -q "$SERVICE_NAME"; then
+            	echo -e "${C_EXITO}✅ El servei $SERVICE_NAME està Actiu (Running).${RESET}"
+            else
+                echo -e "${C_ERROR}❌ El servei $SERVICE_NAME no està Actiu (Aturat). Caldrà comprovar manualment on és el problema.${RESET}"
+            fi
         fi
 fi
 sleep 2
