@@ -116,6 +116,6 @@ L'script d'instal·lació automatitzada de Django-Aula ja s'encarrega d'instal·
 
 Per a la protecció del servidor web contra atacs de *web scraping* i escanejos de vulnerabilitats, es recomana configurar filtres per a Apache.
 
-Es poden crear filtres específics que detectin patrons d'atac i bloquegin aquestes IP automàticament tot i que encara no es troben implementats.
+Es poden crear filtres específics que detectin patrons d'atac i bloquegin aquestes IP automàticament tot i que encara no es troben implementats en el procés automàtic d'instal·lació de l'aplicatiu.
 
-➡️ Consulteu recursos avançats com la pàgina [https://www.andresmorenostudio.com/blog/fail2ban-apache-server](https://www.andresmorenostudio.com/blog/fail2ban-apache-server) per crear filtres de Fail2Ban per a Virtual Hosts concrets o per a errors comuns d'Apache.
+➡️ Consulteu recursos avançats, si n'esteu interessats, com la pàgina [https://www.andresmorenostudio.com/blog/fail2ban-apache-server](https://www.andresmorenostudio.com/blog/fail2ban-apache-server) per crear filtres de Fail2Ban per a Virtual Hosts concrets o per a errors comuns d'Apache.

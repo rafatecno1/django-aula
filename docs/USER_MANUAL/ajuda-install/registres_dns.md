@@ -1,8 +1,8 @@
 # Configuració de Registres DNS per a Accés Públic (VPS)
 
-Per poder accedir a l'aplicació des d'Internet mitjan?ant un domini (i no només per la IP), cal tenir un domini contractat i configurar els registres DNS que apunten a l'adreça IP del servidor VPS.
+Per poder accedir a l'aplicació des d'Internet mitjançant un domini i no només per la IP, cal tenir un domini contractat i configurar els registres DNS que apunten a l'adreça IP del servidor VPS.
 
-A més, per tal que el procés d'instal﹞lació automatitzada pugui generar els certificats de seguretat **Let's Encrypt** (HTTPS), calen uns registres addicionals (tipus CAA).
+A més, per tal que el procés d'instal·lació automatitzada pugui generar els certificats de seguretat **Let's Encrypt** (HTTPS), calen uns registres addicionals (tipus CAA).
 
 ### 1. Requisits
 
@@ -70,4 +70,4 @@ Un cop creat, els registres haurien d'aparèixer al panell de control de DNS:
 
 ![Entrada en el llistat de registres del registre del registre CAA Let's Encrypt pel subdomini que comença per www](assets/dns/registre2_CAA_LetsEncrypt.jpg)
 
-**Nota:** Després de crear o modificar qualsevol registre DNS, pot trigar unes hores (temps de propagació) fins que els canvis siguin efectius arreu del món.
+**Nota:** Després de crear o modificar qualsevol registre DNS, pot trigar unes hores (temps de propagació) fins que els canvis siguin efectius arreu del món, però normalment triga només uns pocs minuts.

@@ -51,7 +51,7 @@ L'aplicació necessita una adreça de correu per a l'enviament de notificacions 
 
 * **Dominis i DNS:** La configuració dels registres DNS dependrà del tipus de servidor:
   * **Servidor intern privat, sense accés a Internet:** Accés per IP interna o nom de la màquina dins la xarxa.  
-  * **Servidor extern públic (típicament un VPS):** El domini principal (`djau.elteudomini.cat`) i el `www.djau.elteudomini.cat` han d'apuntar a l'IP pública del servidor.  
+  * **Servidor extern públic (típicament un VPS):** El domini principal `djau.elteudomini.cat` i el `www.djau.elteudomini.cat` han d'apuntar a l'IP pública del servidor.  
 
   👉 **[Guia per a la creació dels registres DNS per redirigir les visites al servidor públic i per a la instal·lació de certificats Let's Encrypt](USER_MANUAL/ajuda-install/registres_dns.md)**
 
