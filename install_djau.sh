@@ -80,6 +80,7 @@ else
     # 🟡 Sistema SysVinit (Devuan) o similar
     echo "ℹ️ S'ha detectat un sistema operatiu basat en SysVinit.(Probablement Devuan)".
 fi
+echo
 
 
 read -p "Presione una tecla para dar paso a la información sobre el proceso de la instalación de DJANGO-AULA" -n1 -s
