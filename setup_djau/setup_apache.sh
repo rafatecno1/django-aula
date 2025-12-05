@@ -676,8 +676,7 @@ echo -e "${C_SUBTITULO}---------------------------------------------------------
 SERVICE_NAME="apache2"
 
 if [ "$IS_SYSTEMD" -eq 1 ]; then
-	#Mètode systemd
-	echo "Systemd. Reload Apache."
+    #Mètode systemd
 	systemctl reload "$SERVICE_NAME"
 else
 	#Mètode SysVinit/Procés
@@ -696,7 +695,6 @@ else
 
         if [ "$IS_SYSTEMD" -eq 1 ]; then 
                 #Mètode systemd
-		echo "Systemd"
                 systemctl status "$SERVICE_NAME" | grep Loaded
                 systemctl status "$SERVICE_NAME" | grep Active
 	        echo -e "\n"
