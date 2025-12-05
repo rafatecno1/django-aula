@@ -693,16 +693,16 @@ else
 	# Mostrar el estado del servicio para confirmación
 	echo -e "Estado del servicio Apache2:\n"
 
-        if [ "$IS_SYSTEMD" -eq 1 ]; then 
+        if [ "$IS_SYSTEMD" -eq 1 ]; then
             #Mètode systemd
             systemctl status "$SERVICE_NAME" | grep Loaded
             systemctl status "$SERVICE_NAME" | grep Active
-	        echo -e "\n"
-			echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
+	    echo -e "\n"
+	    echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
         else
             #Mètode SysVinit/Procés
-			service "$SERVICE_NAME" status
-			echo
+	    service "$SERVICE_NAME" status
+	    echo
             if ps aux | grep -v grep | grep -q "$SERVICE_NAME"; then
             	echo -e "${C_EXITO}✅ El servei $SERVICE_NAME està Actiu (Running).${RESET}"
             else
