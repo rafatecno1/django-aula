@@ -674,16 +674,15 @@ echo -e "${C_SUBTITULO}--- 5.6 Recargando la configuración del servidor Apache 
 echo -e "${C_SUBTITULO}------------------------------------------------------------------------------------${RESET}"
 
 SERVICE_NAME="apache2"
-ACTION="reload"
 
 if [ "$IS_SYSTEMD" -eq 1 ]; then
 	#Mètode systemd
 	echo "Systemd. Reload Apache."
-	systemctl "$ACTION" "$SERVICE_NAME"
+	systemctl reload "$SERVICE_NAME"
 else
 	#Mètode SysVinit/Procés
 	echo "SysVinit. Reload Apache."
-	service "$SERVICE_NAME" "$ACTION"
+	service "$SERVICE_NAME" reload
 fi
 
 
@@ -705,6 +704,7 @@ else
         else
                 #Mètode SysVinit/Procés
 		echo "SysVinit"
+		service "$SERVICE_NAME" status
                 if ps aux | grep -v grep | grep -q "$SERVICE_NAME"; then
                         echo -e "${C_EXITO}✅ El servei $SERVICE_NAME està Actiu (Running).${RESET}"
                 else
