@@ -34,13 +34,6 @@ else
     exit 1
 fi
 
-# Detectar el sistema d'inicialització
-IS_SYSTEMD=0 # Per defecte, assumim que no és systemd (Devuan, etc.)
-
-if command -v systemctl >/dev/null 2>&1; then
-    # La comanda systemctl s'ha trobat: és un sistema systemd (Debian, Ubuntu)
-    IS_SYSTEMD=1
-fi
 
 echo -e "\n\n"
 echo -e "${C_PRINCIPAL}================================================================="
@@ -286,9 +279,9 @@ echo -e "${C_CAPITULO}--- 3. CREACIÓN DE ARCHIVOS DE CONFIGURACIÓN VIRTUAL HOS
 echo -e "${C_CAPITULO}=============================================================${RESET}"
 echo -e "\n"
 
-VHOST_DIR="/etc/apache2/sites-available"					# Nombre para el directorio donde se encontrarán los VHost
+VHOST_DIR="/etc/apache2/sites-available"			# Nombre para el directorio donde se encontrarán los VHost
 HTTP_REDIRECT_CONF="$VHOST_DIR/$PROJECT_FOLDER.conf"		# Nombre para el VHost http externo que redirigirá a https
-SSL_CONF="$VHOST_DIR/$PROJECT_FOLDER-ssl.conf"				# Nombre para el VHost https externo
+SSL_CONF="$VHOST_DIR/$PROJECT_FOLDER-ssl.conf"			# Nombre para el VHost https externo
 HTTP_INTERNAL_CONF="$VHOST_DIR/$PROJECT_FOLDER-int.conf"	# Nombre para el VHost http interno
 
 if [[ "$INSTALL_TYPE_LOWER" == "pub" ]]; then
@@ -594,8 +587,9 @@ if [[ "$CERT_TYPE_LOWER" == "auto" ]]; then
 
 	echo -e "${C_SUBTITULO}--- 5.5 Certificado SSL Autofirmado generado e instalado ---${RESET}"
 	echo -e "${C_SUBTITULO}------------------------------------------------------------${RESET}"
-    echo -e "${C_EXITO}✅ Certificado SSL Autofirmado generado e instalado en el Vhost temporal.${RESET}"
-    echo -e "${C_INFO}ℹ️ La conexión HTTPS funcionará, pero el navegador mostrará una advertencia de seguridad.${RESET}"
+	echo
+	echo -e "${C_EXITO}✅ Certificado SSL Autofirmado generado e instalado en el Vhost temporal.${RESET}"
+	echo -e "${C_INFO}ℹ️ La conexión HTTPS funcionará, pero el navegador mostrará una advertencia de seguridad.${RESET}"
 
 
 # Mostrar este paso si se ha elegido 'le' con el fin de ejecutar Certbot e instalar los certificados Let's Encrypt.
@@ -637,26 +631,20 @@ elif [[ "$CERT_TYPE_LOWER" == "le" ]]; then
 
 		if [[ "$RESPONSE_LOWER" == "sí" ]] || [[ "$RESPONSE_LOWER" == "si" ]]; then
 
+			if [ "$IS_SYSTEMD" -eq 1 ]; then
+			    # Mètode systemd
+			    systemctl status certbot.timer
+			else
+			    # Mètode SysVinit, amb cron
+			    echo "ℹ️ Comprovant la configuració de renovació (Cron Job)..."
+			    if [ -f /etc/cron.d/certbot ]; then
+			        echo "✅ Fitxer /etc/cron.d/certbot trobat. La renovació està programada per Cron."
+			    else
+			        echo "❌ No s'ha trobat la programació automàtica de renovació. S'ha de verificar manualment."
+				echo -e "${C_ERROR}❌ Es recomana verificar que certbot està actiu fent la simulació de renovació de certificats.${RESET}"
+			    fi
+			fi
 
-if [ "$IS_SYSTEMD" -eq 1 ]; then
-    # Mètode systemd
-    sudo systemctl status certbot.timer
-else
-    # Mètode cron (Devuan/No-systemd)
-    echo "ℹ️ Comprovant la configuració de renovació (Cron Job)..."
-    if [ -f /etc/cron.d/certbot ]; then
-        echo "✅ Fitxer /etc/cron.d/certbot trobat. La renovació està programada per Cron."
-    else
-        echo "❌ No s'ha trobat la programació automàtica de renovació. S'ha de verificar manualment."
-    fi
-fi
-
-
-
-
-
-#			echo -e "${C_INFO}-> Estado de certbot.timer:${RESET}"
-#			systemctl status certbot.timer
 		fi
 		echo -e "\n" 
 		read_prompt "¿Desea ejecutar una simulación de renovación de certificados (dry-run)? Esto no modificará el sistema, sólo és una simulación. (sí/NO - Enter para NO): " DRY_RUN_TEST "no"
@@ -686,9 +674,18 @@ echo -e "${C_SUBTITULO}--- 5.6 Recargando la configuración del servidor Apache 
 echo -e "${C_SUBTITULO}------------------------------------------------------------------------------------${RESET}"
 
 SERVICE_NAME="apache2"
+ACTION="reload"
 
-#systemctl reload apache2
-service apache2 reload
+if [ "$IS_SYSTEMD" -eq 1 ]; then
+	#Mètode systemd
+	echo "Systemd. Reload Apache."
+	systemctl "$ACTION" "$SERVICE_NAME"
+else
+	#Mètode SysVinit/Procés
+	echo "SysVinit. Reload Apache."
+	service "$SERVICE_NAME" "$ACTION"
+fi
+
 
 if [ $? -ne 0 ]; then
     echo -e "${C_ERROR}❌ ERROR: Fallo al recargar Apache2. Revisa los logs y la sintaxis de los Vhosts.${RESET}"
@@ -698,36 +695,22 @@ else
 	# Mostrar el estado del servicio para confirmación
 	echo -e "Estado del servicio Apache2:\n"
 
-        if [ "$IS_SYSTEMD" -eCq 1 ]; then 
+        if [ "$IS_SYSTEMD" -eq 1 ]; then 
                 #Mètode systemd
 		echo "Systemd"
                 systemctl status "$SERVICE_NAME" | grep Loaded
                 systemctl status "$SERVICE_NAME" | grep Active
+	        echo -e "\n"
+		echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
         else
                 #Mètode SysVinit/Procés
 		echo "SysVinit"
                 if ps aux | grep -v grep | grep -q "$SERVICE_NAME"; then
-#                        echo "Active: active (running)"
-                        echo "✅ El servei $SERVICE_NAME està Actiu (Running)."
+                        echo -e "${C_EXITO}✅ El servei $SERVICE_NAME està Actiu (Running).${RESET}"
                 else
-#                        echo "Active: inactive (stopped)"
-                        echo "❌ El servei $SERVICE_NAME no està Actiu (Aturat)."
+                        echo -e "${C_ERROR}❌ El servei $SERVICE_NAME no està Actiu (Aturat). Caldrà comprovar manualment on és el problema.${RESET}"
                 fi
         fi
-
-
-#	systemctl status apache2 | grep Loaded
-#	systemctl status apache2 | grep Active
-#       service apache2 status
-#        echo -e "\n"
-        # Comprovació de l'estat d'execució (Simula systemctl status | grep Active)
-#        if ps aux | grep -v grep | grep -q apache2; then
-#            echo "✅ El servei Apache2 està Actiu (Running)."
-#        else
-#            echo "❌ El servei Apache2 no està Actiu (Aturat)."
-#        fi
-        echo -e "\n"
-	echo -e "${C_EXITO}✅ Recarga de Apache2 completada sin errores.${RESET}"
 fi
 sleep 2
 

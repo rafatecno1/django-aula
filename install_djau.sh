@@ -6,9 +6,26 @@
 
 clear
 
-# ----------------------------------------------------------------------
-# CARGA DE LIBRERÍA DE FUNCIONES Y VARIABLES DE COLOR
-# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# DEFINICIÓN DE VARIABLES, CARGA DE LIBRERÍA DE FUNCIONES Y VARIABLES DE COLOR
+# ----------------------------------------------------------------------------
+
+
+# 1. Definició de variables
+# Repositori i branca per la clonació
+REPO_URL="https://github.com/rafatecno1/django-aula.git"
+GIT_BRANCH="master"						# exemple: "feature/apache-catchall-flood-control" 
+#REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
+#GIT_BRANCH="master"
+
+# Definició de sistema d'inicialització de processos del Sistema Operatiiu (SysVinit vs Systemd)
+IS_SYSTEMD=0 # Per defecte, assumim que no és systemd (Devuan, etc.)
+
+if command -v systemctl >/dev/null 2>&1; then
+    # La comanda systemctl s'ha trobat: és un sistema amb systemd (Debian, Ubuntu o derivats)
+    IS_SYSTEMD=1
+fi
+
 
 echo "--------------------------------------------------------------------------------------------"
 echo "--- Proceso de descarga de la librería temporal necesaria en el inicio de la instalación ---"
@@ -55,6 +72,15 @@ fi
 
 echo -e "${C_EXITO}✅ Limpieza finalizada.${RESET}"
 echo -e "\n\n"
+
+if [ "$IS_SYSTEMD" -eq 1 ]; then
+    # 🟢 Sistema systemd (Ubuntu, Debian modern)
+    echo "ℹ️ S'ha detectat un sistema operatiu basat en Systemd (Debian modern, Ubuntu i derivats"
+else
+    # 🟡 Sistema SysVinit (Devuan) o similar
+    echo "ℹ️ S'ha detectat un sistema operatiu basat en SysVinit.(Probablement Devuan)".
+fi
+
 
 read -p "Presione una tecla para dar paso a la información sobre el proceso de la instalación de DJANGO-AULA" -n1 -s
 
@@ -456,11 +482,6 @@ echo -e "\n"
 echo -e "${C_SUBTITULO}--- 4.1 Clonando Repositorio como usuario '$APP_USER' ---${RESET}"
 echo -e "${C_SUBTITULO}---------------------------------------------------------${RESET}"
 
-REPO_URL="https://github.com/rafatecno1/django-aula.git"
-#REPO_URL="https://github.com/ctrl-alt-d/django-aula.git"	#repositorio original del proyecto
-#GIT_BRANCH="feature/apache-catchall-flood-control"
-GIT_BRANCH="master"
-
 # Usamos sudo -u como el usuario de la aplicación para clonar o actualizar
 
 echo -e "\n"
@@ -512,7 +533,7 @@ export PROJECT_FOLDER="$PROJECT_FOLDER"
 export FULL_PATH="$FULL_PATH"
 export SETUP_DIR="$SETUP_DIR"
 export PATH_DADES_PRIVADES="$PATH_DADES_PRIVADES"
-
+export IS_SYSTEMD="$IS_SYSTEMD"
 EOF
 
 chown -R "$APP_USER":"$APP_USER" "$CONFIG_FILE"
