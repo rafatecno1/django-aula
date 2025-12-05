@@ -75,7 +75,7 @@ echo -e "\n\n"
 
 if [ "$IS_SYSTEMD" -eq 1 ]; then
     # 🟢 Sistema systemd (Ubuntu, Debian modern)
-    echo "ℹ️ S'ha detectat un sistema operatiu basat en Systemd (Debian modern, Ubuntu i derivats"
+    echo "ℹ️ S'ha detectat un sistema operatiu basat en Systemd (Debian modern, Ubuntu i derivats)"
 else
     # 🟡 Sistema SysVinit (Devuan) o similar
     echo "ℹ️ S'ha detectat un sistema operatiu basat en SysVinit.(Probablement Devuan)".
