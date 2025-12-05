@@ -51,7 +51,7 @@ L'aplicació necessita una adreça de correu per a l'enviament de notificacions 
 
 * **Dominis i DNS:** La configuració dels registres DNS dependrà del tipus de servidor:
   * **Servidor intern privat, sense accés a Internet:** Accés per IP interna o nom de la màquina dins la xarxa.  
-  * **Servidor extern públic (típicament un VPS):** El domini principal (`$DOMAIN_NAME`) i el `www.` han d'apuntar a l'IP pública del servidor.  
+  * **Servidor extern públic (típicament un VPS):** El domini principal (`djau.elteudomini.cat`) i el `www.djau.elteudomini.cat` han d'apuntar a l'IP pública del servidor.  
 
   👉 **[Guia per a la creació dels registres DNS per redirigir les visites al servidor públic i per a la instal·lació de certificats Let's Encrypt](USER_MANUAL/ajuda-install/registres_dns.md)**
 
@@ -103,33 +103,33 @@ Durant aquest procés es demanaran dades com:
 * **Correu electrònic:** adreça i contrasenya d’aplicació per SMTP, així com l’adreça visible per al destinatari.  
 * **Superusuari Django-Aula:** correu i contrasenya per al superusuari `admin`.  
 
-Un cop finalitzada l'execució d'aquest script es dona l'opció d'executar el script `test_email.sh` per provar l’enviament de correu prèviament configurat. Aquest script llegeix les dades de l'arxiu `settings_local.py` i es pot executar manualment sempre que es vulgui fer una prova d'enviament de correu. 
+Un cop finalitzada l'execució d'aquest script hi ha l'opció d'executar el script `test_email.sh` per provar l’enviament de correu prèviament configurat. Aquest script llegeix les dades de l'arxiu `settings_local.py` i sempre es pot executar manualment quan es vulgui fer una prova d'enviament de correu. 
 
 ---
 
 <a name="id22"></a>
 ### 2.2 Fase 2: Instal·lació del Servidor Web Apache (`setup_apache.sh`)
 
-Django-Aula fa servir el servidor web **Apache**, per tant, aquest script instal·la i configura el servidor web, activa el tallafocs **UFW** i gestiona la creació de certificats, autofirmats o amb **Let's Encrypt** (si es tracta d’una instal·lació pública).
+Django-Aula fa servir el servidor web **Apache**, per tant, aquest script instal·la i configura el servidor web, activa el tallafocs **UFW** i gestiona la creació de certificats, autofirmats o amb **Let's Encrypt**, si es tracta d’una instal·lació en un servidor extern públic (VPS).
 
 **Execució:**
 
 Suposant que Django-Aula s'ha instal·lat en un directori anomenat `djau`, caldrà accedir al directori `setup_djau` del projecte i executar, amb permisos `sudo`, la següent instrucció. La informació precisa de la ubicació del script es proporcionarà a la finalització del scrip `install_djau.sh` de la Fase 1.
 
 ```bash
-cd /opt/djau/setup_apache
+cd /opt/djau/setup_djau
 sudo ./setup_apache.sh
 ```
 
 El script prepara els fitxers de configuració (Virtual Hosts) segons el tipus d’instal·lació triat:
 
 * **Servidor Intern (HTTP):** sense certificats.  
-* **Servidor Públic (HTTPS)** amb **certificats auto-firmant:** ràpid però no de confiança per als navegadors.  
-* **Servidor Públic (HTTPS)** amb **certificats reconeguts de Let's Encrypt:** opció recomanada.  
+* **Servidor Públic (HTTPS)** amb **certificats auto-signats:** ràpid de generar però un navegador mostrarà un missatge de no confiança que caldrà eludir expressament.  
+* **Servidor Públic (HTTPS)** amb **certificats reconeguts de Let's Encrypt:** opció recomanada per un servidor típic exposat a internet.  
 
 **Configuració Let's Encrypt (recomanada):**
 
-Caldrà contestar un seguit de preguntes que el script `Certbot` ens farà per poder generar els certificats pel nostre domini o subdomini.
+Caldrà contestar un seguit de preguntes que el script `Certbot` farà per poder generar els certificats pel nostre domini o subdomini.
 
 Algunes d'aquestes preguntes seran:
   
@@ -139,7 +139,7 @@ Algunes d'aquestes preguntes seran:
 
 Els certificats de Let's Encrypt caduquen als 90 dies de la seva generació, però Certbot s'encarrega automàticament de programar l'**autorrenovació dels certificats** si falta menys d'un mes per la caducitat dels certificats existents. En aquest cas procedeix, de forma automàtica a la autorenovació dels certificats.
 
-Un cop generats els certificats per Let's Encrypt sense errades, el script `setup_apache.sh` **tenim la possibilitat de fer dues proves opcionals**:
+Un cop generats els certificats per Let's Encrypt sense errades, el script `setup_apache.sh` **hi ha la possibilitat de fer dues proves opcionals**:
 * Comrovar si Cetbot ha programat correctament l'autorenovació dels certificats en el sistema, per estar-ne segurs de que s'autorenovaran.
 * Fer una simulació de renovació dels certificats
 
@@ -156,7 +156,7 @@ Aquest script modifica el fitxer de sistema `crontab` per programar-les, inclosa
 De nou, suposarem que Django-Aula s'ha instal·lat en un directori anomenat `djau`. Caldrà assegurar-nos que ja ens trobem al directori `setup_djau` del projecte i executar, amb permisos `sudo`, la següent instrucció.
 
 ```bash
-cd /opt/djau/setup_apache
+cd /opt/djau/setup_djau
 sudo ./setup_cron.sh
 ```
 
